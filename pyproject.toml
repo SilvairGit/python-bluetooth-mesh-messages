@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bluetooth-mesh-messages"
+version = "0.9"
+readme = "README.rst"
+authors = [
+    { name = "Michał Lowas-Rzechonek", email = "michal.lowas-rzechonek@silvair.com" },
+    { name = "Amadeusz Herzog", email = "amadeusz.hercog@silvair.com" },
+    { name = "Jakub Witowski", email = "jakub.witowski@silvair.com" },
+    { name = "Kamil Janowski", email = "kamil.janowski@silvair.com" },
+    { name = "Przemysław Fierek", email = "przemyslaw.fierek@silvair.com" },
+    { name = "Rafał Gajda", email = "rafal.gajda@silvair.com" }
+]
+dependencies = [
+    "construct>=2.9.45,<2.9.46",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: System :: Networking",
+]
+
+[project.optional-dependencies]
+test = [
+    "black",
+    "isort",
+    "pytest",
+    "ruff",
+]
+capnp = [
+    "pycapnp"
+]
+
+[tool.black]
+line-length = 110
+target-version = ["py310"]
+exclude = '''
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.mypy_cache
+    | _build
+    | build
+    | dist
+  )/
+)
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 110
+include_trailing_comma = true
+use_parentheses = true
+combine_as_imports = true
+
+[tool.ruff]
+select = ["F", "W", "PLW", "I", "B", "RUF"]
+line-length = 110
+indent-width = 4
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/test_*.py" = ["F403", "F405"]
+
+[tool.ruff.isort]
+combine-as-imports = true
