@@ -270,6 +270,10 @@ valid = [
     bytes.fromhex("80270000"),
     bytes.fromhex("802701FF"),
     bytes.fromhex("802700FF"),
+    # Silvair LEC
+    bytes.fromhex("f636010071ff"),
+    bytes.fromhex("f636010171ff01"),
+    bytes.fromhex("f636010372ff90ca04"),
     # Silvair ELT Server
     bytes.fromhex("E936010305040302010608070506"),
 ]
