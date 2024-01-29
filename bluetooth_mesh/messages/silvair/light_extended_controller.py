@@ -19,11 +19,11 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 #
-from datetime import timedelta
 from enum import IntEnum
 
-from construct import Adapter, Flag, Int8ul, Int16ul, Int24ul, Struct, this
+from construct import Construct, Flag, Int8ul, Int16ul, Struct, this
 
+from bluetooth_mesh.messages.properties import PropertyMixin, TimeMiliseconds24
 from bluetooth_mesh.messages.util import EnumAdapter, EnumSwitch as Switch, Opcode, SwitchStruct
 
 
@@ -34,7 +34,7 @@ class LightExtendedControllerOpcode(IntEnum):
 class LightExtendedControllerSubOpcode(IntEnum):
     PROPERTY_GET = 0x00
     PROPERTY_SET = 0x01
-    PROPERTY_SET_UNACKNOWLEDGED = 0x01
+    PROPERTY_SET_UNACKNOWLEDGED = 0x02
     PROPERTY_STATUS = 0x03
     BULK_LC_PROPERTY_SET = 0x04
     BULK_LC_PROPERTY_STATUS = 0x05
@@ -49,36 +49,38 @@ class LightExtendedControllerProperty(IntEnum):
     AUTO_RESUME_TIMER = 0xFF72
 
 
-class AutoResumeTimerAdapter(Adapter):
-    def _decode(self, obj, context, path):
-        return timedelta(milliseconds=obj)
+LightExtendedControllerPropertyDict = {
+    LightExtendedControllerProperty.AUTO_RESUME_MODE: Flag,
+    LightExtendedControllerProperty.AUTO_RESUME_TIMER: TimeMiliseconds24,
+}
 
-    def _encode(self, obj, context, path):
-        return int(obj.total_seconds() * 1000)
+
+class _LightExtendedControllerProperty(PropertyMixin, Construct):
+    ENUM = LightExtendedControllerProperty
+    DICT = LightExtendedControllerPropertyDict
+
+    subcon = Struct(
+        "property_id" / EnumAdapter(Int16ul, LightExtendedControllerProperty),
+        Switch(this.id, LightExtendedControllerPropertyDict),
+    )
+
+    def _parse(self, stream, context, path):
+        msg = LightExtendedControllerPropertyGet._parse(stream, context, path)
+        return self._parse_property(msg, stream, context, path)
+
+    def _build(self, obj, stream, context, path):
+        LightExtendedControllerPropertyGet._build(obj, stream, context, path)
+        return self._build_property(obj, stream, context, path)
 
 
 # fmt: off
-LightExtendedControllerPropertyValue = Switch(
-    this.id,
-    {
-        LightExtendedControllerProperty.AUTO_RESUME_MODE: Flag,
-        LightExtendedControllerProperty.AUTO_RESUME_TIMER: AutoResumeTimerAdapter(Int24ul),
-    }
-)
-
 LightExtendedControllerPropertyGet = Struct(
-    "id" / EnumAdapter(Int16ul, LightExtendedControllerProperty),
+    "property_id" / EnumAdapter(Int16ul, LightExtendedControllerProperty),
 )
 
-LightExtendedControllerPropertySet = Struct(
-    "id" / EnumAdapter(Int16ul, LightExtendedControllerProperty),
-    "value" / LightExtendedControllerPropertyValue,
-)
+LightExtendedControllerPropertySet = _LightExtendedControllerProperty()
 
-LightExtendedControllerPropertyStatus = Struct(
-    "id" / EnumAdapter(Int16ul, LightExtendedControllerProperty),
-    "value" / LightExtendedControllerPropertyValue,
-)
+LightExtendedControllerPropertyStatus = _LightExtendedControllerProperty()
 
 LightExtendedControllerSyncIntegralStatus = Struct(
     "sync_integral" / Int16ul,

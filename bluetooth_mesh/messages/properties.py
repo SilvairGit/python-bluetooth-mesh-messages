@@ -57,7 +57,7 @@ from construct import (
 )
 
 from bluetooth_mesh.messages.config import EmbeddedBitStruct
-from bluetooth_mesh.messages.util import DefaultCountValidator
+from bluetooth_mesh.messages.util import AliasedContainer, DefaultCountValidator
 
 
 class PropertyID(IntEnum):
@@ -651,4 +651,30 @@ PropertyValue = Switch(
     PropertyDict,
     default=Array(this.length, Byte)
 )
-# fmt: off
+
+
+class PropertyMixin:
+    ENUM = IntEnum
+    DICT = {}
+    ID_FIELD = "property_id"
+    VALUE_FIELD = "property_value"
+
+    def _parse_property(self, obj, stream, context, path):
+        property_id = self.ENUM(obj.pop(self.ID_FIELD))
+        property_name = property_id.name.lower()
+        property_value = self.DICT[property_id]._parse(stream, context, path)
+
+        class _Container(AliasedContainer):
+            ALIAS = property_name
+            ORIGINAL = self.VALUE_FIELD
+
+        return _Container({**obj, self.ID_FIELD: property_id, property_name: property_value})
+
+    def _build_property(self, obj, stream, context, path):
+        property_id = self.ENUM(obj[self.ID_FIELD])
+        property_name = property_id.name.lower()
+        property_value = obj.get(property_name)
+
+        self.DICT[property_id]._build(property_value, stream, context, path)
+
+        return obj
