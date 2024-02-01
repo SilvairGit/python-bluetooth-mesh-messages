@@ -62,11 +62,11 @@ from bluetooth_mesh.messages.util import (
 )
 
 
-class EmergencyLightingTestServerOpcode(IntEnum):
+class EmergencyLightingTestOpcode(IntEnum):
     SILVAIR_ELT = 0xE93601
 
 
-class EmergencyLightingTestServerSubOpcode(IntEnum):
+class EmergencyLightingTestSubOpcode(IntEnum):
     ELT_FUNCTIONAL_TEST_GET = 0x00
     ELT_FUNCTIONAL_TEST_START = 0x01
     ELT_FUNCTIONAL_TEST_STOP = 0x02
@@ -162,52 +162,52 @@ Timestamp = Struct(
                        )
 )
 
-EmergencyLightingTestServerFunctionalTestGet = Struct()
+EmergencyLightingTestFunctionalTestGet = Struct()
 
-EmergencyLightingTestServerFunctionalTestStart = Struct()
+EmergencyLightingTestFunctionalTestStart = Struct()
 
-EmergencyLightingTestServerFunctionalTestStop = Struct()
+EmergencyLightingTestFunctionalTestStop = Struct()
 
-EmergencyLightingTestServerFunctionalTestStatusMinimal = Struct(
+EmergencyLightingTestFunctionalTestStatusMinimal = Struct(
     "tai_timestamp" / TimestampAdapter(Timestamp),
     "execution_status" / EnumAdapter(Int8ul, TestExecutionStatus),
     "execution_result" / FunctionalExecutionResult,
 )
 
-EmergencyLightingTestServerFunctionalTestStatusOptional = Struct(
-    Embedded(EmergencyLightingTestServerFunctionalTestStatusMinimal),
+EmergencyLightingTestFunctionalTestStatusOptional = Struct(
+    Embedded(EmergencyLightingTestFunctionalTestStatusMinimal),
     "relative_timestamp" / Int32ul,
 )
 
-EmergencyLightingTestServerFunctionalTestStatus = NamedSelect(
-    optional=EmergencyLightingTestServerFunctionalTestStatusOptional,
-    minimal=EmergencyLightingTestServerFunctionalTestStatusMinimal,
+EmergencyLightingTestFunctionalTestStatus = NamedSelect(
+    optional=EmergencyLightingTestFunctionalTestStatusOptional,
+    minimal=EmergencyLightingTestFunctionalTestStatusMinimal,
 )
 
-EmergencyLightingTestServerDurationTestGet = Struct()
+EmergencyLightingTestDurationTestGet = Struct()
 
-EmergencyLightingTestServerDurationTestStart = Struct()
+EmergencyLightingTestDurationTestStart = Struct()
 
-EmergencyLightingTestServerDurationTestStop = Struct()
+EmergencyLightingTestDurationTestStop = Struct()
 
-EmergencyLightingTestServerDurationTestStatusMinimal = Struct(
+EmergencyLightingTestDurationTestStatusMinimal = Struct(
     "tai_timestamp" / TimestampAdapter(Timestamp),
     "execution_status" / EnumAdapter(Int8ul, TestExecutionStatus),
     "execution_result" / DurationExecutionResult,
     "duration_result" / Int16ul,
 )
 
-EmergencyLightingTestServerDurationTestStatusOptional = Struct(
-    Embedded(EmergencyLightingTestServerDurationTestStatusMinimal),
+EmergencyLightingTestDurationTestStatusOptional = Struct(
+    Embedded(EmergencyLightingTestDurationTestStatusMinimal),
     "relative_timestamp" / Int32ul,
 )
 
-EmergencyLightingTestServerDurationTestStatus = NamedSelect(
-    optional=EmergencyLightingTestServerDurationTestStatusOptional,
-    minimal=EmergencyLightingTestServerDurationTestStatusMinimal,
+EmergencyLightingTestDurationTestStatus = NamedSelect(
+    optional=EmergencyLightingTestDurationTestStatusOptional,
+    minimal=EmergencyLightingTestDurationTestStatusMinimal,
 )
 
-EmergencyLightingTestServerPropertyId = FieldAdapter(
+EmergencyLightingTestPropertyId = FieldAdapter(
     Select(
         EnumAdapter(Int16ul, PropertyID),
         Int16ul
@@ -215,8 +215,8 @@ EmergencyLightingTestServerPropertyId = FieldAdapter(
     Int16ul
 )
 
-EmergencyLightingTestServerPropertyGet = Struct(
-    "property_id" / EmergencyLightingTestServerPropertyId,
+EmergencyLightingTestPropertyGet = Struct(
+    "property_id" / EmergencyLightingTestPropertyId,
 )
 
 PropertyValue = Switch(
@@ -224,42 +224,42 @@ PropertyValue = Switch(
     PropertyDict,
 )
 
-EmergencyLightingTestServerPropertySet = Struct(
-    "property_id" / EmergencyLightingTestServerPropertyId,
+EmergencyLightingTestPropertySet = Struct(
+    "property_id" / EmergencyLightingTestPropertyId,
     "value" / PropertyValue,
 )
 
 # message format is the same
-EmergencyLightingTestServerPropertyStatus = EmergencyLightingTestServerPropertySet
+EmergencyLightingTestPropertyStatus = EmergencyLightingTestPropertySet
 
 
-EmergencyLightingTestServerParams = SwitchStruct(
-    "subopcode" / EnumAdapter(Int8ul, EmergencyLightingTestServerSubOpcode),
+EmergencyLightingTestParams = SwitchStruct(
+    "subopcode" / EnumAdapter(Int8ul, EmergencyLightingTestSubOpcode),
     "payload" / Switch(
         this.subopcode,
         {
-            EmergencyLightingTestServerSubOpcode.ELT_FUNCTIONAL_TEST_GET: EmergencyLightingTestServerFunctionalTestGet,
-            EmergencyLightingTestServerSubOpcode.ELT_FUNCTIONAL_TEST_START: EmergencyLightingTestServerFunctionalTestStart,
-            EmergencyLightingTestServerSubOpcode.ELT_FUNCTIONAL_TEST_STOP: EmergencyLightingTestServerFunctionalTestStop,
-            EmergencyLightingTestServerSubOpcode.ELT_FUNCTIONAL_TEST_STATUS: EmergencyLightingTestServerFunctionalTestStatus,
-            EmergencyLightingTestServerSubOpcode.ELT_DURATION_TEST_GET: EmergencyLightingTestServerDurationTestGet,
-            EmergencyLightingTestServerSubOpcode.ELT_DURATION_TEST_START: EmergencyLightingTestServerDurationTestStart,
-            EmergencyLightingTestServerSubOpcode.ELT_DURATION_TEST_STOP: EmergencyLightingTestServerDurationTestStop,
-            EmergencyLightingTestServerSubOpcode.ELT_DURATION_TEST_STATUS: EmergencyLightingTestServerDurationTestStatus,
-            EmergencyLightingTestServerSubOpcode.ELT_PROPERTY_GET: EmergencyLightingTestServerPropertyGet,
-            EmergencyLightingTestServerSubOpcode.ELT_PROPERTY_SET: EmergencyLightingTestServerPropertySet,
-            EmergencyLightingTestServerSubOpcode.ELT_PROPERTY_SET_UNACKNOWLEDGED: EmergencyLightingTestServerPropertySet,
-            EmergencyLightingTestServerSubOpcode.ELT_PROPERTY_STATUS: EmergencyLightingTestServerPropertyStatus,
+            EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_GET: EmergencyLightingTestFunctionalTestGet,
+            EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_START: EmergencyLightingTestFunctionalTestStart,
+            EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STOP: EmergencyLightingTestFunctionalTestStop,
+            EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STATUS: EmergencyLightingTestFunctionalTestStatus,
+            EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_GET: EmergencyLightingTestDurationTestGet,
+            EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_START: EmergencyLightingTestDurationTestStart,
+            EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_STOP: EmergencyLightingTestDurationTestStop,
+            EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_STATUS: EmergencyLightingTestDurationTestStatus,
+            EmergencyLightingTestSubOpcode.ELT_PROPERTY_GET: EmergencyLightingTestPropertyGet,
+            EmergencyLightingTestSubOpcode.ELT_PROPERTY_SET: EmergencyLightingTestPropertySet,
+            EmergencyLightingTestSubOpcode.ELT_PROPERTY_SET_UNACKNOWLEDGED: EmergencyLightingTestPropertySet,
+            EmergencyLightingTestSubOpcode.ELT_PROPERTY_STATUS: EmergencyLightingTestPropertyStatus,
         }
     )
 )
 
-EmergencyLightingTestServerMessage = SwitchStruct(
-    "opcode" / Opcode(EmergencyLightingTestServerOpcode),
+EmergencyLightingTestMessage = SwitchStruct(
+    "opcode" / Opcode(EmergencyLightingTestOpcode),
     "params" / Switch(
         this.opcode,
         {
-            EmergencyLightingTestServerOpcode.SILVAIR_ELT: EmergencyLightingTestServerParams
+            EmergencyLightingTestOpcode.SILVAIR_ELT: EmergencyLightingTestParams
         }
     )
 )
