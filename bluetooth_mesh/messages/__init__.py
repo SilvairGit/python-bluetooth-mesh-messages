@@ -17,10 +17,7 @@ from .sensor import SensorMessage, SensorOpcode, SensorSetupMessage, SensorSetup
 from .silvair.debug import DebugMessage, DebugOpcode
 from .silvair.debugV2 import DebugV2Message, DebugV2Opcode
 from .silvair.emergency_lighting import EmergencyLightingMessage, EmergencyLightingOpcode
-from .silvair.emergency_lighting_test import (
-    EmergencyLightingTestServerMessage,
-    EmergencyLightingTestServerOpcode,
-)
+from .silvair.emergency_lighting_test import EmergencyLightingTestMessage, EmergencyLightingTestOpcode
 from .silvair.gateway_config_server import GatewayConfigMessage, GatewayConfigServerOpcode
 from .silvair.light_extended_controller import LightExtendedControllerMessage, LightExtendedControllerOpcode
 from .silvair.network_diagnostic_server import (
@@ -57,7 +54,7 @@ class _AccessMessage(Construct):
         DebugV2Opcode: DebugV2Message,
         RRuleSchedulerOpcode: RRuleSchedulerMessage,
         EmergencyLightingOpcode: EmergencyLightingMessage,
-        EmergencyLightingTestServerOpcode: EmergencyLightingTestServerMessage,
+        EmergencyLightingTestOpcode: EmergencyLightingTestMessage,
     }
 
     OPCODE = Opcode()

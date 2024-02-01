@@ -4,30 +4,30 @@ import pytest
 
 from bluetooth_mesh.messages.properties import PropertyID
 from bluetooth_mesh.messages.silvair.emergency_lighting_test import (
-    EmergencyLightingTestServerParams,
-    EmergencyLightingTestServerSubOpcode,
+    EmergencyLightingTestParams,
+    EmergencyLightingTestSubOpcode,
     TestExecutionStatus,
 )
 
 valid = [
     pytest.param(
         bytes.fromhex("00"),
-        EmergencyLightingTestServerSubOpcode.ELT_FUNCTIONAL_TEST_GET,
+        EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_GET,
         {},
     ),
     pytest.param(
         bytes.fromhex("01"),
-        EmergencyLightingTestServerSubOpcode.ELT_FUNCTIONAL_TEST_START,
+        EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_START,
         {},
     ),
     pytest.param(
         bytes.fromhex("02"),
-        EmergencyLightingTestServerSubOpcode.ELT_FUNCTIONAL_TEST_STOP,
+        EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STOP,
         {},
     ),
     pytest.param(
         bytes.fromhex("0305040302010608070506"),
-        EmergencyLightingTestServerSubOpcode.ELT_FUNCTIONAL_TEST_STATUS,
+        EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STATUS,
         dict(
             tai_timestamp=dict(
                 date=datetime(
@@ -54,7 +54,7 @@ valid = [
     ),
     pytest.param(
         bytes.fromhex("030000000000060807050604030201"),
-        EmergencyLightingTestServerSubOpcode.ELT_FUNCTIONAL_TEST_STATUS,
+        EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STATUS,
         dict(
             tai_timestamp=dict(
                 date=datetime(
@@ -79,22 +79,22 @@ valid = [
     ),
     pytest.param(
         bytes.fromhex("04"),
-        EmergencyLightingTestServerSubOpcode.ELT_DURATION_TEST_GET,
+        EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_GET,
         {},
     ),
     pytest.param(
         bytes.fromhex("05"),
-        EmergencyLightingTestServerSubOpcode.ELT_DURATION_TEST_START,
+        EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_START,
         {},
     ),
     pytest.param(
         bytes.fromhex("06"),
-        EmergencyLightingTestServerSubOpcode.ELT_DURATION_TEST_STOP,
+        EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_STOP,
         {},
     ),
     pytest.param(
         bytes.fromhex("07050403020106080705063412"),
-        EmergencyLightingTestServerSubOpcode.ELT_DURATION_TEST_STATUS,
+        EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_STATUS,
         dict(
             tai_timestamp=dict(
                 date=datetime(
@@ -120,7 +120,7 @@ valid = [
     ),
     pytest.param(
         bytes.fromhex("0700000000000608070506341204030201"),
-        EmergencyLightingTestServerSubOpcode.ELT_DURATION_TEST_STATUS,
+        EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_STATUS,
         dict(
             tai_timestamp=dict(
                 date=datetime(
@@ -146,14 +146,14 @@ valid = [
     ),
     pytest.param(
         bytes.fromhex("0886FF"),
-        EmergencyLightingTestServerSubOpcode.ELT_PROPERTY_GET,
+        EmergencyLightingTestSubOpcode.ELT_PROPERTY_GET,
         dict(
             property_id=PropertyID.ELT_DURATION_TEST_RETRY_PERIOD,
         ),
     ),
     pytest.param(
         bytes.fromhex("0986FF04030201"),
-        EmergencyLightingTestServerSubOpcode.ELT_PROPERTY_SET,
+        EmergencyLightingTestSubOpcode.ELT_PROPERTY_SET,
         dict(
             property_id=PropertyID.ELT_DURATION_TEST_RETRY_PERIOD,
             value=dict(seconds=0x01020304),
@@ -161,7 +161,7 @@ valid = [
     ),
     pytest.param(
         bytes.fromhex("0A86FF04030201"),
-        EmergencyLightingTestServerSubOpcode.ELT_PROPERTY_SET_UNACKNOWLEDGED,
+        EmergencyLightingTestSubOpcode.ELT_PROPERTY_SET_UNACKNOWLEDGED,
         dict(
             property_id=PropertyID.ELT_DURATION_TEST_RETRY_PERIOD,
             value=dict(seconds=0x01020304),
@@ -169,7 +169,7 @@ valid = [
     ),
     pytest.param(
         bytes.fromhex("0B86FF04030201"),
-        EmergencyLightingTestServerSubOpcode.ELT_PROPERTY_STATUS,
+        EmergencyLightingTestSubOpcode.ELT_PROPERTY_STATUS,
         dict(
             property_id=PropertyID.ELT_DURATION_TEST_RETRY_PERIOD,
             value=dict(seconds=0x01020304),
@@ -180,11 +180,11 @@ valid = [
 
 @pytest.mark.parametrize("encoded, subopcode, payload", valid)
 def test_parse(encoded, subopcode, payload):
-    decoded = EmergencyLightingTestServerParams.parse(encoded)
+    decoded = EmergencyLightingTestParams.parse(encoded)
     assert decoded.subopcode == subopcode
     assert decoded.payload == payload
 
 
 @pytest.mark.parametrize("encoded, subopcode, payload", valid)
 def test_build(encoded, subopcode, payload):
-    assert EmergencyLightingTestServerParams.build(dict(subopcode=subopcode, payload=payload)) == encoded
+    assert EmergencyLightingTestParams.build(dict(subopcode=subopcode, payload=payload)) == encoded
