@@ -28,6 +28,7 @@ from construct import (
     BitStruct,
     BytesInteger,
     Const,
+    Construct,
     Container,
     Embedded,
     Flag,
@@ -36,12 +37,11 @@ from construct import (
     Int16ul,
     Int32ul,
     Padding,
-    Select,
     Struct,
     this,
 )
 
-from bluetooth_mesh.messages.properties import PropertyDict, PropertyID
+from bluetooth_mesh.messages.properties import PropertyDict, PropertyMixin, TimeSecond32
 from bluetooth_mesh.messages.time import (
     MESH_UNIX_EPOCH_DIFF,
     DateTime,
@@ -52,10 +52,10 @@ from bluetooth_mesh.messages.time import (
     timedelta_to_mesh_time_zone_offset,
 )
 from bluetooth_mesh.messages.util import (
+    AliasedContainer,
     EmbeddedBitStruct,
     EnumAdapter,
     EnumSwitch as Switch,
-    FieldAdapter,
     NamedSelect,
     Opcode,
     SwitchStruct,
@@ -152,6 +152,47 @@ class TimestampAdapter(Adapter):
         )
 
 
+class EmergencyLightingTestProperty(IntEnum):
+    ELT_DURATION_TEST_EXECUTION_TIMEOUT = 0xFF84
+    ELT_FUNCTIONAL_TEST_EXECUTION_TIMEOUT = 0xFF85
+    ELT_DURATION_TEST_RETRY_PERIOD = 0xFF86
+    ELT_FUNCTIONAL_TEST_RETRY_PERIOD = 0xFF87
+    ELT_DURATION_TEST_BACKUP_AUTOMATIC_DELAY = 0xFF88
+    ELT_FUNCTIONAL_TEST_BACKUP_AUTOMATIC_DELAY = 0xFF89
+    ELT_DURATION_TEST_BACKUP_AUTOMATIC_INTERVAL = 0xFF8A
+    ELT_FUNCTIONAL_TEST_BACKUP_AUTOMATIC_INTERVAL = 0xFF8B
+
+
+EmergencyLightingTestPropertyDict = {
+    EmergencyLightingTestProperty.ELT_DURATION_TEST_EXECUTION_TIMEOUT: TimeSecond32,
+    EmergencyLightingTestProperty.ELT_FUNCTIONAL_TEST_EXECUTION_TIMEOUT: TimeSecond32,
+    EmergencyLightingTestProperty.ELT_DURATION_TEST_RETRY_PERIOD: TimeSecond32,
+    EmergencyLightingTestProperty.ELT_FUNCTIONAL_TEST_RETRY_PERIOD: TimeSecond32,
+    EmergencyLightingTestProperty.ELT_DURATION_TEST_BACKUP_AUTOMATIC_DELAY: TimeSecond32,
+    EmergencyLightingTestProperty.ELT_FUNCTIONAL_TEST_BACKUP_AUTOMATIC_DELAY: TimeSecond32,
+    EmergencyLightingTestProperty.ELT_DURATION_TEST_BACKUP_AUTOMATIC_INTERVAL: TimeSecond32,
+    EmergencyLightingTestProperty.ELT_FUNCTIONAL_TEST_BACKUP_AUTOMATIC_INTERVAL: TimeSecond32,
+}
+
+
+class _EmergencyLightingTestProperty(PropertyMixin, Construct):
+    ENUM = EmergencyLightingTestProperty
+    DICT = EmergencyLightingTestPropertyDict
+
+    subcon = Struct(
+        "property_id" / EnumAdapter(Int16ul, EmergencyLightingTestProperty),
+        Switch(this.id, EmergencyLightingTestPropertyDict),
+    )
+
+    def _parse(self, stream, context, path):
+        msg = EmergencyLightingTestPropertyGet._parse(stream, context, path)
+        return self._parse_property(msg, stream, context, path)
+
+    def _build(self, obj, stream, context, path):
+        EmergencyLightingTestPropertyGet._build(obj, stream, context, path)
+        return self._build_property(obj, stream, context, path)
+
+
 # fmt: off
 Timestamp = Struct(
     "tai_seconds" / BytesInteger(5, swapped=True),
@@ -207,30 +248,14 @@ EmergencyLightingTestDurationTestStatus = NamedSelect(
     minimal=EmergencyLightingTestDurationTestStatusMinimal,
 )
 
-EmergencyLightingTestPropertyId = FieldAdapter(
-    Select(
-        EnumAdapter(Int16ul, PropertyID),
-        Int16ul
-    ),
-    Int16ul
-)
 
 EmergencyLightingTestPropertyGet = Struct(
-    "property_id" / EmergencyLightingTestPropertyId,
+    "property_id" / EnumAdapter(Int16ul, EmergencyLightingTestProperty),
 )
 
-PropertyValue = Switch(
-    this.property_id,
-    PropertyDict,
-)
+EmergencyLightingTestPropertySet = _EmergencyLightingTestProperty()
 
-EmergencyLightingTestPropertySet = Struct(
-    "property_id" / EmergencyLightingTestPropertyId,
-    "value" / PropertyValue,
-)
-
-# message format is the same
-EmergencyLightingTestPropertyStatus = EmergencyLightingTestPropertySet
+EmergencyLightingTestPropertyStatus = _EmergencyLightingTestProperty()
 
 
 EmergencyLightingTestParams = SwitchStruct(
