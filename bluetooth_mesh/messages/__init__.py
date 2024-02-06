@@ -16,6 +16,7 @@ from .scene import SceneMessage, SceneOpcode
 from .sensor import SensorMessage, SensorOpcode, SensorSetupMessage, SensorSetupOpcode
 from .silvair.debug import DebugMessage, DebugOpcode
 from .silvair.debugV2 import DebugV2Message, DebugV2Opcode
+from .silvair.emergency_lighting import EmergencyLightingMessage, EmergencyLightingOpcode
 from .silvair.emergency_lighting_test import (
     EmergencyLightingTestServerMessage,
     EmergencyLightingTestServerOpcode,
@@ -55,6 +56,7 @@ class _AccessMessage(Construct):
         TimeOpcode: TimeMessage,
         DebugV2Opcode: DebugV2Message,
         RRuleSchedulerOpcode: RRuleSchedulerMessage,
+        EmergencyLightingOpcode: EmergencyLightingMessage,
         EmergencyLightingTestServerOpcode: EmergencyLightingTestServerMessage,
     }
 

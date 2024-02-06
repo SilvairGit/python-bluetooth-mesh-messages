@@ -1,5 +1,6 @@
 from .debug import DebugMessage, DebugSubOpcode
 from .debugV2 import DebugV2Message, DebugV2Opcode
+from .emergency_lighting import EmergencyLightingMessage, EmergencyLightingSubOpcode
 from .emergency_lighting_test import EmergencyLightingTestServerMessage, EmergencyLightingTestServerSubOpcode
 from .gateway_config_server import GatewayConfigMessage, GatewayConfigServerSubOpcode
 from .light_extended_controller import LightExtendedControllerMessage, LightExtendedControllerSubOpcode
