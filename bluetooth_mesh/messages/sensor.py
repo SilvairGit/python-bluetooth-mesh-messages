@@ -63,6 +63,7 @@ class SensorSampling(IntEnum):
 
 class SensorSettingAccess(IntEnum):
     READ_ONLY = 0x01
+    WRITE_ONLY = 0x02
     READ_WRITE = 0x03
 
 

@@ -57,7 +57,7 @@ from construct import (
 )
 
 from bluetooth_mesh.messages.config import EmbeddedBitStruct
-from bluetooth_mesh.messages.util import AliasedContainer, DefaultCountValidator
+from bluetooth_mesh.messages.util import AliasedContainer, DefaultCountValidator, EnumAdapter
 
 
 class PropertyID(IntEnum):
@@ -174,6 +174,39 @@ class PropertyID(IntEnum):
     TOTAL_LIGHT_EXPOSURE_TIME = 0x006F
     TOTAL_LUMINOUS_ENERGY = 0x0070
     PRECISE_TOTAL_DEVICE_ENERGY_USE = 0x0072
+    POWER_FACTOR = 0x0073
+    EXTERNAL_SUPPLY_VOLTAGE = 0x0088
+    EXTERNAL_SUPPLY_VOLTAGE_FREQUENCY = 0x0089
+    LIGHT_DISTRIBUTION = 0x008C
+    LIGHT_SOURCE_CURRENT = 0x008D
+    LIGHT_SOURCE_ON_TIME_NOT_RESETTABLE = 0x008E
+    LIGHT_SOURCE_ON_TIME_RESETTABLE = 0x008F
+    LIGHT_SOURCE_OPEN_CIRCUIT_STATISTICS = 0x0090
+    LIGHT_SOURCE_OVERALL_FAILURES_STATISTICS = 0x0091
+    LIGHT_SOURCE_SHORT_CIRCUIT_STATISTICS = 0x0092
+    LIGHT_SOURCE_START_COUNTER_RESETTABLE = 0x0093
+    LIGHT_SOURCE_TEMPERATURE = 0x0094
+    LIGHT_SOURCE_THERMAL_DERATING_STATISTICS = 0x0095
+    LIGHT_SOURCE_THERMAL_SHUTDOWN_STATISTICS = 0x0096
+    LIGHT_SOURCE_TOTAL_POWER_ON_CYCLES = 0x0097
+    LIGHT_SOURCE_VOLTAGE = 0x0098
+    LUMINAIRE_COLOR = 0x0099
+    LUMINAIRE_IDENTIFICATION_NUMBER = 0x009A
+    LUMINAIRE_NOMINAL_INPUT_POWER = 0x009C
+    LUMINAIRE_NOMINAL_MAXIMUM_AC_MAINS_VOLTAGE = 0x009D
+    LUMINAIRE_NOMINAL_MINIMUM_AC_MAINS_VOLTAGE = 0x009E
+    LUMINAIRE_POWER_AT_MINIMUM_DIM_LEVEL = 0x009F
+    LUMINAIRE_TIME_OF_MANUFACTURE = 0x00A0
+    NOMINAL_LIGHT_OUTPUT = 0x00A4
+    OVERALL_FAILURE_CONDITION = 0x00A5
+    RATED_MEDIAN_USEFUL_LIFE_OF_LUMINAIRE = 0x00AB
+    RATED_MEDIAN_USEFUL_LIGHT_SOURCE_STARTS = 0x00AC
+    REFERENCE_TEMPERATURE = 0x00AD
+    TOTAL_DEVICE_STARTS = 0x00AE
+    LUMINAIRE_IDENTIFICATION_STRING = 0x00B4
+    OUTPUT_POWER_LIMITATION = 0x00B5
+    THERMAL_DERATING = 0x00B6
+    OUTPUT_CURRENT_PERCENT = 0x00B7
 
     def __repr__(self):
         return str(self.value)
@@ -214,6 +247,15 @@ class DateAdapter(Adapter):
             return (obj - self.EPOCH).days
 
         return obj
+
+
+class LightDistributionField(IntEnum):
+    TYPE_NOT_SPECIFIED = 0x00
+    TYPE_I = 0x01
+    TYPE_II = 0x02
+    TYPE_III = 0x03
+    TYPE_IV = 0x04
+    TYPE_V = 0x05
 
 
 def FixedString(size):
@@ -325,6 +367,13 @@ RelativeValueInAVoltageRange = Struct(
     "maximum_voltage" / DefaultCountValidator(Int16ul, resolution=1/64),
 )
 
+HighVoltage = Struct(
+    "high_voltage" / DefaultCountValidator(Int24ul, resolution=1/64, unknown_value=False),
+)
+
+VoltageFrequency = Struct(
+    "voltage_frequency" / Int16ul
+)
 
 # energy
 Energy = Struct(
@@ -390,6 +439,10 @@ TemperatureStatistics = Struct(
     "sensing_duration" / TimeExponential8,
 )
 
+HighTemperature = Struct(
+    "temperature" / DefaultCountValidator(Int16sl, rounding=1, resolution=0.5, unknown_value=False),
+)
+
 RelativeValueInATemperatureRange = Struct(
     "relative_value" / DefaultCountValidator(Int8ul, rounding=1, resolution=0.5, unknown_value=False),
     "minimum_temperature" / DefaultCountValidator(Int16sl, rounding=2, resolution=0.01),
@@ -437,6 +490,13 @@ PerceivedLightness = Struct(
     "perceived_lightness" / Int16ul
 )
 
+LightDistribution = Struct(
+    "light_distribution" / EnumAdapter(Int8ul, LightDistributionField)
+)
+
+LightOutput = Struct(
+    "light_output" / DefaultCountValidator(Int24ul, rounding=1, resolution=1, unknown_value=False)
+)
 
 # counters
 Percentage8 = Struct(
@@ -480,6 +540,10 @@ ColorRenderingIndex = Struct(
 
 
 # misc
+CosineOfTheAngle = Struct(
+    "cosine_of_the_angle" / Int8sl
+)
+
 GlobalTradeItemNumber = Struct(
     "global_trade_item_number" / BytesInteger(6, swapped=True)
 )
@@ -628,6 +692,39 @@ PropertyDict = {
     PropertyID.TOTAL_LIGHT_EXPOSURE_TIME: TimeHour24,
     PropertyID.TOTAL_LUMINOUS_ENERGY: LuminousEnergy,
     PropertyID.PRECISE_TOTAL_DEVICE_ENERGY_USE: PreciseEnergy,
+    PropertyID.POWER_FACTOR: CosineOfTheAngle,
+    PropertyID.EXTERNAL_SUPPLY_VOLTAGE: HighVoltage,
+    PropertyID.EXTERNAL_SUPPLY_VOLTAGE_FREQUENCY: VoltageFrequency,
+    PropertyID.LIGHT_DISTRIBUTION: LightDistribution,
+    PropertyID.LIGHT_SOURCE_CURRENT: AverageCurrent,
+    PropertyID.LIGHT_SOURCE_ON_TIME_NOT_RESETTABLE: TimeSecond32,
+    PropertyID.LIGHT_SOURCE_ON_TIME_RESETTABLE: TimeSecond32,
+    PropertyID.LIGHT_SOURCE_OPEN_CIRCUIT_STATISTICS: EventStatistics,
+    PropertyID.LIGHT_SOURCE_OVERALL_FAILURES_STATISTICS: EventStatistics,
+    PropertyID.LIGHT_SOURCE_SHORT_CIRCUIT_STATISTICS: EventStatistics,
+    PropertyID.LIGHT_SOURCE_START_COUNTER_RESETTABLE: Count24,
+    PropertyID.LIGHT_SOURCE_TEMPERATURE: HighTemperature,
+    PropertyID.LIGHT_SOURCE_THERMAL_DERATING_STATISTICS: EventStatistics,
+    PropertyID.LIGHT_SOURCE_THERMAL_SHUTDOWN_STATISTICS: EventStatistics,
+    PropertyID.LIGHT_SOURCE_TOTAL_POWER_ON_CYCLES: Count24,
+    PropertyID.LIGHT_SOURCE_VOLTAGE: AverageVoltage,
+    PropertyID.LUMINAIRE_COLOR: FixedString(24),
+    PropertyID.LUMINAIRE_IDENTIFICATION_NUMBER: FixedString(24),
+    PropertyID.LUMINAIRE_NOMINAL_INPUT_POWER: Power,
+    PropertyID.LUMINAIRE_NOMINAL_MAXIMUM_AC_MAINS_VOLTAGE: Voltage,
+    PropertyID.LUMINAIRE_NOMINAL_MINIMUM_AC_MAINS_VOLTAGE: Voltage,
+    PropertyID.LUMINAIRE_POWER_AT_MINIMUM_DIM_LEVEL: Power,
+    PropertyID.LUMINAIRE_TIME_OF_MANUFACTURE: DateUTC,
+    PropertyID.NOMINAL_LIGHT_OUTPUT: LightOutput,
+    PropertyID.OVERALL_FAILURE_CONDITION: EventStatistics,
+    PropertyID.RATED_MEDIAN_USEFUL_LIFE_OF_LUMINAIRE: TimeHour24,
+    PropertyID.RATED_MEDIAN_USEFUL_LIGHT_SOURCE_STARTS: Count24,
+    PropertyID.REFERENCE_TEMPERATURE: HighTemperature,
+    PropertyID.TOTAL_DEVICE_STARTS: Count24,
+    PropertyID.LUMINAIRE_IDENTIFICATION_STRING: FixedString(64),
+    PropertyID.OUTPUT_POWER_LIMITATION: EventStatistics,
+    PropertyID.THERMAL_DERATING: EventStatistics,
+    PropertyID.OUTPUT_CURRENT_PERCENT: Percentage8,
 }
 
 PropertyValue = Switch(
