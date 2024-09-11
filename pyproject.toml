@@ -72,3 +72,7 @@ indent-width = 4
 
 [tool.ruff.isort]
 combine-as-imports = true
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "INFO"

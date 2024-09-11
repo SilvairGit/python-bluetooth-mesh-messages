@@ -4,6 +4,7 @@ from .config import ConfigMessage, ConfigOpcode
 from .generic.battery import GenericBatteryMessage, GenericBatteryOpcode
 from .generic.level import GenericLevelMessage, GenericLevelOpcode
 from .generic.onoff import GenericOnOffMessage, GenericOnOffOpcode
+from .generic.property import GenericPropertyMessage, GenericPropertyOpcode
 from .health import HealthMessage, HealthOpcode
 from .light.ctl import LightCTLMessage, LightCTLOpcode, LightCTLSetupMessage, LightCTLSetupOpcode
 from .light.lightness import (
@@ -36,6 +37,7 @@ class _AccessMessage(Construct):
         ConfigOpcode: ConfigMessage,
         DebugOpcode: DebugMessage,
         GatewayConfigServerOpcode: GatewayConfigMessage,
+        GenericPropertyOpcode: GenericPropertyMessage,
         GenericOnOffOpcode: GenericOnOffMessage,
         GenericBatteryOpcode: GenericBatteryMessage,
         GenericLevelOpcode: GenericLevelMessage,
