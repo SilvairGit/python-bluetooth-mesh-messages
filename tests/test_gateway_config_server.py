@@ -216,7 +216,7 @@ valid = [
         GatewayConfigParams,
         bytes.fromhex("0A C0A80C03"),
         GatewayConfigServerSubOpcode.GATEWAY_IP_ADDRESS_SET,
-        dict(gateway_ip_address=IPv4Address("192.168.12.03")),
+        dict(gateway_ip_address=IPv4Address("192.168.12.3")),
         id="GatewayIpAddressSet",
     ),
     pytest.param(
@@ -263,7 +263,7 @@ valid = [
             server_address="",
             dns_ip_address=IPv4Address("192.168.10.2"),
             ip_address=IPv4Address("192.168.10.2"),
-            gateway_ip_address=IPv4Address("192.168.10.01"),
+            gateway_ip_address=IPv4Address("192.168.10.1"),
             netmask=10,
             flags=DhcpFlag.DHCP_ENABLED_AUTO_DNS,
             status_code=StatusCode.STATUS_SUCCESS,
