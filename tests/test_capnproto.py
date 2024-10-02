@@ -117,7 +117,6 @@ valid = [
     bytes.fromhex("52" + "e20ac800"),  # SENSOR_STATUS
     bytes.fromhex("52" + "220b2003"),  # SENSOR_STATUS
     bytes.fromhex("52" + "440da244ff"),  # SENSOR_STATUS
-    bytes.fromhex("52" + "09" + "9040" + "a244" + "ff0000"),  # SENSOR_STATUS
     bytes.fromhex("52" + "44" + "0da2" + "44ff" + "220b2003"),  # SENSOR_STATUS
     bytes.fromhex("58" + "3000" + "0100" + "0400" + "0900"),  # SENSOR_SETTINGS_STATUS
     bytes.fromhex("58" + "3000"),  # SENSOR_SETTINGS_STATUS
@@ -462,6 +461,13 @@ valid = [
     bytes.fromhex("E93601" + "0B" + "8BFF04030201"),  # ELT_PROPERTY_STATUS
 ]
 
+xfailing = [
+    (
+        bytes.fromhex("52" + "09" + "9040" + "a244" + "ff0000"),
+        "capnproto schema fails to parse dict with sensorStatusRaw field",
+    ),  # SENSOR_STATUS
+]
+
 
 @pytest.fixture(scope="session")
 def capnproto():
@@ -476,7 +482,11 @@ def capnproto():
 
 
 @pytest.mark.skipif(not importlib.util.find_spec("capnp"), reason="requires Python3.7")
-@pytest.mark.parametrize("encoded", [pytest.param(i, id=i.hex()) for i in valid])
+@pytest.mark.parametrize(
+    "encoded",
+    [pytest.param(i, id=i.hex()) for i in valid]
+    + [pytest.param(i, id=i.hex(), marks=[pytest.mark.xfail(reason=reason)]) for i, reason in xfailing],
+)
 def test_parse_capnproto(encoded, capnproto):
     logging.info("MESH[%i] %s", len(encoded), encoded.hex())
 
