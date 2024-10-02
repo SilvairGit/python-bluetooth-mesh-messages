@@ -386,6 +386,15 @@ valid = [
     bytes.fromhex(
         "46" + "A000" + "03" + "FEFF00"
     ),  # Generic Manufacturer Property Status + Luminaire Time Of Manufacture + Read Write + 12-12-12 2012 12:12
+    bytes.fromhex(
+        "46" + "8300" + "01" + "FDFFFFFF"
+    ),  # Generic Manufacturer Property Status + Apparent Energy + User Access + 4294967.293 kVAh
+    bytes.fromhex(
+        "46" + "8200" + "01" + "FDFFFF"
+    ),  # Generic Manufacturer Property Status + Apparent Power + User Access + 1677721.3 VA
+    bytes.fromhex(
+        "46" + "8000" + "01" + "FDFFFFFF"
+    ),  # Generic Manufacturer Property Status + Active Energy Loadside + User Access + 4294967.293 kWh
     # ------------------
     # Generic Client Property Server
     bytes.fromhex("4F"),  # Generic Client Properties Get
