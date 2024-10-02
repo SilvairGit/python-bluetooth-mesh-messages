@@ -175,6 +175,10 @@ class PropertyID(IntEnum):
     TOTAL_LUMINOUS_ENERGY = 0x0070
     PRECISE_TOTAL_DEVICE_ENERGY_USE = 0x0072
     POWER_FACTOR = 0x0073
+    ACTIVE_ENERGY_LOAD_SIDE = 0x0080
+    ACTIVE_POWER_LOAD_SIDE = 0x0081
+    APPARENT_POWER = 0x0082
+    APPARENT_ENERGY = 0x0083
     EXTERNAL_SUPPLY_VOLTAGE = 0x0088
     EXTERNAL_SUPPLY_VOLTAGE_FREQUENCY = 0x0089
     LIGHT_DISTRIBUTION = 0x008C
@@ -192,6 +196,7 @@ class PropertyID(IntEnum):
     LIGHT_SOURCE_VOLTAGE = 0x0098
     LUMINAIRE_COLOR = 0x0099
     LUMINAIRE_IDENTIFICATION_NUMBER = 0x009A
+    LUMINAIRE_MANUFACTURER_GTIN = 0x009B
     LUMINAIRE_NOMINAL_INPUT_POWER = 0x009C
     LUMINAIRE_NOMINAL_MAXIMUM_AC_MAINS_VOLTAGE = 0x009D
     LUMINAIRE_NOMINAL_MINIMUM_AC_MAINS_VOLTAGE = 0x009E
@@ -391,6 +396,14 @@ EnergyInAPeriodOfDay = Struct(
     "end_time" / TimeDecihour8,
 )
 
+ApparentEnergy32 = Struct(
+    "energy" / DefaultCountValidator(Int32ul, rounding=3, resolution=0.001),
+)
+
+Energy32 = Struct(
+    "energy" / DefaultCountValidator(Int32ul, rounding=3, resolution=0.001),
+)
+
 
 # power
 Power = Struct(
@@ -401,6 +414,10 @@ PowerSpecification = Struct(
     "minimum_power_value" / DefaultCountValidator(Int24ul, rounding=1, resolution=0.1),
     "typical_power_value" / DefaultCountValidator(Int24ul, rounding=1, resolution=0.1),
     "maximum_power_value" / DefaultCountValidator(Int24ul, rounding=1, resolution=0.1)
+)
+
+ApparentPower = Struct(
+    "power" / DefaultCountValidator(Int24ul, rounding=1, resolution=0.1),
 )
 
 
@@ -725,6 +742,11 @@ PropertyDict = {
     PropertyID.OUTPUT_POWER_LIMITATION: EventStatistics,
     PropertyID.THERMAL_DERATING: EventStatistics,
     PropertyID.OUTPUT_CURRENT_PERCENT: Percentage8,
+    PropertyID.LUMINAIRE_MANUFACTURER_GTIN: GlobalTradeItemNumber,
+    PropertyID.APPARENT_ENERGY: ApparentEnergy32,
+    PropertyID.APPARENT_POWER: ApparentPower,
+    PropertyID.ACTIVE_ENERGY_LOAD_SIDE: Energy32,
+    PropertyID.ACTIVE_POWER_LOAD_SIDE: Power,
 }
 
 PropertyValue = Switch(
