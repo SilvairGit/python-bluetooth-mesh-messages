@@ -23,7 +23,9 @@ import io
 from enum import IntEnum
 
 from construct import (
+    Array,
     BitsInteger,
+    Byte,
     Construct,
     Embedded,
     GreedyRange,
@@ -39,7 +41,7 @@ from construct import (
 )
 
 from bluetooth_mesh.messages.config import DoubleKeyIndex, EmbeddedBitStruct
-from bluetooth_mesh.messages.properties import DefaultCountValidator, PropertyDict, PropertyID, PropertyValue
+from bluetooth_mesh.messages.properties import DefaultCountValidator, PropertyDict, PropertyID
 from bluetooth_mesh.messages.util import (
     AliasedContainer,
     EnumAdapter,
@@ -47,7 +49,10 @@ from bluetooth_mesh.messages.util import (
     NamedSelect,
     Opcode,
     SwitchStruct,
+    SwitchWithNamedDefault,
 )
+
+SENSOR_SETTING_RAW_NAME = "sensor_setting_raw"
 
 
 class SensorSampling(IntEnum):
@@ -125,13 +130,20 @@ SensorSettingGet = Struct(
     "sensor_setting_property_id" / SensorPropertyId,
 )
 
+SensorSettingPropertyValue = SwitchWithNamedDefault(
+    this.sensor_setting_property_id,
+    PropertyDict,
+    default=Array(this.length, Byte),
+    name_for_default=SENSOR_SETTING_RAW_NAME,
+)
+
 class SensorSettingRawMixin:
     def _parse_sensor_setting(self, stream, context, path, sensor_setting_property_id, **kwargs):
         try:
             sensor_setting_property_id = PropertyID(sensor_setting_property_id)
             sensor_setting_name = sensor_setting_property_id.name.lower()
         except ValueError:
-            sensor_setting_name = "sensor_setting_raw"
+            sensor_setting_name = SENSOR_SETTING_RAW_NAME
 
         try:
             sensor_setting_raw = PropertyDict[sensor_setting_property_id]._parse(stream, context, path)
@@ -140,7 +152,7 @@ class SensorSettingRawMixin:
 
         class _Container(AliasedContainer):
             ALIAS = sensor_setting_name
-            ORIGINAL = "sensor_setting_raw"
+            ORIGINAL = SENSOR_SETTING_RAW_NAME
 
         return _Container({
             **kwargs,
@@ -153,9 +165,9 @@ class SensorSettingRawMixin:
             sensor_setting_property_id = PropertyID(sensor_setting_property_id)
             sensor_setting_name = sensor_setting_property_id.name.lower()
         except ValueError:
-            sensor_setting_name = "sensor_setting_raw"
+            sensor_setting_name = SENSOR_SETTING_RAW_NAME
 
-        sensor_setting_raw = obj.get(sensor_setting_name, obj.get("sensor_setting_raw"))
+        sensor_setting_raw = obj.get(sensor_setting_name, obj.get(SENSOR_SETTING_RAW_NAME))
 
         try:
             PropertyDict[sensor_setting_property_id]._build(sensor_setting_raw, stream, context, path)
@@ -169,7 +181,7 @@ class _SensorSettingSet(SensorSettingRawMixin, Construct):
     subcon = Struct(
         "sensor_property_id" / SensorPropertyId,
         "sensor_setting_property_id" / SensorPropertyId,
-        PropertyValue,
+        SensorSettingPropertyValue,
     )
 
     def _parse(self, stream, context, path):
@@ -193,7 +205,7 @@ class _SensorSettingStatus(SensorSettingRawMixin, Construct):
         "sensor_property_id" / SensorPropertyId,
         "sensor_setting_property_id" / SensorPropertyId,
         "sensor_setting_access" / Int8ul,
-        PropertyValue,
+        SensorSettingPropertyValue,
     )
 
     def _parse(self, stream, context, path):
@@ -235,12 +247,13 @@ SensorDescriptorStatusItem = NamedSelect(
 
 SensorDescriptorStatus = GreedyRange(SensorDescriptorStatusItem)
 
+
 class _SensorData(SensorSettingRawMixin, Construct):
     subcon = Struct(
         "format" / Int8ul,
         "length" / Int16ul,
         "sensor_setting_property_id" / SensorPropertyId,
-        PropertyValue,
+        SensorSettingPropertyValue,
     )
 
     def _parse(self, stream, context, path):
@@ -303,8 +316,8 @@ TriggerDelta = Struct(
         this.status_trigger_type,
         {
             0: Struct(
-                "status_trigger_delta_down" / PropertyValue,
-                "status_trigger_delta_up" / PropertyValue
+                "status_trigger_delta_down" / SensorSettingPropertyValue,
+                "status_trigger_delta_up" / SensorSettingPropertyValue
             ),
             1: Struct(
                 "status_trigger_delta_down" / UnitlessTriggerDelta,
