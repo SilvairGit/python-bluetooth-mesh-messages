@@ -474,6 +474,12 @@ class IfThenElseDefault(IfThenElse):
         return self.thensubcon._parsereport(stream, context, path) if condfunc else self.default
 
 
+class SwitchWithNamedDefault(Switch):
+    def __init__(self, keyfunc, cases, default=None, name_for_default=None):
+        self.name_for_default = name_for_default
+        super().__init__(keyfunc, cases, default)
+
+
 def camelcase(field_name):
     if field_name is None:
         return None

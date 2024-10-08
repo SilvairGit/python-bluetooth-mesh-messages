@@ -91,6 +91,14 @@ def convert(
         for key, subcon in con.cases.items():
             field_name = type(key)(key).name if isinstance(key, IntEnum) else key
             convert(subcon, visitor, field_name=field_name, message_name=message_name)
+        if con.default is not Pass and getattr(con, "name_for_default", None):
+            convert(
+                con.default,
+                visitor,
+                field_name=con.name_for_default,
+                struct_name=struct_name,
+                message_name=message_name,
+            )
 
         visitor.exit()
 

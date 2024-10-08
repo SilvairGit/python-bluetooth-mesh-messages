@@ -749,11 +749,6 @@ PropertyDict = {
     PropertyID.ACTIVE_POWER_LOAD_SIDE: Power,
 }
 
-PropertyValue = Switch(
-    this.sensor_setting_property_id,
-    PropertyDict,
-    default=Array(this.length, Byte)
-)
 
 
 class PropertyMixin:
