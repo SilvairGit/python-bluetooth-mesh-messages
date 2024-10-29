@@ -37,7 +37,6 @@ class _AccessMessage(Construct):
         ConfigOpcode: ConfigMessage,
         DebugOpcode: DebugMessage,
         GatewayConfigServerOpcode: GatewayConfigMessage,
-        GenericPropertyOpcode: GenericPropertyMessage,
         GenericOnOffOpcode: GenericOnOffMessage,
         GenericBatteryOpcode: GenericBatteryMessage,
         GenericLevelOpcode: GenericLevelMessage,
@@ -55,6 +54,7 @@ class _AccessMessage(Construct):
         TimeOpcode: TimeMessage,
         DebugV2Opcode: DebugV2Message,
         RRuleSchedulerOpcode: RRuleSchedulerMessage,
+        GenericPropertyOpcode: GenericPropertyMessage,
         EmergencyLightingOpcode: EmergencyLightingMessage,
         EmergencyLightingTestOpcode: EmergencyLightingTestMessage,
     }
