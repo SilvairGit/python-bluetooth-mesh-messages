@@ -1,7 +1,7 @@
 import pytest
 
 from bluetooth_mesh.messages.generic.property import GenericPropertyMessage, GenericPropertyOpcode
-from bluetooth_mesh.messages.properties import LightDistributionField, PropertyID
+from bluetooth_mesh.messages.properties import LightDistributionField, PropertyID, LightSourceTypeField
 from bluetooth_mesh.messages.sensor import SensorSettingAccess
 
 valid = [
@@ -126,7 +126,14 @@ valid = [
              access=SensorSettingAccess.READ_ONLY,
              luminaire_identification_number="abcdefghijklmnoprstuvxyz"),
         id="GENERIC_MANUFACTURER_PROPERTY_STATUS"),
-
+    pytest.param(
+        b'\x46\xB3\x00\x01\x03',
+        GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_STATUS,
+        dict(property_id=PropertyID.LIGHT_SOURCE_TYPE,
+             access=SensorSettingAccess.READ_ONLY,
+             light_source_type=dict(light_source_type=
+                 LightSourceTypeField.LOW_VOLTAGE_HALOGEN)),
+        id="GENERIC_MANUFACTURER_PROPERTY_STATUS_LIGHT_SOURCE"),
     pytest.param(
         b'\x4F',
         GenericPropertyOpcode.GENERIC_CLIENT_PROPERTIES_GET,

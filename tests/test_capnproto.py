@@ -396,6 +396,9 @@ valid = [
     bytes.fromhex(
         "46" + "8000" + "01" + "FDFFFFFF"
     ),  # Generic Manufacturer Property Status + Active Energy Loadside + User Access + 4294967.293 kWh
+    bytes.fromhex(
+        "46" + "B300" + "03" + "05"
+    ),  # Generic Manufacturer Property Status + Light Source Type + Read Write + Light emitting diode (LED)
     # ------------------
     # Generic Client Property Server
     bytes.fromhex("4F"),  # Generic Client Properties Get
