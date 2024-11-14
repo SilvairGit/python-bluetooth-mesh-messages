@@ -212,6 +212,7 @@ class PropertyID(IntEnum):
     OUTPUT_POWER_LIMITATION = 0x00B5
     THERMAL_DERATING = 0x00B6
     OUTPUT_CURRENT_PERCENT = 0x00B7
+    LIGHT_SOURCE_TYPE = 0x00B3
 
     def __repr__(self):
         return str(self.value)
@@ -261,6 +262,19 @@ class LightDistributionField(IntEnum):
     TYPE_III = 0x03
     TYPE_IV = 0x04
     TYPE_V = 0x05
+
+
+class LightSourceTypeField(IntEnum):
+    TYPE_NOT_SPECIFIED = 0x00
+    LOW_PRESSURE_FLUORESCENT = 0x01
+    HIGH_INTENSITY_DISCHARGE = 0x02
+    LOW_VOLTAGE_HALOGEN = 0x03
+    INCANDESCENT = 0x04
+    LIGHT_EMITTING_DIODE = 0x05
+    ORGANIC_LIGHT_EMITTING_DIODE = 0x06
+    OTHER_THAN_LISTED_ABOVE = 0xFD
+    NO_LIGHT_SOURCE = 0xFE
+    MULTIPLE_LIGHT_SOURCE_TYPES = 0xFF
 
 
 def FixedString(size):
@@ -515,6 +529,10 @@ LightOutput = Struct(
     "light_output" / DefaultCountValidator(Int24ul, rounding=1, resolution=1, unknown_value=False)
 )
 
+LightSourceType = Struct(
+    "light_source_type" / EnumAdapter(Int8ul, LightSourceTypeField)
+)
+
 # counters
 Percentage8 = Struct(
     "percentage" / DefaultCountValidator(Int8ul, rounding=1, resolution=0.5)
@@ -747,6 +765,7 @@ PropertyDict = {
     PropertyID.APPARENT_POWER: ApparentPower,
     PropertyID.ACTIVE_ENERGY_LOAD_SIDE: Energy32,
     PropertyID.ACTIVE_POWER_LOAD_SIDE: Power,
+    PropertyID.LIGHT_SOURCE_TYPE: LightSourceType,
 }
 
 
