@@ -35,9 +35,7 @@ from math import log, pow
 
 from construct import (
     Adapter,
-    Array,
     BitsInteger,
-    Byte,
     BytesInteger,
     Embedded,
     ExprAdapter,
@@ -51,9 +49,7 @@ from construct import (
     Int32ul,
     PaddedString,
     Struct,
-    Switch,
     obj_,
-    this,
 )
 
 from bluetooth_mesh.messages.config import EmbeddedBitStruct
@@ -177,7 +173,7 @@ class PropertyID(IntEnum):
     POWER_FACTOR = 0x0073
     ACTIVE_ENERGY_LOAD_SIDE = 0x0080
     ACTIVE_POWER_LOAD_SIDE = 0x0081
-    APPARENT_POWER = 0x0082
+    APPARENT_POWER = 0x0084
     APPARENT_ENERGY = 0x0083
     EXTERNAL_SUPPLY_VOLTAGE = 0x0088
     EXTERNAL_SUPPLY_VOLTAGE_FREQUENCY = 0x0089
@@ -213,6 +209,9 @@ class PropertyID(IntEnum):
     THERMAL_DERATING = 0x00B6
     OUTPUT_CURRENT_PERCENT = 0x00B7
     LIGHT_SOURCE_TYPE = 0x00B3
+    SENSOR_GAIN = 0x0074
+    PRECISE_PRESENT_AMBIENT_TEMPERATURE = 0x0075
+    DESIRED_AMBIENT_TEMPERATURE = 0x0071
 
     def __repr__(self):
         return str(self.value)
@@ -766,6 +765,9 @@ PropertyDict = {
     PropertyID.ACTIVE_ENERGY_LOAD_SIDE: Energy32,
     PropertyID.ACTIVE_POWER_LOAD_SIDE: Power,
     PropertyID.LIGHT_SOURCE_TYPE: LightSourceType,
+    PropertyID.DESIRED_AMBIENT_TEMPERATURE: Temperature8,
+    PropertyID.SENSOR_GAIN: Coefficient,
+    PropertyID.PRECISE_PRESENT_AMBIENT_TEMPERATURE: Temperature,
 }
 
 
