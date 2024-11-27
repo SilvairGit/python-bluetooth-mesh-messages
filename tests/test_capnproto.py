@@ -363,11 +363,11 @@ valid = [
     ),  # Generic Admin Properties Status
     bytes.fromhex("822D" + "7000"),  # Generic Admin Property Get + Total Luminous Energy
     bytes.fromhex(
-        "48" + "9400" + "7fff"
-    ),  # Generic Admin Property Set + Light Source Temperature + 16383.5 °C
+        "48" + "9400" + "00" + "7fff"
+    ),  # Generic Admin Property Set + Light Source Temperature  + Not a Generic User Property + 16383.5 °C
     bytes.fromhex(
-        "49" + "A400" + "FFFFFD"
-    ),  # Generic Admin Property Set Unacknowledged + Nominal Light Output + 16777213 lm
+        "49" + "A400" + "02" + "FFFFFD"
+    ),  # Generic Admin Property Set Unacknowledged + Nominal Light Output + Write Only + 16777213 lm
     bytes.fromhex(
         "4A" + "7300" + "02" + "64"
     ),  # Generic Admin Property Status + Write Only + Power Factor + 100
@@ -379,11 +379,11 @@ valid = [
     ),  # Generic Manufacturer Properties Status
     bytes.fromhex("822B" + "7200"),  # Generic Manufacturer Property Get + Precise Total Device Energy Use
     bytes.fromhex(
-        "44" + "8D00" + "FEFFFE"
-    ),  # Generic Manufacturer Property Set + Light Source Current + 655.34 A
+        "44" + "8D00" + "00"
+    ),  # Generic Manufacturer Property Set + Light Source Current + Not a Generic User Property
     bytes.fromhex(
-        "45" + "9900" + "5761726d2057686974652020202020202020202020202020"
-    ),  # Generic Manufacturer Property Set Unacknowledged + Luminaire Color + "Warm White          "
+        "45" + "9900" + "01"
+    ),  # Generic Manufacturer Property Set Unacknowledged + Luminaire Color + Generic User Property and can be read
     bytes.fromhex(
         "46" + "A000" + "03" + "FEFF00"
     ),  # Generic Manufacturer Property Status + Luminaire Time Of Manufacture + Read Write + 12-12-12 2012 12:12
@@ -391,7 +391,7 @@ valid = [
         "46" + "8300" + "01" + "FDFFFFFF"
     ),  # Generic Manufacturer Property Status + Apparent Energy + User Access + 4294967.293 kVAh
     bytes.fromhex(
-        "46" + "8200" + "01" + "FDFFFF"
+        "46" + "8400" + "01" + "FDFFFF"
     ),  # Generic Manufacturer Property Status + Apparent Power + User Access + 1677721.3 VA
     bytes.fromhex(
         "46" + "8000" + "01" + "FDFFFFFF"

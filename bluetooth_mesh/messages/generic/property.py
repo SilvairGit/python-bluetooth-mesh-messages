@@ -24,7 +24,7 @@ from enum import IntEnum
 from construct import Construct, Embedded, GreedyRange, Int8ul, Int16ul, Struct, this
 
 from bluetooth_mesh.messages.properties import PropertyDict, PropertyID, PropertyMixin
-from bluetooth_mesh.messages.sensor import SensorPropertyId, SensorSettingAccess
+from bluetooth_mesh.messages.sensor import SensorPropertyId
 from bluetooth_mesh.messages.util import EnumAdapter, EnumSwitch as Switch, Opcode, SwitchStruct
 
 
@@ -51,6 +51,24 @@ class GenericPropertyOpcode(IntEnum):
     GENERIC_CLIENT_PROPERTIES_STATUS = 0x50
 
 
+class UserAccess(IntEnum):
+    READ_ONLY = 0x01
+    WRITE_ONLY = 0x02
+    READ_WRITE = 0x03
+
+
+class AdminUserAccess(IntEnum):
+    NOT_USER_PROPERTY = 0x00
+    READ_ONLY = 0x01
+    WRITE_ONLY = 0x02
+    READ_WRITE = 0x03
+
+
+class ManufacturerUserAccess(IntEnum):
+    NOT_USER_PROPERTY = 0x00
+    READ_ONLY = 0x01
+
+
 GenericPropertiesGet = Struct()
 
 GenericPropertiesStatus = Struct(
@@ -62,7 +80,7 @@ GenericPropertyGet = Struct(
 )
 
 
-class _GenericPropertySet(PropertyMixin, Construct):
+class _GenericUserPropertySet(PropertyMixin, Construct):
     ENUM = PropertyID
     DICT = PropertyDict
 
@@ -86,7 +104,7 @@ class _GenericPropertyStatus(PropertyMixin, Construct):
 
     subcon = Struct(
         "property_id" / EnumAdapter(Int16ul, PropertyID),
-        "access" / EnumAdapter(Int8ul, SensorSettingAccess),
+        "access" / EnumAdapter(Int8ul, UserAccess),
         Switch(this.id, PropertyDict),
     )
 
@@ -99,7 +117,14 @@ class _GenericPropertyStatus(PropertyMixin, Construct):
         return self._build_property(obj, stream, context, path)
 
 
-GenericPropertySet = _GenericPropertySet()
+GenericUserPropertySet = _GenericUserPropertySet()
+
+GenericAdminPropertySet = _GenericPropertyStatus()
+
+GenericManufacturerPropertySet = Struct(
+    "property_id" / EnumAdapter(Int16ul, PropertyID),
+    "access" / EnumAdapter(Int8ul, ManufacturerUserAccess),
+)
 
 GenericPropertyStatus = _GenericPropertyStatus()
 
@@ -112,20 +137,20 @@ GenericPropertyMessage = SwitchStruct(
             GenericPropertyOpcode.GENERIC_USER_PROPERTIES_GET: GenericPropertiesGet,
             GenericPropertyOpcode.GENERIC_USER_PROPERTIES_STATUS: GenericPropertiesStatus,
             GenericPropertyOpcode.GENERIC_USER_PROPERTY_GET: GenericPropertyGet,
-            GenericPropertyOpcode.GENERIC_USER_PROPERTY_SET: GenericPropertySet,
-            GenericPropertyOpcode.GENERIC_USER_PROPERTY_SET_UNACKNOWLEDGED: GenericPropertySet,
+            GenericPropertyOpcode.GENERIC_USER_PROPERTY_SET: GenericUserPropertySet,
+            GenericPropertyOpcode.GENERIC_USER_PROPERTY_SET_UNACKNOWLEDGED: GenericUserPropertySet,
             GenericPropertyOpcode.GENERIC_USER_PROPERTY_STATUS: GenericPropertyStatus,
             GenericPropertyOpcode.GENERIC_ADMIN_PROPERTIES_GET: GenericPropertiesGet,
             GenericPropertyOpcode.GENERIC_ADMIN_PROPERTIES_STATUS: GenericPropertiesStatus,
             GenericPropertyOpcode.GENERIC_ADMIN_PROPERTY_GET: GenericPropertyGet,
-            GenericPropertyOpcode.GENERIC_ADMIN_PROPERTY_SET: GenericPropertySet,
-            GenericPropertyOpcode.GENERIC_ADMIN_PROPERTY_SET_UNACKNOWLEDGED: GenericPropertySet,
+            GenericPropertyOpcode.GENERIC_ADMIN_PROPERTY_SET: GenericAdminPropertySet,
+            GenericPropertyOpcode.GENERIC_ADMIN_PROPERTY_SET_UNACKNOWLEDGED: GenericAdminPropertySet,
             GenericPropertyOpcode.GENERIC_ADMIN_PROPERTY_STATUS: GenericPropertyStatus,
             GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTIES_GET: GenericPropertiesGet,
             GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTIES_STATUS: GenericPropertiesStatus,
             GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_GET: GenericPropertyGet,
-            GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_SET: GenericPropertySet,
-            GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_SET_UNACKNOWLEDGED: GenericPropertySet,
+            GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_SET: GenericManufacturerPropertySet,
+            GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_SET_UNACKNOWLEDGED: GenericManufacturerPropertySet,
             GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_STATUS: GenericPropertyStatus,
             GenericPropertyOpcode.GENERIC_CLIENT_PROPERTIES_GET: GenericPropertiesGet,
             GenericPropertyOpcode.GENERIC_CLIENT_PROPERTIES_STATUS: GenericPropertiesStatus,
