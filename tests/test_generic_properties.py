@@ -1,8 +1,13 @@
 import pytest
 
-from bluetooth_mesh.messages.generic.property import GenericPropertyMessage, GenericPropertyOpcode
-from bluetooth_mesh.messages.properties import LightDistributionField, PropertyID, LightSourceTypeField
-from bluetooth_mesh.messages.sensor import SensorSettingAccess
+from bluetooth_mesh.messages.generic.property import (
+    AdminUserAccess,
+    GenericPropertyMessage,
+    GenericPropertyOpcode,
+    ManufacturerUserAccess,
+    UserAccess,
+)
+from bluetooth_mesh.messages.properties import LightDistributionField, LightSourceTypeField, PropertyID
 
 valid = [
     # fmt: off
@@ -41,7 +46,7 @@ valid = [
         b'\x4E\x8C\x00\x01\x05',
         GenericPropertyOpcode.GENERIC_USER_PROPERTY_STATUS,
         dict(property_id=PropertyID.LIGHT_DISTRIBUTION,
-             access=SensorSettingAccess.READ_ONLY,
+             access=UserAccess.READ_ONLY,
              light_distribution=dict(
                  light_distribution=LightDistributionField.TYPE_V)),
         id="GENERIC_USER_PROPERTY_STATUS"),
@@ -65,16 +70,18 @@ valid = [
         dict(property_id=PropertyID.LIGHT_DISTRIBUTION),
         id="GENERIC_ADMIN_PROPERTY_GET"),
     pytest.param(
-        b'\x48\x94\x00\x01\x80',
+        b'\x48\x94\x00\x03\x01\x80',
         GenericPropertyOpcode.GENERIC_ADMIN_PROPERTY_SET,
         dict(property_id=PropertyID.LIGHT_SOURCE_TEMPERATURE,
+             access=AdminUserAccess.READ_WRITE,
              light_source_temperature=dict(
                  temperature=-16383.5)),  # It supposed to be value not know
         id="GENERIC_ADMIN_PROPERTY_SET"),
     pytest.param(
-        b'\x49\xA4\x00\xFF\xFF\xFF',
+        b'\x49\xA4\x00\x01\xFF\xFF\xFF',
         GenericPropertyOpcode.GENERIC_ADMIN_PROPERTY_SET_UNACKNOWLEDGED,
         dict(property_id=PropertyID.NOMINAL_LIGHT_OUTPUT,
+             access=AdminUserAccess.READ_ONLY,
              nominal_light_output=dict(
                  light_output=16777215)), # It supposed to be value not know
         id="GENERIC_ADMIN_PROPERTY_SET_UNACKNOWLEDGED"),
@@ -82,7 +89,7 @@ valid = [
         b'\x4A\xA4\x00\x01\x0A\x00\x00',
         GenericPropertyOpcode.GENERIC_ADMIN_PROPERTY_STATUS,
         dict(property_id=PropertyID.NOMINAL_LIGHT_OUTPUT,
-             access=SensorSettingAccess.READ_ONLY,
+             access=UserAccess.READ_ONLY,
              nominal_light_output=dict(
                  light_output=10)),
         id="GENERIC_ADMIN_PROPERTY_STATUS"),
@@ -106,31 +113,29 @@ valid = [
         dict(property_id=PropertyID.LUMINAIRE_TIME_OF_MANUFACTURE),
         id="GENERIC_MANUFACTURER_PROPERTY_GET"),
     pytest.param(
-        b'\x44\x73\x00\xE2',
+        b'\x44\x73\x00\x01',
         GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_SET,
         dict(property_id=PropertyID.POWER_FACTOR,
-             power_factor=dict(
-                 cosine_of_the_angle=-30)),
+             access=ManufacturerUserAccess.READ_ONLY),
         id="GENERIC_MANUFACTURER_PROPERTY_SET"),
     pytest.param(
-        b'\x45\x89\x00\xFF\xFF',
+        b'\x45\x89\x00\x00',
         GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_SET_UNACKNOWLEDGED,
         dict(property_id=PropertyID.EXTERNAL_SUPPLY_VOLTAGE_FREQUENCY,
-             external_supply_voltage_frequency=dict(
-                 voltage_frequency=65535)), # It supposed to be value not know
+             access=ManufacturerUserAccess.NOT_USER_PROPERTY),
         id="GENERIC_MANUFACTURER_PROPERTY_SET_UNACKNOWLEDGED"),
     pytest.param(
         b'\x46\x9A\x00\x01abcdefghijklmnoprstuvxyz',
         GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_STATUS,
         dict(property_id=PropertyID.LUMINAIRE_IDENTIFICATION_NUMBER,
-             access=SensorSettingAccess.READ_ONLY,
+             access=UserAccess.READ_ONLY,
              luminaire_identification_number="abcdefghijklmnoprstuvxyz"),
         id="GENERIC_MANUFACTURER_PROPERTY_STATUS"),
     pytest.param(
         b'\x46\xB3\x00\x01\x03',
         GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_STATUS,
         dict(property_id=PropertyID.LIGHT_SOURCE_TYPE,
-             access=SensorSettingAccess.READ_ONLY,
+             access=UserAccess.READ_ONLY,
              light_source_type=dict(light_source_type=
                  LightSourceTypeField.LOW_VOLTAGE_HALOGEN)),
         id="GENERIC_MANUFACTURER_PROPERTY_STATUS_LIGHT_SOURCE"),
