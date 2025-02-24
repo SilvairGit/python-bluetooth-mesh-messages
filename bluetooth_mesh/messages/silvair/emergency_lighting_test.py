@@ -116,8 +116,10 @@ class TimestampAdapter(Adapter):
 
     def _decode(self, obj, context, path):
         time_zone_offset = mesh_time_zone_offset_to_timedelta(obj["time_zone_offset"])
-        full_recv_time = obj["tai_seconds"] + MESH_UNIX_EPOCH_DIFF + int(time_zone_offset.total_seconds())
-        recv_date = datetime.fromtimestamp(full_recv_time, timezone(time_zone_offset))
+        full_recv_time = obj["tai_seconds"] + MESH_UNIX_EPOCH_DIFF
+        recv_date = datetime.fromtimestamp(
+            full_recv_time, timezone(time_zone_offset)
+        ) - mesh_tai_utc_delta_to_timedelta(obj["tai_utc_delta"])
 
         return Container(
             date=recv_date,
@@ -143,7 +145,7 @@ class TimestampAdapter(Adapter):
         if isinstance(obj["tai_utc_delta"], int):
             obj["tai_utc_delta"] = timedelta(seconds=obj["tai_utc_delta"])
 
-        total_time = passed_time.timestamp() - MESH_UNIX_EPOCH_DIFF - passed_time.utcoffset().total_seconds()
+        total_time = passed_time.timestamp() - MESH_UNIX_EPOCH_DIFF + obj["tai_utc_delta"].total_seconds()
 
         return Container(
             tai_seconds=int(total_time),
@@ -198,8 +200,9 @@ Timestamp = Struct(
     "tai_seconds" / BytesInteger(5, swapped=True),
     "time_zone_offset" / Int8ul,
     *EmbeddedBitStruct("_",
-                       Const(0, BitsInteger(1)),
                        "tai_utc_delta" / BitsInteger(15),
+                       Const(0, Flag),
+                       reversed=True
                        )
 )
 
@@ -248,7 +251,6 @@ EmergencyLightingTestDurationTestStatus = NamedSelect(
     minimal=EmergencyLightingTestDurationTestStatusMinimal,
 )
 
-
 EmergencyLightingTestPropertyGet = Struct(
     "property_id" / EnumAdapter(Int16ul, EmergencyLightingTestProperty),
 )
@@ -256,7 +258,6 @@ EmergencyLightingTestPropertyGet = Struct(
 EmergencyLightingTestPropertySet = _EmergencyLightingTestProperty()
 
 EmergencyLightingTestPropertyStatus = _EmergencyLightingTestProperty()
-
 
 EmergencyLightingTestParams = SwitchStruct(
     "subopcode" / EnumAdapter(Int8ul, EmergencyLightingTestSubOpcode),

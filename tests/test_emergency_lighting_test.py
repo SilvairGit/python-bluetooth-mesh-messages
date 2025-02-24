@@ -30,18 +30,10 @@ valid = [
         EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STATUS,
         dict(
             tai_timestamp=dict(
-                date=datetime(
-                    2137,
-                    3,
-                    2,
-                    17,
-                    2,
-                    45,
-                    # time_zone_offset is -870min, which is -52200s, but
-                    # python encodes that as -1d +34200s
+                date=datetime(2137, 3, 3, 7, 22,
                     tzinfo=timezone(timedelta(days=-1, seconds=34200)),
                 ),
-                tai_utc_delta=timedelta(seconds=1800),
+                tai_utc_delta=timedelta(seconds=645),
             ),
             execution_result=dict(
                 lamp_fault=False,
@@ -57,15 +49,10 @@ valid = [
         EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STATUS,
         dict(
             tai_timestamp=dict(
-                date=datetime(
-                    1999,
-                    12,
-                    30,
-                    19,
-                    0,
+                date=datetime(1999, 12, 31, 9, 19, 15,
                     tzinfo=timezone(timedelta(days=-1, seconds=34200)),
                 ),
-                tai_utc_delta=timedelta(seconds=1800),
+                tai_utc_delta=timedelta(seconds=645),
             ),
             execution_result=dict(
                 lamp_fault=False,
@@ -97,16 +84,10 @@ valid = [
         EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_STATUS,
         dict(
             tai_timestamp=dict(
-                date=datetime(
-                    2137,
-                    3,
-                    2,
-                    17,
-                    2,
-                    45,
+                date=datetime(2137, 3, 3, 7, 22,
                     tzinfo=timezone(timedelta(days=-1, seconds=34200)),
                 ),
-                tai_utc_delta=timedelta(seconds=1800),
+                tai_utc_delta=timedelta(seconds=645),
             ),
             execution_result=dict(
                 lamp_fault=False,
@@ -123,15 +104,10 @@ valid = [
         EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_STATUS,
         dict(
             tai_timestamp=dict(
-                date=datetime(
-                    1999,
-                    12,
-                    30,
-                    19,
-                    0,
+                date=datetime(1999, 12, 31, 9, 19, 15,
                     tzinfo=timezone(timedelta(days=-1, seconds=34200)),
                 ),
-                tai_utc_delta=timedelta(seconds=1800),
+                tai_utc_delta=timedelta(seconds=645),
             ),
             execution_result=dict(
                 lamp_fault=False,
