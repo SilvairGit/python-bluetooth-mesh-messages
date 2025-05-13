@@ -119,9 +119,16 @@ class TimestampAdapter(Adapter):
         full_recv_time = obj["tai_seconds"] + MESH_UNIX_EPOCH_DIFF + int(time_zone_offset.total_seconds())
         recv_date = datetime.fromtimestamp(full_recv_time, timezone(time_zone_offset))
 
+        tai_utc_delta_raw = obj["tai_utc_delta_raw"]
+        tai_utc_delta_padding = (tai_utc_delta_raw >> 15) & 0x1
+        tai_utc_delta_encoded = tai_utc_delta_raw & 0x7FFF
+
+        if tai_utc_delta_padding != 0:
+            raise ValueError("Invalid TAI-UTC delta: padding bit must be 0")
+
         return Container(
             date=recv_date,
-            tai_utc_delta=mesh_tai_utc_delta_to_timedelta(obj["tai_utc_delta"]),
+            tai_utc_delta=mesh_tai_utc_delta_to_timedelta(tai_utc_delta_encoded),
         )
 
     def _encode(self, obj, context, path):
@@ -147,7 +154,7 @@ class TimestampAdapter(Adapter):
 
         return Container(
             tai_seconds=int(total_time),
-            tai_utc_delta=timedelta_to_mesh_tai_utc_delta(obj["tai_utc_delta"]),
+            tai_utc_delta_raw=timedelta_to_mesh_tai_utc_delta(obj["tai_utc_delta"]),
             time_zone_offset=timedelta_to_mesh_time_zone_offset(passed_time.utcoffset()),
         )
 
@@ -197,10 +204,7 @@ class _EmergencyLightingTestProperty(PropertyMixin, Construct):
 Timestamp = Struct(
     "tai_seconds" / BytesInteger(5, swapped=True),
     "time_zone_offset" / Int8ul,
-    *EmbeddedBitStruct("_",
-                       Const(0, BitsInteger(1)),
-                       "tai_utc_delta" / BitsInteger(15),
-                       )
+    "tai_utc_delta_raw" / BytesInteger(2, swapped=True),
 )
 
 EmergencyLightingTestFunctionalTestGet = Struct()

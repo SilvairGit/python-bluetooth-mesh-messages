@@ -26,7 +26,7 @@ valid = [
         {},
     ),
     pytest.param(
-        bytes.fromhex("0305040302010608070506"),
+        bytes.fromhex("03050403020106ff7f0506"),
         EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STATUS,
         dict(
             tai_timestamp=dict(
@@ -41,7 +41,7 @@ valid = [
                     # python encodes that as -1d +34200s
                     tzinfo=timezone(timedelta(days=-1, seconds=34200)),
                 ),
-                tai_utc_delta=timedelta(seconds=1800),
+                tai_utc_delta=timedelta(seconds=32512),
             ),
             execution_result=dict(
                 lamp_fault=False,
@@ -53,7 +53,7 @@ valid = [
         ),
     ),
     pytest.param(
-        bytes.fromhex("030000000000060807050604030201"),
+        bytes.fromhex("030000000000062401050604030201"),
         EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STATUS,
         dict(
             tai_timestamp=dict(
@@ -65,7 +65,7 @@ valid = [
                     0,
                     tzinfo=timezone(timedelta(days=-1, seconds=34200)),
                 ),
-                tai_utc_delta=timedelta(seconds=1800),
+                tai_utc_delta=timedelta(seconds=37),
             ),
             execution_result=dict(
                 lamp_fault=False,
@@ -75,6 +75,30 @@ valid = [
             ),
             execution_status=TestExecutionStatus.DROPPED,
             relative_timestamp=0x01020304,
+        ),
+    ),
+    pytest.param(
+        bytes.fromhex("03000000000040ff000700"),
+        EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STATUS,
+        dict(
+            tai_timestamp=dict(
+                date=datetime(
+                    2000,
+                    1,
+                    1,
+                    0,
+                    0,
+                    tzinfo=timezone(timedelta(seconds=0)),
+                ),
+                tai_utc_delta=timedelta(seconds=0),
+            ),
+            execution_result=dict(
+                lamp_fault=False,
+                battery_fault=False,
+                circuit_fault=False,
+                battery_duration_fault=False,
+            ),
+            execution_status=TestExecutionStatus.UNKNOWN,
         ),
     ),
     pytest.param(
@@ -93,7 +117,7 @@ valid = [
         {},
     ),
     pytest.param(
-        bytes.fromhex("07050403020106080705063412"),
+        bytes.fromhex("07050403020106ff7f05063412"),
         EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_STATUS,
         dict(
             tai_timestamp=dict(
@@ -106,7 +130,7 @@ valid = [
                     45,
                     tzinfo=timezone(timedelta(days=-1, seconds=34200)),
                 ),
-                tai_utc_delta=timedelta(seconds=1800),
+                tai_utc_delta=timedelta(seconds=32512),
             ),
             execution_result=dict(
                 lamp_fault=False,
@@ -119,7 +143,7 @@ valid = [
         ),
     ),
     pytest.param(
-        bytes.fromhex("0700000000000608070506341204030201"),
+        bytes.fromhex("0700000000000624010506341204030201"),
         EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_STATUS,
         dict(
             tai_timestamp=dict(
@@ -131,7 +155,7 @@ valid = [
                     0,
                     tzinfo=timezone(timedelta(days=-1, seconds=34200)),
                 ),
-                tai_utc_delta=timedelta(seconds=1800),
+                tai_utc_delta=timedelta(seconds=37),
             ),
             execution_result=dict(
                 lamp_fault=False,
@@ -142,6 +166,31 @@ valid = [
             execution_status=TestExecutionStatus.DROPPED,
             duration_result=0x1234,
             relative_timestamp=0x01020304,
+        ),
+    ),
+    pytest.param(
+        bytes.fromhex("07000000000040ff000700ffff"),
+        EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_STATUS,
+        dict(
+            tai_timestamp=dict(
+                date=datetime(
+                    2000,
+                    1,
+                    1,
+                    0,
+                    0,
+                    tzinfo=timezone(timedelta(seconds=0)),
+                ),
+                tai_utc_delta=timedelta(seconds=0),
+            ),
+            execution_result=dict(
+                lamp_fault=False,
+                battery_fault=False,
+                circuit_fault=False,
+                battery_duration_fault=False,
+            ),
+            execution_status=TestExecutionStatus.UNKNOWN,
+            duration_result=0xFFFF,
         ),
     ),
     pytest.param(
