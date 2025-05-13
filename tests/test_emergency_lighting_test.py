@@ -26,55 +26,133 @@ valid = [
         {},
     ),
     pytest.param(
-        bytes.fromhex("0305040302010608070506"),
-        EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STATUS,
-        dict(
-            tai_timestamp=dict(
-                date=datetime(
-                    2137,
-                    3,
-                    2,
-                    17,
-                    2,
-                    45,
-                    # time_zone_offset is -870min, which is -52200s, but
-                    # python encodes that as -1d +34200s
-                    tzinfo=timezone(timedelta(days=-1, seconds=34200)),
-                ),
-                tai_utc_delta=timedelta(seconds=1800),
-            ),
-            execution_result=dict(
-                lamp_fault=False,
-                battery_fault=True,
-                circuit_fault=True,
-                battery_duration_fault=False,
-            ),
-            execution_status=TestExecutionStatus.DROPPED,
+        bytes.fromhex(
+            "03"  # Subopcode
+            "0000000000"  # ELT Test TAI Timestamp: TAI Seconds
+            "40"  # ELT Test TAI Timestamp: Time Zone Offset
+            "1F01"  # ELT Test TAI Timestamp: TAI-UTC Delta
+            "00"  # ELT Test Execution Status
+            "00"  # ELT Test Execution Result
         ),
-    ),
-    pytest.param(
-        bytes.fromhex("030000000000060807050604030201"),
         EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STATUS,
         dict(
             tai_timestamp=dict(
                 date=datetime(
                     1999,
                     12,
-                    30,
-                    19,
-                    0,
-                    tzinfo=timezone(timedelta(days=-1, seconds=34200)),
+                    31,
+                    23,
+                    59,
+                    28,
+                    tzinfo=timezone(timedelta(hours=0)),
                 ),
-                tai_utc_delta=timedelta(seconds=1800),
+                tai_utc_delta=timedelta(seconds=32),
+            ),
+            execution_result=dict(
+                lamp_fault=False,
+                battery_fault=False,
+                circuit_fault=False,
+                battery_duration_fault=False,
+            ),
+            execution_status=TestExecutionStatus.FINISHED,
+        ),
+    ),
+    pytest.param(
+        bytes.fromhex(
+            "03"  # Subopcode
+            "0000000000"  # ELT Test TAI Timestamp: TAI Seconds
+            "40"  # ELT Test TAI Timestamp: Time Zone Offset
+            "FF00"  # ELT Test TAI Timestamp: TAI-UTC Delta
+            "07"  # ELT Test Execution Status
+            "01"  # ELT Test Execution Result
+        ),
+        EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STATUS,
+        dict(
+            tai_timestamp=dict(
+                date=datetime(
+                    2000,
+                    1,
+                    1,
+                    0,
+                    0,
+                    0,
+                    tzinfo=timezone(timedelta(hours=0)),
+                ),
+                tai_utc_delta=timedelta(seconds=0),
+            ),
+            execution_result=dict(
+                lamp_fault=True,
+                battery_fault=False,
+                circuit_fault=False,
+                battery_duration_fault=False,
+            ),
+            execution_status=TestExecutionStatus.UNKNOWN,
+        ),
+    ),
+    pytest.param(
+        bytes.fromhex(
+            "03"  # Subopcode
+            "2E48D52F00"  # ELT Test TAI Timestamp: TAI Seconds
+            "48"  # ELT Test TAI Timestamp: Time Zone Offset
+            "2401"  # ELT Test TAI Timestamp: TAI-UTC Delta
+            "02"  # ELT Test Execution Status
+            "02"  # ELT Test Execution Result
+        ),
+        EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STATUS,
+        dict(
+            tai_timestamp=dict(
+                date=datetime(
+                    2025,
+                    6,
+                    6,
+                    8,
+                    32,
+                    41,
+                    tzinfo=timezone(timedelta(hours=2)),
+                ),
+                tai_utc_delta=timedelta(seconds=37),
             ),
             execution_result=dict(
                 lamp_fault=False,
                 battery_fault=True,
+                circuit_fault=False,
+                battery_duration_fault=False,
+            ),
+            execution_status=TestExecutionStatus.IN_PROGRESS,
+        ),
+    ),
+    pytest.param(
+        bytes.fromhex(
+            "03"  # Subopcode
+            "0000000000"  # ELT Test TAI Timestamp: TAI Seconds
+            "78"  # ELT Test TAI Timestamp: Time Zone Offset
+            "2401"  # ELT Test TAI Timestamp: TAI-UTC Delta
+            "03"  # ELT Test Execution Status
+            "07"  # ELT Test Execution Result
+            "45000000"  # ELT Test Relative Timestamp (optional)
+        ),
+        EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STATUS,
+        dict(
+            tai_timestamp=dict(
+                date=datetime(
+                    2000,
+                    1,
+                    1,
+                    13,
+                    59,
+                    23,
+                    tzinfo=timezone(timedelta(hours=14)),
+                ),
+                tai_utc_delta=timedelta(seconds=37),
+            ),
+            execution_result=dict(
+                lamp_fault=True,
+                battery_fault=True,
                 circuit_fault=True,
                 battery_duration_fault=False,
             ),
-            execution_status=TestExecutionStatus.DROPPED,
-            relative_timestamp=0x01020304,
+            execution_status=TestExecutionStatus.POSTPONED,
+            relative_timestamp=69,
         ),
     ),
     pytest.param(
@@ -93,55 +171,141 @@ valid = [
         {},
     ),
     pytest.param(
-        bytes.fromhex("07050403020106080705063412"),
-        EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_STATUS,
-        dict(
-            tai_timestamp=dict(
-                date=datetime(
-                    2137,
-                    3,
-                    2,
-                    17,
-                    2,
-                    45,
-                    tzinfo=timezone(timedelta(days=-1, seconds=34200)),
-                ),
-                tai_utc_delta=timedelta(seconds=1800),
-            ),
-            execution_result=dict(
-                lamp_fault=False,
-                battery_fault=True,
-                circuit_fault=True,
-                battery_duration_fault=False,
-            ),
-            execution_status=TestExecutionStatus.DROPPED,
-            duration_result=0x1234,
+        bytes.fromhex(
+            "07"  # Subopcode
+            "0000000000"  # ELT Test TAI Timestamp: TAI Seconds
+            "40"  # ELT Test TAI Timestamp: Time Zone Offset
+            "1F01"  # ELT Test TAI Timestamp: TAI-UTC Delta
+            "00"  # ELT Test Execution Status
+            "00"  # ELT Test Execution Result
+            "0000"  # ELT Duration Result
         ),
-    ),
-    pytest.param(
-        bytes.fromhex("0700000000000608070506341204030201"),
         EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_STATUS,
         dict(
             tai_timestamp=dict(
                 date=datetime(
                     1999,
                     12,
-                    30,
-                    19,
-                    0,
-                    tzinfo=timezone(timedelta(days=-1, seconds=34200)),
+                    31,
+                    23,
+                    59,
+                    28,
+                    tzinfo=timezone(timedelta(hours=0)),
                 ),
-                tai_utc_delta=timedelta(seconds=1800),
+                tai_utc_delta=timedelta(seconds=32),
+            ),
+            execution_result=dict(
+                lamp_fault=False,
+                battery_fault=False,
+                circuit_fault=False,
+                battery_duration_fault=False,
+            ),
+            execution_status=TestExecutionStatus.FINISHED,
+            duration_result=0,
+        ),
+    ),
+    pytest.param(
+        bytes.fromhex(
+            "07"  # Subopcode
+            "0000000000"  # ELT Test TAI Timestamp: TAI Seconds
+            "40"  # ELT Test TAI Timestamp: Time Zone Offset
+            "FF00"  # ELT Test TAI Timestamp: TAI-UTC Delta
+            "07"  # ELT Test Execution Status
+            "01"  # ELT Test Execution Result
+            "FFFF"  # ELT Duration Result
+        ),
+        EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_STATUS,
+        dict(
+            tai_timestamp=dict(
+                date=datetime(
+                    2000,
+                    1,
+                    1,
+                    0,
+                    0,
+                    0,
+                    tzinfo=timezone(timedelta(hours=0)),
+                ),
+                tai_utc_delta=timedelta(seconds=0),
+            ),
+            execution_result=dict(
+                lamp_fault=True,
+                battery_fault=False,
+                circuit_fault=False,
+                battery_duration_fault=False,
+            ),
+            execution_status=TestExecutionStatus.UNKNOWN,
+            duration_result=65535,
+        ),
+    ),
+    pytest.param(
+        bytes.fromhex(
+            "07"  # Subopcode
+            "2E48D52F00"  # ELT Test TAI Timestamp: TAI Seconds
+            "48"  # ELT Test TAI Timestamp: Time Zone Offset
+            "2401"  # ELT Test TAI Timestamp: TAI-UTC Delta
+            "02"  # ELT Test Execution Status
+            "02"  # ELT Test Execution Result
+            "0000"  # ELT Duration Result
+        ),
+        EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_STATUS,
+        dict(
+            tai_timestamp=dict(
+                date=datetime(
+                    2025,
+                    6,
+                    6,
+                    8,
+                    32,
+                    41,
+                    tzinfo=timezone(timedelta(hours=2)),
+                ),
+                tai_utc_delta=timedelta(seconds=37),
             ),
             execution_result=dict(
                 lamp_fault=False,
                 battery_fault=True,
-                circuit_fault=True,
+                circuit_fault=False,
                 battery_duration_fault=False,
             ),
-            execution_status=TestExecutionStatus.DROPPED,
-            duration_result=0x1234,
-            relative_timestamp=0x01020304,
+            execution_status=TestExecutionStatus.IN_PROGRESS,
+            duration_result=0,
+        ),
+    ),
+    pytest.param(
+        bytes.fromhex(
+            "07"  # Subopcode
+            "0000000000"  # ELT Test TAI Timestamp: TAI Seconds
+            "78"  # ELT Test TAI Timestamp: Time Zone Offset
+            "2401"  # ELT Test TAI Timestamp: TAI-UTC Delta
+            "03"  # ELT Test Execution Status
+            "0F"  # ELT Test Execution Result
+            "100E"  # ELT Duration Result
+            "45000000"  # ELT Test Relative Timestamp (optional)
+        ),
+        EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_STATUS,
+        dict(
+            tai_timestamp=dict(
+                date=datetime(
+                    2000,
+                    1,
+                    1,
+                    13,
+                    59,
+                    23,
+                    tzinfo=timezone(timedelta(hours=14)),
+                ),
+                tai_utc_delta=timedelta(seconds=37),
+            ),
+            execution_result=dict(
+                lamp_fault=True,
+                battery_fault=True,
+                circuit_fault=True,
+                battery_duration_fault=True,
+            ),
+            execution_status=TestExecutionStatus.POSTPONED,
+            duration_result=3600,
+            relative_timestamp=69,
         ),
     ),
     pytest.param(
