@@ -338,6 +338,22 @@ valid_properties = [
              )),
         id="Energy"),
     pytest.param(
+        b'Yr\x00r\x00H\xcf\xb6c',
+        dict(sensor_property_id=PropertyID.PRECISE_TOTAL_DEVICE_ENERGY_USE,
+             sensor_setting_property_id=PropertyID.PRECISE_TOTAL_DEVICE_ENERGY_USE,
+             precise_total_device_energy_use=dict(
+                 energy=1672925
+             )),
+        id="PreciseEnergy"),
+    pytest.param(
+        b'Yr\x00r\x00\x7f{\xe1\xff',
+        dict(sensor_property_id=PropertyID.PRECISE_TOTAL_DEVICE_ENERGY_USE,
+             sensor_setting_property_id=PropertyID.PRECISE_TOTAL_DEVICE_ENERGY_USE,
+             precise_total_device_energy_use=dict(
+                 energy=4292967.295
+             )),
+        id="PreciseEnergy unknown value"),
+    pytest.param(
         b'\x59\x2e\x00\x2e\x00\x44\xff',
         dict(sensor_property_id=PropertyID.LIGHT_CONTROL_LIGHTNESS_ON,
              sensor_setting_property_id=PropertyID.LIGHT_CONTROL_LIGHTNESS_ON,

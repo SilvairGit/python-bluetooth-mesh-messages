@@ -399,7 +399,7 @@ Energy = Struct(
 )
 
 PreciseEnergy = Struct(
-    "energy" / DefaultCountValidator(Int32ul)
+    "energy" / DefaultCountValidator(Int32ul, resolution=0.001, rounding=3, unknown_value=False)
 )
 
 
