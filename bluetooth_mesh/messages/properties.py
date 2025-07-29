@@ -410,11 +410,11 @@ EnergyInAPeriodOfDay = Struct(
 )
 
 ApparentEnergy32 = Struct(
-    "energy" / DefaultCountValidator(Int32ul, rounding=3, resolution=0.001),
+    "energy" / DefaultCountValidator(Int32ul, rounding=3, resolution=0.001, unknown_value=False),
 )
 
 Energy32 = Struct(
-    "energy" / DefaultCountValidator(Int32ul, rounding=3, resolution=0.001),
+    "energy" / DefaultCountValidator(Int32ul, rounding=3, resolution=0.001, unknown_value=False),
 )
 
 

@@ -346,13 +346,45 @@ valid_properties = [
              )),
         id="PreciseEnergy"),
     pytest.param(
-        b'Yr\x00r\x00\x7f{\xe1\xff',
+        b'Yr\x00r\x00\xff\xff\xff\xff',
         dict(sensor_property_id=PropertyID.PRECISE_TOTAL_DEVICE_ENERGY_USE,
              sensor_setting_property_id=PropertyID.PRECISE_TOTAL_DEVICE_ENERGY_USE,
              precise_total_device_energy_use=dict(
-                 energy=4292967.295
+                 energy=4294967.295
              )),
         id="PreciseEnergy unknown value"),
+    pytest.param(
+        b'Y\x80\x00\x80\x00H\xcf\xb6c',
+        dict(sensor_property_id=PropertyID.ACTIVE_ENERGY_LOAD_SIDE,
+             sensor_setting_property_id=PropertyID.ACTIVE_ENERGY_LOAD_SIDE,
+             active_energy_load_side=dict(
+                 energy=1672925
+             )),
+        id="Energy32"),
+    pytest.param(
+        b'Y\x80\x00\x80\x00\xff\xff\xff\xff',
+        dict(sensor_property_id=PropertyID.ACTIVE_ENERGY_LOAD_SIDE,
+             sensor_setting_property_id=PropertyID.ACTIVE_ENERGY_LOAD_SIDE,
+             active_energy_load_side=dict(
+                 energy=4294967.295
+             )),
+        id="Energy32 unknown value"),
+    pytest.param(
+        b'Y\x83\x00\x83\x00H\xcf\xb6c',
+        dict(sensor_property_id=PropertyID.APPARENT_ENERGY,
+             sensor_setting_property_id=PropertyID.APPARENT_ENERGY,
+             apparent_energy=dict(
+                 energy=1672925
+             )),
+        id="ApparentEnergy32"),
+    pytest.param(
+        b'Y\x83\x00\x83\x00\xff\xff\xff\xff',
+        dict(sensor_property_id=PropertyID.APPARENT_ENERGY,
+             sensor_setting_property_id=PropertyID.APPARENT_ENERGY,
+             apparent_energy=dict(
+                 energy=4294967.295
+             )),
+        id="ApparentEnergy32 unknown value"),
     pytest.param(
         b'\x59\x2e\x00\x2e\x00\x44\xff',
         dict(sensor_property_id=PropertyID.LIGHT_CONTROL_LIGHTNESS_ON,
