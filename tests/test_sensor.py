@@ -410,6 +410,14 @@ valid_properties = [
              )),
         id="Power"),
     pytest.param(
+        b'\x59\x52\x00\x52\x00\xff\xff\xff',
+        dict(sensor_property_id=PropertyID.PRESENT_DEVICE_INPUT_POWER,
+             sensor_setting_property_id=PropertyID.PRESENT_DEVICE_INPUT_POWER,
+             present_device_input_power=dict(
+                 power=1677721.5
+             )),
+        id="Power unknown value"),
+    pytest.param(
         b'\x59\x16\x00\x16\x00\xe8\x03\x00\xd0\x07\x00\x0f\x27\x00',
         dict(sensor_property_id=PropertyID.DEVICE_POWER_RANGE_SPECIFICATION,
              sensor_setting_property_id=PropertyID.DEVICE_POWER_RANGE_SPECIFICATION,
