@@ -420,7 +420,7 @@ Energy32 = Struct(
 
 # power
 Power = Struct(
-    "power" / DefaultCountValidator(Int24ul, rounding=1, resolution=0.1)
+    "power" / DefaultCountValidator(Int24ul, rounding=1, resolution=0.1, unknown_value=False)
 )
 
 PowerSpecification = Struct(
