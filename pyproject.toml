@@ -4,25 +4,33 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bluetooth-mesh-messages"
-version = "0.9.12"
+version = "0.10.0a1"
 readme = "README.rst"
+requires-python = ">=3.10"
 authors = [
     { name = "Michał Lowas-Rzechonek", email = "michal.lowas-rzechonek@silvair.com" },
     { name = "Amadeusz Herzog", email = "amadeusz.hercog@silvair.com" },
     { name = "Jakub Witowski", email = "jakub.witowski@silvair.com" },
     { name = "Kamil Janowski", email = "kamil.janowski@silvair.com" },
     { name = "Przemysław Fierek", email = "przemyslaw.fierek@silvair.com" },
-    { name = "Rafał Gajda", email = "rafal.gajda@silvair.com" }
+    { name = "Rafał Gajda", email = "rafal.gajda@silvair.com" },
+    { name = "Patryk Bieleń", email = "patryk.bielen@silvair.com" }
 ]
 dependencies = [
-    "construct>=2.9.45,<2.9.46",
+    "construct==2.10.57",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
     "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: System :: Networking",
 ]

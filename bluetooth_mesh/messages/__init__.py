@@ -66,7 +66,7 @@ class _AccessMessage(Construct):
         self._opcodes = {}
         for opcode_class, message in self.OPCODES.items():
             for opcode in opcode_class._value2member_map_.keys():
-                self._opcodes[opcode] = opcode_class(opcode), message.compile()
+                self._opcodes[opcode] = opcode_class(opcode), message
 
     def _parse(self, stream, context, path):
         opcode = self.OPCODE._parse(stream, context, path)
@@ -74,7 +74,7 @@ class _AccessMessage(Construct):
         try:
             opcode, message = self._opcodes[opcode]
         except KeyError:
-            return Container(opcode=opcode, params=stream_read_entire(stream))
+            return Container(opcode=opcode, params=stream_read_entire(stream, path))
 
         stream.seek(0)
         parsed = message._parse(stream, context, path)
@@ -92,7 +92,8 @@ class _AccessMessage(Construct):
                 opcode, message = self._opcodes[opcode]
         except KeyError:
             Opcode()._build(opcode, stream, context, path)
-            stream_write(stream, obj["params"])
+            params = obj["params"]
+            stream_write(stream, params, len(params), path)
             return obj
 
         return message._build(obj, stream, context, path)

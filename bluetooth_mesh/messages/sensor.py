@@ -27,7 +27,6 @@ from construct import (
     BitsInteger,
     Byte,
     Construct,
-    Embedded,
     GreedyRange,
     Int8ul,
     Int16ul,
@@ -126,7 +125,7 @@ SensorSettingsGet = Struct(
 )
 
 SensorSettingGet = Struct(
-    Embedded(SensorSettingsGet),
+    *SensorSettingsGet.subcons,
     "sensor_setting_property_id" / SensorPropertyId,
 )
 
@@ -148,7 +147,7 @@ class SensorSettingRawMixin:
         try:
             sensor_setting_raw = PropertyDict[sensor_setting_property_id]._parse(stream, context, path)
         except KeyError:
-            sensor_setting_raw = list(stream_read_entire(stream))
+            sensor_setting_raw = list(stream_read_entire(stream, path))
 
         class _Container(AliasedContainer):
             ALIAS = sensor_setting_name
@@ -172,7 +171,8 @@ class SensorSettingRawMixin:
         try:
             PropertyDict[sensor_setting_property_id]._build(sensor_setting_raw, stream, context, path)
         except KeyError:
-            stream_write(stream, bytes(sensor_setting_raw))
+            encoded = bytes(sensor_setting_raw)
+            stream_write(stream, encoded, len(encoded), path)
 
         return obj
 
@@ -209,13 +209,13 @@ class _SensorSettingStatus(SensorSettingRawMixin, Construct):
     )
 
     def _parse(self, stream, context, path):
-        obj = Struct(Embedded(SensorSettingGet), "sensor_setting_access" / Int8ul)._parse(stream, context, path)
+        obj = Struct(*SensorSettingGet.subcons, "sensor_setting_access" / Int8ul)._parse(stream, context, path)
 
         sensor_setting_property_id = obj.pop("sensor_setting_property_id")
         return self._parse_sensor_setting(stream, context, path, sensor_setting_property_id, **obj)
 
     def _build(self, obj, stream, context, path):
-        Struct(Embedded(SensorSettingGet), "sensor_setting_access" / Int8ul)._build(obj, stream, context, path)
+        Struct(*SensorSettingGet.subcons, "sensor_setting_access" / Int8ul)._build(obj, stream, context, path)
 
         sensor_setting_property_id = obj["sensor_setting_property_id"]
         return self._build_sensor_setting(obj, stream, context, path, sensor_setting_property_id)
@@ -224,7 +224,7 @@ class _SensorSettingStatus(SensorSettingRawMixin, Construct):
 SensorSettingStatus = _SensorSettingStatus()
 
 SensorSettingsStatus = Struct(
-    Embedded(SensorSettingsGet),
+    *SensorSettingsGet.subcons,
     "sensor_setting_property_ids" / GreedyRange(SensorPropertyId)
 )
 
@@ -233,7 +233,7 @@ SensorDescriptorMinimal = Struct(
 )
 
 SensorDescriptorOptional = Struct(
-    Embedded(SensorDescriptorMinimal),
+    *SensorDescriptorMinimal.subcons,
     *DoubleKeyIndex("sensor_negative_tolerance", "sensor_positive_tolerance"),
     "sensor_sampling_funcion" / Int8ul,
     "sensor_measurement_period" / Int8ul,
@@ -257,12 +257,12 @@ class _SensorData(SensorSettingRawMixin, Construct):
     )
 
     def _parse(self, stream, context, path):
-        setting_property_id = stream_read(stream, 2)
+        setting_property_id = stream_read(stream, 2, path)
 
         format = setting_property_id[0] & 0x01
 
         if format:
-            setting_property_id += stream_read(stream, 1)
+            setting_property_id += stream_read(stream, 1, path)
 
             length = (setting_property_id[0] >> 1) + 1
             sensor_setting_property_id = setting_property_id[1] | setting_property_id[2] << 8
@@ -280,11 +280,15 @@ class _SensorData(SensorSettingRawMixin, Construct):
         length = obj["length"]
 
         if format:
-            stream_write(stream, bytes([(length - 1) << 1 | 0x01]))
-            stream_write(stream, sensor_setting_property_id.to_bytes(2, byteorder='little'))
+            encoded = bytes([(length - 1) << 1 | 0x01])
+            stream_write(stream, encoded, len(encoded), path)
+            encoded = sensor_setting_property_id.to_bytes(2, byteorder='little')
+            stream_write(stream, encoded, len(encoded), path)
         else:
-            stream_write(stream, bytes([(length - 1) << 1 | (sensor_setting_property_id & 0b111) << 5]))
-            stream_write(stream, bytes([sensor_setting_property_id >> 3]))
+            encoded = bytes([(length - 1) << 1 | (sensor_setting_property_id & 0b111) << 5])
+            stream_write(stream, encoded, len(encoded), path)
+            encoded = bytes([sensor_setting_property_id >> 3])
+            stream_write(stream, encoded, len(encoded), path)
 
         return self._build_sensor_setting(obj, stream, context, path, sensor_setting_property_id)
 
@@ -294,13 +298,13 @@ SensorStatus = GreedyRange(SensorData)
 
 # TODO: message not implemented due to somewhat complicated structure and lack of examples
 # SensorColumnGet = Struct(
-#     Embedded(SensorSettingsGet),
+#     *SensorSettingsGet.subcons,
 #     "raw_value_x" / PropertyValue
 # )
 
 # TODO: message not implemented due to somewhat complicated structure and lack of examples
 # SensorSeriesGet = Struct(
-#     Embedded(SensorSettingsGet),
+#     *SensorSettingsGet.subcons,
 #     "raw_value_y" / PropertyValue
 # )
 
@@ -331,7 +335,7 @@ TriggerDelta = Struct(
 # SensorCadence = Struct(
 #     "sensor_setting_property_id" / Int16ul,
 #     *FastCadencePeriodDivisorAndTriggerType,
-#     Embedded(TriggerDelta),
+#     *TriggerDelta.subcons,
 #     "status_min_interval" / ExprAdapter(Int16ul, lambda obj, ctx: pow(2, obj), lambda obj, ctx: log(obj, 2)),
 #     "fast_cadence_low" / PropertyValue,
 #     "fast_cadence_high" / PropertyValue

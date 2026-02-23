@@ -30,7 +30,6 @@ from construct import (
     Const,
     Construct,
     Container,
-    Embedded,
     Flag,
     Int8ul,
     Int16sl,
@@ -226,7 +225,7 @@ EmergencyLightingTestFunctionalTestStatusMinimal = Struct(
 )
 
 EmergencyLightingTestFunctionalTestStatusOptional = Struct(
-    Embedded(EmergencyLightingTestFunctionalTestStatusMinimal),
+    *EmergencyLightingTestFunctionalTestStatusMinimal.subcons,
     "relative_timestamp" / Int32ul,
 )
 
@@ -249,7 +248,7 @@ EmergencyLightingTestDurationTestStatusMinimal = Struct(
 )
 
 EmergencyLightingTestDurationTestStatusOptional = Struct(
-    Embedded(EmergencyLightingTestDurationTestStatusMinimal),
+    *EmergencyLightingTestDurationTestStatusMinimal.subcons,
     "relative_timestamp" / Int32ul,
 )
 
