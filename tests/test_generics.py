@@ -26,7 +26,6 @@ from bluetooth_mesh.messages.generics import *
 
 
 @pytest.mark.parametrize(
-    # fmt: off
     "steps, resolution, expected_tt",
     [
         (0x00, 0b00, "00"),
@@ -34,9 +33,8 @@ from bluetooth_mesh.messages.generics import *
         (0x01, 0b01, "41"),
         (0x3E, 0b00, "3E"),
         (0x3E, 0b11, "FE"),
-        (0x3F, 0b11, "FF")
-    ]
-    # fmt: on
+        (0x3F, 0b11, "FF"),
+    ],
 )
 def test_build_transition_time(steps, resolution, expected_tt):
     tt = TransitionTime.build(dict(steps=steps, resolution=resolution))
@@ -44,7 +42,6 @@ def test_build_transition_time(steps, resolution, expected_tt):
 
 
 @pytest.mark.parametrize(
-    # fmt: off
     "raw_bytes, expected_steps, expected_resolution",
     [
         ("00", 0x00, 0b00),
@@ -52,9 +49,8 @@ def test_build_transition_time(steps, resolution, expected_tt):
         ("40", 0x00, 0b01),
         ("3E", 0x3E, 0b00),
         ("FE", 0x3E, 0b11),
-        ("FF", 0x3F, 0b11)
-    ]
-    # fmt: on
+        ("FF", 0x3F, 0b11),
+    ],
 )
 def test_parse_transition_time(raw_bytes, expected_steps, expected_resolution):
     tt = TransitionTime.parse(bytes.fromhex(raw_bytes))
@@ -63,81 +59,84 @@ def test_parse_transition_time(raw_bytes, expected_steps, expected_resolution):
 
 
 valid = [
-    # fmt: off
     pytest.param(
-        b'\x82\x01',
+        b"\x82\x01",
         GenericOnOffOpcode.GENERIC_ONOFF_GET,
         dict(),
-        id="ONOFF_GET"),
+        id="ONOFF_GET",
+    ),
     pytest.param(
-        b'\x82\x02\x01\x22',
+        b"\x82\x02\x01\x22",
         GenericOnOffOpcode.GENERIC_ONOFF_SET,
         dict(
             onoff=1,
-            tid=34
+            tid=34,
         ),
-        id="ONOFF_SET"),
+        id="ONOFF_SET",
+    ),
     pytest.param(
-        b'\x82\x02\x01\x22',
+        b"\x82\x02\x01\x22",
         GenericOnOffOpcode.GENERIC_ONOFF_SET,
         dict(
             onoff=1,
             tid=34,
             transition_time=6.3,
-            delay=0.3
+            delay=0.3,
         ),
-        id="ONOFF_SET_invalid"),
+        id="ONOFF_SET_invalid",
+    ),
     pytest.param(
-        b'\x82\x02\x00\x31\x32\x3c',
+        b"\x82\x02\x00\x31\x32\x3c",
         GenericOnOffOpcode.GENERIC_ONOFF_SET,
         dict(
             onoff=0,
             tid=49,
             transition_time=5,
-            delay=0.3
+            delay=0.3,
         ),
-        id="ONOFF_SET_with_optional"),
+        id="ONOFF_SET_with_optional",
+    ),
     pytest.param(
-        b'\x82\x02\x00\x31\xf2\x3c',
+        b"\x82\x02\x00\x31\xf2\x3c",
         GenericOnOffOpcode.GENERIC_ONOFF_SET,
         dict(
             onoff=0,
             tid=49,
             transition_time=30000,
-            delay=0.3
+            delay=0.3,
         ),
-        id="ONOFF_SET_large_transition_time"),
+        id="ONOFF_SET_large_transition_time",
+    ),
     pytest.param(
-        b'\x82\x04\x00',
+        b"\x82\x04\x00",
         GenericOnOffOpcode.GENERIC_ONOFF_STATUS,
         dict(
             present_onoff=0,
             target_onoff=None,
-            remaining_time=None
+            remaining_time=None,
         ),
-        id="ONOFF_STATUS"
+        id="ONOFF_STATUS",
     ),
     pytest.param(
-        b'\x82\x04\x00\x01\x4a',
+        b"\x82\x04\x00\x01\x4a",
         GenericOnOffOpcode.GENERIC_ONOFF_STATUS,
         dict(
             present_onoff=0,
             target_onoff=1,
-            remaining_time=10
+            remaining_time=10,
         ),
-        id="ONOFF_STATUS_with_optional"
+        id="ONOFF_STATUS_with_optional",
     ),
     pytest.param(
-        b'\x82\x04\x00\x01\xff',
+        b"\x82\x04\x00\x01\xff",
         GenericOnOffOpcode.GENERIC_ONOFF_STATUS,
         dict(
             present_onoff=0,
             target_onoff=1,
-            remaining_time=37800
+            remaining_time=37800,
         ),
-        id="ONOFF_STATUS_max_time"
+        id="ONOFF_STATUS_max_time",
     ),
-    # fmt: on
 ]
 
 

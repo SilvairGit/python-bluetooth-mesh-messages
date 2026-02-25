@@ -195,7 +195,7 @@ class Visitor:
 
     @property
     def current(self):
-        field_name, struct_fields = self.stack[-1]
+        _, struct_fields = self.stack[-1]
         return struct_fields
 
     @staticmethod

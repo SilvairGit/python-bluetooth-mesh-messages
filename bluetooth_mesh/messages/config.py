@@ -650,7 +650,7 @@ class RetransmitAdapter(Adapter):
             )
         return dict(
             count=obj["count"],
-            interval_steps=int(round((obj["interval"] / self.interval) - 1)),
+            interval_steps=round((obj["interval"] / self.interval) - 1),
         )
 
 

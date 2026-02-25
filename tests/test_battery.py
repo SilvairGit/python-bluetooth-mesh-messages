@@ -26,46 +26,44 @@ import pytest
 from bluetooth_mesh.messages.generic.battery import *
 
 valid = [
-    # fmt: off
     pytest.param(
-        b'\x82\x23',
+        b"\x82\x23",
         GenericBatteryOpcode.GENERIC_BATTERY_GET,
         dict(),
-        id="GENERIC_BATTERY_GET"
+        id="GENERIC_BATTERY_GET",
     ),
     pytest.param(
-        b'\x82\x24\x32\xb4\x00\x00\xfe\xfe\x00\x62',
+        b"\x82\x24\x32\xb4\x00\x00\xfe\xfe\x00\x62",
         GenericBatteryOpcode.GENERIC_BATTERY_STATUS,
         dict(
             battery_level=50,
-            time_to_discharge=0xb4,
-            time_to_charge=0xfefe,
+            time_to_discharge=0xB4,
+            time_to_charge=0xFEFE,
             flags=dict(
                 battery_presence_flags=GenericBatteryFlagsPresence.BATTERY_PRESENT_NON_REMOVABLE,
                 battery_indicator_flags=GenericBatteryFlagsIndicator.BATTERY_CHARGE_CRITICALLY_LOW,
                 battery_charging_flags=GenericBatteryFlagsCharging.BATTERY_CHARGEABLE_CHARGING,
-                battery_serviceability_flags=GenericBatteryFlagsServiceability.BATTERY_NOT_REQUIRE_SERVICE
-            )
+                battery_serviceability_flags=GenericBatteryFlagsServiceability.BATTERY_NOT_REQUIRE_SERVICE,
+            ),
         ),
-        id="GENERIC_BATTERY_STATUS"
+        id="GENERIC_BATTERY_STATUS",
     ),
     pytest.param(
-        b'\x82\x24\xff\xbb\xaa\x00\xff\xff\xff\xdb',
+        b"\x82\x24\xff\xbb\xaa\x00\xff\xff\xff\xdb",
         GenericBatteryOpcode.GENERIC_BATTERY_STATUS,
         dict(
             battery_level=float(sys.float_info.max),
-            time_to_discharge=0xaabb,
+            time_to_discharge=0xAABB,
             time_to_charge=float(sys.float_info.max),
             flags=dict(
                 battery_presence_flags=GenericBatteryFlagsPresence.BATTERY_PRESENCE_UNKNOWN,
                 battery_indicator_flags=GenericBatteryFlagsIndicator.BATTERY_CHARGE_GOOD,
                 battery_charging_flags=GenericBatteryFlagsCharging.BATTERY_CHARGEABLE_NOT_CHARGING,
-                battery_serviceability_flags=GenericBatteryFlagsServiceability.BATTERY_SERVICEABILITY_UNKNOWN
-            )
+                battery_serviceability_flags=GenericBatteryFlagsServiceability.BATTERY_SERVICEABILITY_UNKNOWN,
+            ),
         ),
-        id="GENERIC_BATTERY_STATUS"
+        id="GENERIC_BATTERY_STATUS",
     ),
-    # fmt: on
 ]
 
 

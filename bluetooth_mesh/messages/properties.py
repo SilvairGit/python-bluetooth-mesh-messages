@@ -32,6 +32,7 @@
 from datetime import date, timedelta
 from enum import IntEnum
 from math import log, pow
+from typing import ClassVar
 
 from construct import (
     Adapter,
@@ -773,7 +774,7 @@ PropertyDict = {
 
 class PropertyMixin:
     ENUM = IntEnum
-    DICT = {}
+    DICT: ClassVar = {}
     ID_FIELD = "property_id"
     VALUE_FIELD = "property_value"
 

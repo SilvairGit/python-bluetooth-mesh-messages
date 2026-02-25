@@ -24,10 +24,8 @@ from enum import IntEnum
 
 from construct import (
     Adapter,
-    BitsInteger,
     BitStruct,
     BytesInteger,
-    Const,
     Construct,
     Container,
     Flag,
@@ -40,7 +38,7 @@ from construct import (
     this,
 )
 
-from bluetooth_mesh.messages.properties import PropertyDict, PropertyMixin, TimeSecond32
+from bluetooth_mesh.messages.properties import PropertyMixin, TimeSecond32
 from bluetooth_mesh.messages.time import (
     MESH_UNIX_EPOCH_DIFF,
     DateTime,
@@ -51,8 +49,6 @@ from bluetooth_mesh.messages.time import (
     timedelta_to_mesh_time_zone_offset,
 )
 from bluetooth_mesh.messages.util import (
-    AliasedContainer,
-    EmbeddedBitStruct,
     EnumAdapter,
     EnumSwitch as Switch,
     NamedSelect,

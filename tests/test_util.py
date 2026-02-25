@@ -27,12 +27,8 @@ from bluetooth_mesh.messages import AccessMessage
 from bluetooth_mesh.messages.util import camelcase, snakecase
 
 valid = [
-    # fmt: off
     pytest.param(opcode.lower())
-    for opcode in chain(
-        *[opcode_class._member_names_ for opcode_class in AccessMessage.OPCODES]
-    )
-    # fmt: on
+    for opcode in chain(*[opcode_class._member_names_ for opcode_class in AccessMessage.OPCODES])
 ]
 
 
