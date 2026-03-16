@@ -21,7 +21,7 @@
 #
 from enum import IntEnum
 
-from construct import Construct, Embedded, GreedyRange, Int8ul, Int16ul, Struct, this
+from construct import Construct, GreedyRange, Int8ul, Int16ul, Struct, this
 
 from bluetooth_mesh.messages.properties import PropertyDict, PropertyID, PropertyMixin
 from bluetooth_mesh.messages.sensor import SensorPropertyId
@@ -109,11 +109,11 @@ class _GenericPropertyStatus(PropertyMixin, Construct):
     )
 
     def _parse(self, stream, context, path):
-        msg = Struct(Embedded(GenericPropertyGet), "access" / Int8ul)._parse(stream, context, path)
+        msg = Struct(*GenericPropertyGet.subcons, "access" / Int8ul)._parse(stream, context, path)
         return self._parse_property(msg, stream, context, path)
 
     def _build(self, obj, stream, context, path):
-        Struct(Embedded(GenericPropertyGet), "access" / Int8ul)._build(obj, stream, context, path)
+        Struct(*GenericPropertyGet.subcons, "access" / Int8ul)._build(obj, stream, context, path)
         return self._build_property(obj, stream, context, path)
 
 

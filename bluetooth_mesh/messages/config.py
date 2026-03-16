@@ -29,7 +29,6 @@ from construct import (
     BitStruct,
     Bytes,
     Bytewise,
-    Embedded,
     ExprValidator,
     Flag,
     GreedyBytes,
@@ -651,7 +650,7 @@ class RetransmitAdapter(Adapter):
             )
         return dict(
             count=obj["count"],
-            interval_steps=int(round((obj["interval"] / self.interval) - 1)),
+            interval_steps=round((obj["interval"] / self.interval) - 1),
         )
 
 
@@ -849,7 +848,7 @@ ConfigModelPublicationSet = Struct(
 
 ConfigModelPublicationStatus = Struct(
     "status" / StatusCodeAdapter,
-    Embedded(ConfigModelPublicationSet)
+    *ConfigModelPublicationSet.subcons
 )
 
 ConfigModelPublicationVASet = Struct(
@@ -981,7 +980,7 @@ ConfigNodeIdentitySet = Struct(
 
 ConfigNodeIdentityStatus = Struct(
     "status" / StatusCodeAdapter,
-    Embedded(ConfigNodeIdentitySet),
+    *ConfigNodeIdentitySet.subcons,
 )
 
 ConfigModelAppBind = Struct(
@@ -994,7 +993,7 @@ ConfigModelAppUnbind = ConfigModelAppBind
 
 ConfigModelAppStatus = Struct(
     "status" / StatusCodeAdapter,
-    Embedded(ConfigModelAppBind),
+    *ConfigModelAppBind.subcons,
 )
 
 ConfigSIGModelAppGet = Struct(
@@ -1004,7 +1003,7 @@ ConfigSIGModelAppGet = Struct(
 
 ConfigSIGModelAppList = Struct(
     "status" / StatusCodeAdapter,
-    Embedded(ConfigSIGModelAppGet),
+    *ConfigSIGModelAppGet.subcons,
     "app key indices" / KeyIndices,
 )
 
@@ -1015,7 +1014,7 @@ ConfigVendorModelAppGet = Struct(
 
 ConfigVendorModelAppList = Struct(
     "status" / StatusCodeAdapter,
-    Embedded(ConfigVendorModelAppGet),
+    *ConfigVendorModelAppGet.subcons,
     "app_key_indices" / KeyIndices,
 )
 
@@ -1036,7 +1035,7 @@ ConfigKeyRefreshPhaseGet = Struct(
 )
 
 ConfigKeyRefreshPhaseSet = Struct(
-    Embedded(ConfigKeyRefreshPhaseGet),
+    *ConfigKeyRefreshPhaseGet.subcons,
     "transition" / EnumAdapter(Int8ul, KeyRefreshTransition),
 )
 
@@ -1063,7 +1062,7 @@ ConfigHeartbeatPublicationSet = Struct(
 
 ConfigHeartbeatPublicationStatus = Struct(
     "status" / StatusCodeAdapter,
-    Embedded(ConfigHeartbeatPublicationSet),
+    *ConfigHeartbeatPublicationSet.subcons,
 )
 
 ConfigHeartbeatSubscriptionGet = Struct()
@@ -1076,7 +1075,7 @@ ConfigHeartbeatSubscriptionSet = Struct(
 
 ConfigHeartbeatSubscriptionStatus = Struct(
     "status" / StatusCodeAdapter,
-    Embedded(ConfigHeartbeatSubscriptionSet),
+    *ConfigHeartbeatSubscriptionSet.subcons,
     "count" / LogAdapter(Int8ul, max_value=0x11, infinity=True),
     "min_hops" / RangeValidator(Int8ul, max_value=0x7F),
     "max_hops" / RangeValidator(Int8ul, max_value=0x7F),
@@ -1087,7 +1086,7 @@ ConfigLowPowerNodePollTimeoutGet = Struct(
 )
 
 ConfigLowPowerNodePollTimeoutStatus = Struct(
-    Embedded(ConfigLowPowerNodePollTimeoutGet),
+    *ConfigLowPowerNodePollTimeoutGet.subcons,
     "poll_timeout" / Int24ul,  # TODO
 )
 

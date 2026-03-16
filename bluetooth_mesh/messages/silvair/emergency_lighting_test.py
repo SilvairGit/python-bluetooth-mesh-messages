@@ -24,13 +24,10 @@ from enum import IntEnum
 
 from construct import (
     Adapter,
-    BitsInteger,
     BitStruct,
     BytesInteger,
-    Const,
     Construct,
     Container,
-    Embedded,
     Flag,
     Int8ul,
     Int16sl,
@@ -41,7 +38,7 @@ from construct import (
     this,
 )
 
-from bluetooth_mesh.messages.properties import PropertyDict, PropertyMixin, TimeSecond32
+from bluetooth_mesh.messages.properties import PropertyMixin, TimeSecond32
 from bluetooth_mesh.messages.time import (
     MESH_UNIX_EPOCH_DIFF,
     DateTime,
@@ -51,15 +48,7 @@ from bluetooth_mesh.messages.time import (
     timedelta_to_mesh_tai_utc_delta,
     timedelta_to_mesh_time_zone_offset,
 )
-from bluetooth_mesh.messages.util import (
-    AliasedContainer,
-    EmbeddedBitStruct,
-    EnumAdapter,
-    EnumSwitch as Switch,
-    NamedSelect,
-    Opcode,
-    SwitchStruct,
-)
+from bluetooth_mesh.messages.util import EnumAdapter, EnumSwitch as Switch, NamedSelect, Opcode, SwitchStruct
 
 
 class EmergencyLightingTestOpcode(IntEnum):
@@ -226,7 +215,7 @@ EmergencyLightingTestFunctionalTestStatusMinimal = Struct(
 )
 
 EmergencyLightingTestFunctionalTestStatusOptional = Struct(
-    Embedded(EmergencyLightingTestFunctionalTestStatusMinimal),
+    *EmergencyLightingTestFunctionalTestStatusMinimal.subcons,
     "relative_timestamp" / Int32ul,
 )
 
@@ -249,7 +238,7 @@ EmergencyLightingTestDurationTestStatusMinimal = Struct(
 )
 
 EmergencyLightingTestDurationTestStatusOptional = Struct(
-    Embedded(EmergencyLightingTestDurationTestStatusMinimal),
+    *EmergencyLightingTestDurationTestStatusMinimal.subcons,
     "relative_timestamp" / Int32ul,
 )
 
