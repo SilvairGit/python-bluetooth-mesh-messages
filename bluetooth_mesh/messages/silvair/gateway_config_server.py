@@ -25,7 +25,6 @@ from construct import (
     BitsInteger,
     BitStruct,
     Bytes,
-    Embedded,
     Int8ul,
     Int16ul,
     PaddedString,
@@ -171,12 +170,12 @@ ConfigurationSetWithoutOptionalAutoDhcpEnabled = Struct(
 )
 
 ConfigurationSetWithOptionalDhcpEnabledWithStaticDns = Struct(
-    Embedded(ConfigurationSetWithoutOptionalAutoDhcpEnabled),
+    *ConfigurationSetWithoutOptionalAutoDhcpEnabled.subcons,
     "dns_ip_address" / IpAddressAdapter(Bytes(4)),
 )
 
 ConfigurationSetWithOptionalDhcpDisabled = Struct(
-    Embedded(ConfigurationSetWithOptionalDhcpEnabledWithStaticDns),
+    *ConfigurationSetWithOptionalDhcpEnabledWithStaticDns.subcons,
     "ip_address" / IpAddressAdapter(Bytes(4)),
     "gateway_ip_address" / IpAddressAdapter(Bytes(4)),
     "netmask" / Int8ul,
@@ -190,7 +189,7 @@ ConfigurationSet = Select(
 
 ConfigurationStatus = Struct(
     "chip_revision_id" / Int8ul,
-    Embedded(ConfigurationSetWithOptionalDhcpDisabled),
+    *ConfigurationSetWithOptionalDhcpDisabled.subcons,
     "flags" / EnumAdapter(Int8ul, DhcpFlag),
     "status_code" / EnumAdapter(Int8ul, StatusCode),
 )

@@ -21,7 +21,7 @@
 #
 from enum import IntEnum
 
-from construct import Embedded, GreedyRange, Int8ul, Int16ul, Struct, this
+from construct import GreedyRange, Int8ul, Int16ul, Struct, this
 
 from bluetooth_mesh.messages.config import (
     TTL,
@@ -78,7 +78,7 @@ NetworkDiagnosticSetupServerPublicationSetMinimal = Struct(
 )
 
 NetworkDiagnosticSetupServerPublicationSetOptional = Struct(
-    Embedded(NetworkDiagnosticSetupServerPublicationSetMinimal),
+    *NetworkDiagnosticSetupServerPublicationSetMinimal.subcons,
     "features" / ConfigHeartbeatPublicationFeatures
 )
 

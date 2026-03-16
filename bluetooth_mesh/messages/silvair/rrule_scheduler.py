@@ -25,7 +25,6 @@ from construct import (
     BitsInteger,
     BitStruct,
     ByteSwapped,
-    Embedded,
     GreedyBytes,
     GreedyRange,
     Int8sl,
@@ -224,7 +223,7 @@ ScheduleRegisterEntryStatusMinimal = Struct(
 )
 
 ScheduleRegisterEntryStatusOptional = Struct(
-    Embedded(ScheduleRegisterEntryStatusMinimal),
+    *ScheduleRegisterEntryStatusMinimal.subcons,
     "scheduler_register_entry" / SchedulerRegisterEntry,
 )
 

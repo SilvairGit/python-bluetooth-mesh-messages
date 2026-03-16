@@ -21,7 +21,7 @@
 #
 from enum import IntEnum
 
-from construct import Embedded, Int8ul, Int16sl, Int32sl, Struct, this
+from construct import Int8ul, Int16sl, Int32sl, Struct, this
 
 from bluetooth_mesh.messages.generics import OptionalSetParameters, TransitionTime, TransitionTimeAdapter
 from bluetooth_mesh.messages.util import EnumSwitch as Switch, NamedSelect, Opcode, SwitchStruct
@@ -47,8 +47,8 @@ GenericLevelSetMinimal = Struct(
 )
 
 GenericLevelSetOptional = Struct(
-    Embedded(GenericLevelSetMinimal),
-    Embedded(OptionalSetParameters)
+    *GenericLevelSetMinimal.subcons,
+    *OptionalSetParameters.subcons
 )
 
 GenericLevelSet = NamedSelect(
@@ -62,8 +62,8 @@ GenericDeltaSetMinimal = Struct(
 )
 
 GenericDeltaSetOptional = Struct(
-    Embedded(GenericDeltaSetMinimal),
-    Embedded(OptionalSetParameters)
+    *GenericDeltaSetMinimal.subcons,
+    *OptionalSetParameters.subcons
 )
 
 GenericDeltaSet = NamedSelect(
@@ -77,8 +77,8 @@ GenericMoveSetMinimal = Struct(
 )
 
 GenericMoveSetOptional = Struct(
-    Embedded(GenericMoveSetMinimal),
-    Embedded(OptionalSetParameters)
+    *GenericMoveSetMinimal.subcons,
+    *OptionalSetParameters.subcons
 )
 
 GenericMoveSet = NamedSelect(
@@ -91,7 +91,7 @@ GenericLevelStatusMinimal = Struct(
 )
 
 GenericLevelStatusOptional = Struct(
-    Embedded(GenericLevelStatusMinimal),
+    *GenericLevelStatusMinimal.subcons,
     "target_level" / Int16sl,
     "remaining_time" / TransitionTimeAdapter(TransitionTime, allow_unknown=True)
 )

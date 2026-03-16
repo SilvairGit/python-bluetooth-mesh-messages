@@ -21,7 +21,7 @@
 #
 from enum import IntEnum
 
-from construct import Embedded, Int8ul, Int16ul, Struct, Switch, this
+from construct import Int8ul, Int16ul, Struct, Switch, this
 
 from bluetooth_mesh.messages.config import StatusCodeAdapter
 from bluetooth_mesh.messages.generics import OptionalSetParameters, TransitionTime, TransitionTimeAdapter
@@ -66,13 +66,13 @@ LightCTLDefault = Struct(
 )
 
 LightCTLSetMinimal = Struct(
-    Embedded(LightCTLDefault),
+    *LightCTLDefault.subcons,
     "tid" / Int8ul
 )
 
 LightCTLSetOptional = Struct(
-    Embedded(LightCTLSetMinimal),
-    Embedded(OptionalSetParameters)
+    *LightCTLSetMinimal.subcons,
+    *OptionalSetParameters.subcons
 )
 
 LightCTLSet = NamedSelect(
@@ -86,7 +86,7 @@ LightCTLStatusMinimal = Struct(
 )
 
 LightCTLStatusOptional = Struct(
-    Embedded(LightCTLStatusMinimal),
+    *LightCTLStatusMinimal.subcons,
     "target_ctl_lightness" / Int16ul,
     "target_ctl_temperature" / Int16ul,
     "remaining_time" / TransitionTimeAdapter(TransitionTime, allow_unknown=True)
@@ -103,7 +103,7 @@ LightCTLTemperatureStatusMinimal = Struct(
 )
 
 LightCTLTemperatureStatusOptional = Struct(
-    Embedded(LightCTLTemperatureStatusMinimal),
+    *LightCTLTemperatureStatusMinimal.subcons,
     "target_ctl_temperature" / Int16ul,
     "target_ctl_delta_uv" / Int16ul,
     "remaining_time" / TransitionTimeAdapter(TransitionTime, allow_unknown=True)
@@ -121,8 +121,8 @@ LightCTLTemperatureSetMinimal = Struct(
 )
 
 LightCTLTemperatureSetOptional = Struct(
-    Embedded(LightCTLTemperatureSetMinimal),
-    Embedded(OptionalSetParameters)
+    *LightCTLTemperatureSetMinimal.subcons,
+    *OptionalSetParameters.subcons
 )
 
 LightCTLTemperatureSet = NamedSelect(
@@ -137,7 +137,7 @@ LightCTLRange = Struct(
 
 LightCTLRangeStatus = Struct(
     "status" / StatusCodeAdapter,
-    Embedded(LightCTLRange)
+    *LightCTLRange.subcons
 )
 
 

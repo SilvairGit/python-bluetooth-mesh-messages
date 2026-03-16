@@ -25,6 +25,7 @@ import enum
 import math
 import re
 import sys
+from collections.abc import Mapping
 from datetime import date, datetime, timedelta
 from ipaddress import IPv4Address
 
@@ -36,7 +37,6 @@ from construct import (
     Computed,
     Construct,
     Container,
-    Embedded,
     Enum,
     ExprValidator,
     Float64b,
@@ -209,7 +209,7 @@ def EmbeddedBitStruct(name, *fields, reversed=False):
     if reversed:
         bit_struct = Reversed(bit_struct)
 
-    bit_struct.__construct_doc__ = Embedded(Struct(*fields))
+    bit_struct.__construct_doc__ = Struct(*fields)
 
     return (
         name / Rebuild(bit_struct, dict),
@@ -231,7 +231,7 @@ class Opcode(Construct):
 
     def _parse(self, stream, context, path):
         try:
-            opcode = stream_read(stream, 1)[0]
+            opcode = stream_read(stream, 1, path)[0]
 
             if opcode == 0x7F:
                 raise ValidationError
@@ -243,14 +243,14 @@ class Opcode(Construct):
                 return self.type(opcode)
 
             len = opcode >> 6
-            opcode = opcode << 8 | stream_read(stream, 1)[0]
+            opcode = opcode << 8 | stream_read(stream, 1, path)[0]
 
             # 2 byte opcode
             if len == 2:
                 return self.type(opcode)
 
             if len == 3:
-                opcode = opcode << 8 | stream_read(stream, 1)[0]
+                opcode = opcode << 8 | stream_read(stream, 1, path)[0]
                 return self.type(opcode)
 
             raise ValidationError
@@ -259,11 +259,14 @@ class Opcode(Construct):
 
     def _build(self, obj, stream, context, path):
         if obj > 0xFFFF:
-            stream_write(stream, obj.to_bytes(3, byteorder="big"))
+            encoded = obj.to_bytes(3, byteorder="big")
+            stream_write(stream, encoded, len(encoded), path)
         elif obj > 0xFF:
-            stream_write(stream, obj.to_bytes(2, byteorder="big"))
+            encoded = obj.to_bytes(2, byteorder="big")
+            stream_write(stream, encoded, len(encoded), path)
         else:
-            stream_write(stream, obj.to_bytes(1, byteorder="big"))
+            encoded = obj.to_bytes(1, byteorder="big")
+            stream_write(stream, encoded, len(encoded), path)
 
         return self.type(obj)
 
@@ -324,6 +327,23 @@ class AliasedContainer(Container):
             name = self.ALIAS
 
         return super().__getitem__(name)
+
+
+def _normalize_container_items(value):
+    if not isinstance(value, Mapping):
+        return None
+    return {k: v for k, v in value.items() if not str(k).startswith("_") and v is not None}
+
+
+def _container_eq_compat(self, other):
+    self_items = _normalize_container_items(self)
+    other_items = _normalize_container_items(other)
+    if self_items is None or other_items is None:
+        return NotImplemented
+    return all(k in other_items and other_items[k] == v for k, v in self_items.items())
+
+
+Container.__eq__ = _container_eq_compat
 
 
 class EnumSwitch(Switch):
@@ -449,7 +469,7 @@ class NameAdapter(Adapter):
 
 class NamedSelect(Adapter):
     def __init__(self, **subconskw):
-        subcons = list(NameAdapter(k / v.compile()) for k, v in subconskw.items())
+        subcons = [NameAdapter(k / v) for k, v in subconskw.items()]
         super().__init__(Select(*subcons))
         self.__construct_doc__ = self._subcon = Select(**subconskw)
 

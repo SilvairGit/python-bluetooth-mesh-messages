@@ -32,12 +32,12 @@
 from datetime import date, timedelta
 from enum import IntEnum
 from math import log, pow
+from typing import ClassVar
 
 from construct import (
     Adapter,
     BitsInteger,
     BytesInteger,
-    Embedded,
     ExprAdapter,
     Flag,
     Float32b,
@@ -344,7 +344,7 @@ ElectricCurrentSpecification = Struct(
 ElectricCurrentStatistics = Struct(
     "average_electric_current_value" / DefaultCountValidator(Int16ul, rounding=2, resolution=0.01),
     "standard_deviation_electric_current_value" / DefaultCountValidator(Int16ul, rounding=2, resolution=0.01),
-    Embedded(ElectricCurrentRange),
+    *ElectricCurrentRange.subcons,
     "sensing_duration" / TimeExponential8,
 )
 
@@ -451,7 +451,7 @@ TemperatureRange = Struct(
 Temperature8Statistics = Struct(
     "average_temperature" / DefaultCountValidator(Int8sl, rounding=1, resolution=0.5),
     "standard_deviation_temperature" / DefaultCountValidator(Int8sl, rounding=1, resolution=0.5),
-    Embedded(TemperatureRange),
+    *TemperatureRange.subcons,
     "sensing_duration" / TimeExponential8,
 )
 
@@ -774,7 +774,7 @@ PropertyDict = {
 
 class PropertyMixin:
     ENUM = IntEnum
-    DICT = {}
+    DICT: ClassVar = {}
     ID_FIELD = "property_id"
     VALUE_FIELD = "property_value"
 
