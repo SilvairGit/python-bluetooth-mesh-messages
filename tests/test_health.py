@@ -25,7 +25,6 @@ import pytest
 from bluetooth_mesh.messages.health import *
 
 valid = [
-    # fmt: off
     pytest.param(
         HealthCurrentStatus,
         bytes.fromhex("043601"),
@@ -34,7 +33,7 @@ valid = [
             "company_id": 0x0136,
             "fault_array": [],
         },
-        id='HealthCurrentStatus - without faults'
+        id="HealthCurrentStatus - without faults",
     ),
     pytest.param(
         HealthCurrentStatus,
@@ -44,7 +43,7 @@ valid = [
             "company_id": 0x0136,
             "fault_array": [0x02, 0x03, 0x04],
         },
-        id='HealthCurrentStatus - with faults'
+        id="HealthCurrentStatus - with faults",
     ),
     pytest.param(
         HealthFaultGet,
@@ -52,7 +51,7 @@ valid = [
         {
             "company_id": 0x0136,
         },
-        id='HealthFaultGet'
+        id="HealthFaultGet",
     ),
     pytest.param(
         HealthFaultClear,
@@ -60,7 +59,7 @@ valid = [
         {
             "company_id": 0x0136,
         },
-        id='HealthFaultClear'
+        id="HealthFaultClear",
     ),
     pytest.param(
         HealthFaultTest,
@@ -69,7 +68,7 @@ valid = [
             "test_id": 3,
             "company_id": 0x0136,
         },
-        id='HealthFaultTest'
+        id="HealthFaultTest",
     ),
     pytest.param(
         HealthFaultStatus,
@@ -79,7 +78,7 @@ valid = [
             "company_id": 0x0136,
             "fault_array": [],
         },
-        id='HealthCurrentStatus - without faults'
+        id="HealthCurrentStatus - without faults",
     ),
     pytest.param(
         HealthFaultStatus,
@@ -89,77 +88,72 @@ valid = [
             "company_id": 0x0136,
             "fault_array": [0x02, 0x03, 0x04],
         },
-        id='HealthCurrentStatus - with faults'
+        id="HealthCurrentStatus - with faults",
     ),
     pytest.param(
         HealthPeriodGet,
         bytes.fromhex(""),
         {},
-        id='HealthPeriodGet',
+        id="HealthPeriodGet",
     ),
     pytest.param(
         HealthPeriodSet,
         bytes.fromhex("0f"),
         {
-            "fast_period_divisor": 15
+            "fast_period_divisor": 15,
         },
-        id='HealthPeriodSet',
+        id="HealthPeriodSet",
     ),
     pytest.param(
         HealthPeriodStatus,
         bytes.fromhex("06"),
         {
-            "fast_period_divisor": 6
+            "fast_period_divisor": 6,
         },
-        id='HealthPeriodStatus',
+        id="HealthPeriodStatus",
     ),
     pytest.param(
         HealthAttentionGet,
         bytes.fromhex(""),
         {},
-        id='HealthAttentionGet',
+        id="HealthAttentionGet",
     ),
     pytest.param(
         HealthAttentionSet,
         bytes.fromhex("07"),
         {
-            "attention": 7
+            "attention": 7,
         },
-        id='HealthAttentionSet',
+        id="HealthAttentionSet",
     ),
     pytest.param(
         HealthAttentionStatus,
         bytes.fromhex("06"),
         {
-            "attention": 6
+            "attention": 6,
         },
-        id='HealthAttentionSet',
+        id="HealthAttentionSet",
     ),
-    # fmt: on
 ]
 
 parse_invalid = [
-    # fmt: off
     pytest.param(
         HealthPeriodSet,
         bytes.fromhex("10"),
         construct.core.ValidationError,
-        id="HealthPeriodSet - wrong value"
+        id="HealthPeriodSet - wrong value",
     ),
-    # fmt: on
 ]
 
 build_invalid = [
-    # fmt: off
     pytest.param(
         HealthPeriodSet,
         {
-            "fast_period_divisor": 16
+            "fast_period_divisor": 16,
         },
         construct.core.ValidationError,
-        id="HealthPeriodSet - wrong value"
+        id="HealthPeriodSet - wrong value",
     ),
-    # fmt: on
 ]
 
 

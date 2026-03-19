@@ -24,18 +24,16 @@ import pytest
 from bluetooth_mesh.messages import AccessMessage
 
 valid = [
-    # fmt: off
     pytest.param(
         bytes.fromhex("82310200"),
         {
             "opcode": "SENSOR_GET",
             "params": {
                 "property_id": "AVERAGE_INPUT_CURRENT",
-            }
+            },
         },
-        id="SensorGet[AVERAGE_INPUT_CURRENT]"
+        id="SensorGet[AVERAGE_INPUT_CURRENT]",
     ),
-    # fmt: on
 ]
 
 

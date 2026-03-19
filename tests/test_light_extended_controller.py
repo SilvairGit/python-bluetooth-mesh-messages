@@ -31,7 +31,6 @@ from bluetooth_mesh.messages.silvair.light_extended_controller import (
 )
 
 valid = [
-    # fmt: off
     pytest.param(
         bytes.fromhex("f636010071ff"),
         LightExtendedControllerOpcode.SILVAIR_LEC,
@@ -39,9 +38,9 @@ valid = [
             subopcode=LightExtendedControllerSubOpcode.PROPERTY_GET,
             payload=dict(
                 property_id=LightExtendedControllerProperty.AUTO_RESUME_MODE,
-            )
+            ),
         ),
-        id="LIGHT_LEC_PROPERTY_GET[AUTO_RESUME_MODE]"
+        id="LIGHT_LEC_PROPERTY_GET[AUTO_RESUME_MODE]",
     ),
     pytest.param(
         bytes.fromhex("f636010171ff01"),
@@ -51,9 +50,9 @@ valid = [
             payload=dict(
                 property_id=LightExtendedControllerProperty.AUTO_RESUME_MODE,
                 auto_resume_mode=True,
-            )
+            ),
         ),
-        id="LIGHT_LEC_PROPERTY_SET[AUTO_RESUME_MODE]"
+        id="LIGHT_LEC_PROPERTY_SET[AUTO_RESUME_MODE]",
     ),
     pytest.param(
         bytes.fromhex("f636010272ff10A400"),
@@ -63,9 +62,9 @@ valid = [
             payload=dict(
                 property_id=LightExtendedControllerProperty.AUTO_RESUME_TIMER,
                 auto_resume_timer=dict(seconds=42),
-            )
+            ),
         ),
-        id="LIGHT_LEC_PROPERTY_SET_UNACKNOWLEDGED[AUTO_RESUME_TIMER]"
+        id="LIGHT_LEC_PROPERTY_SET_UNACKNOWLEDGED[AUTO_RESUME_TIMER]",
     ),
     pytest.param(
         bytes.fromhex("f636010372ff90ca04"),
@@ -75,17 +74,16 @@ valid = [
             payload=dict(
                 property_id=LightExtendedControllerProperty.AUTO_RESUME_TIMER,
                 auto_resume_timer=dict(seconds=314),
-            )
+            ),
         ),
-        id="LIGHT_LEC_PROPERTY_STATUS[AUTO_RESUME_TIMER]"
+        id="LIGHT_LEC_PROPERTY_STATUS[AUTO_RESUME_TIMER]",
     ),
-    # fmt: on
 ]
 
 
 @pytest.mark.parametrize("encoded,opcode,data", valid)
 def test_parse_valid(encoded, opcode, data):
-    LightExtendedControllerMessage.parse(encoded).params == data
+    assert LightExtendedControllerMessage.parse(encoded).params == data
 
 
 @pytest.mark.parametrize("encoded,opcode,data", valid)

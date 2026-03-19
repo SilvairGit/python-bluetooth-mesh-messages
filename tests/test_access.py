@@ -24,7 +24,6 @@ import pytest
 from bluetooth_mesh.messages import AccessMessage
 
 valid = [
-    # fmt: off
     pytest.param(
         bytes.fromhex("04003601030405"),
         {
@@ -32,15 +31,15 @@ valid = [
             "params": {
                 "test_id": 0,
                 "company_id": 0x0136,
-                "fault_array": [0x03, 0x04, 0x05]
+                "fault_array": [0x03, 0x04, 0x05],
             },
             "health_current_status": {
                 "test_id": 0,
                 "company_id": 0x0136,
-                "fault_array": [0x03, 0x04, 0x05]
-            }
+                "fault_array": [0x03, 0x04, 0x05],
+            },
         },
-        id="1 byte opcode"
+        id="1 byte opcode",
     ),
     pytest.param(
         bytes.fromhex("8032013601"),
@@ -48,24 +47,23 @@ valid = [
             "opcode": 0x8032,
             "params": {
                 "test_id": 1,
-                "company_id": 0x0136
+                "company_id": 0x0136,
             },
             "health_fault_test": {
                 "test_id": 1,
-                "company_id": 0x0136
-            }
+                "company_id": 0x0136,
+            },
         },
-        id="2 byte opcode"
+        id="2 byte opcode",
     ),
     pytest.param(
         bytes.fromhex("c0112233"),
         {
-            "opcode": 0xc01122,
-            "params": bytes([0x33])
+            "opcode": 0xC01122,
+            "params": bytes([0x33]),
         },
-        id="3 byte opcode"
-    )
-    # fmt: on
+        id="3 byte opcode",
+    ),
 ]
 
 
