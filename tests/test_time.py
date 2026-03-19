@@ -34,80 +34,85 @@ from bluetooth_mesh.messages.time import (
 )
 
 valid = [
-    # fmt: off
     pytest.param(
-        b'\x82\x37',
+        b"\x82\x37",
         TimeOpcode.TIME_GET,
         dict(),
-        id="TIME_GET"
+        id="TIME_GET",
     ),
     pytest.param(
-        b'\x5C\xbd\xf7\x67\x26\x00\x1a\xb2\x49\x02\x48',
+        b"\x5c\xbd\xf7\x67\x26\x00\x1a\xb2\x49\x02\x48",
         TimeOpcode.TIME_SET,
         dict(
             date=datetime.fromtimestamp(
-                0x2667f7bd + MESH_UNIX_EPOCH_DIFF + subsecond_to_seconds(0x1A) + mesh_time_zone_offset_to_timedelta(
-                    0x48).total_seconds(),
-                timezone(mesh_time_zone_offset_to_timedelta(0x48))),
+                0x2667F7BD
+                + MESH_UNIX_EPOCH_DIFF
+                + subsecond_to_seconds(0x1A)
+                + mesh_time_zone_offset_to_timedelta(0x48).total_seconds(),
+                timezone(mesh_time_zone_offset_to_timedelta(0x48)),
+            ),
             uncertainty=timedelta(milliseconds=(0xB2 * 10)),
             tai_utc_delta=mesh_tai_utc_delta_to_timedelta(0x0248 >> 1),
             time_authority=True,
         ),
-        id="TIME_SET"
+        id="TIME_SET",
     ),
     pytest.param(
-        b'\x5D\xbd\xf7\x67\x26\x00\x1a\xb2\x49\x02\x48',
+        b"\x5d\xbd\xf7\x67\x26\x00\x1a\xb2\x49\x02\x48",
         TimeOpcode.TIME_STATUS,
         dict(
             date=datetime.fromtimestamp(
-                0x2667f7bd + MESH_UNIX_EPOCH_DIFF + subsecond_to_seconds(0x1A) + mesh_time_zone_offset_to_timedelta(
-                    0x48).total_seconds(),
-                timezone(mesh_time_zone_offset_to_timedelta(0x48))),
+                0x2667F7BD
+                + MESH_UNIX_EPOCH_DIFF
+                + subsecond_to_seconds(0x1A)
+                + mesh_time_zone_offset_to_timedelta(0x48).total_seconds(),
+                timezone(mesh_time_zone_offset_to_timedelta(0x48)),
+            ),
             uncertainty=timedelta(milliseconds=(0xB2 * 10)),
             tai_utc_delta=mesh_tai_utc_delta_to_timedelta(0x0248 >> 1),
             time_authority=True,
         ),
-        id="TIME_STATUS"
+        id="TIME_STATUS",
     ),
     pytest.param(
         bytes.fromhex("823b"),
         TimeOpcode.TIME_ZONE_GET,
         dict(),
-        id="TIME_ZONE_GET"
+        id="TIME_ZONE_GET",
     ),
     pytest.param(
         bytes.fromhex("823cab3400000012"),
         TimeOpcode.TIME_ZONE_SET,
         dict(
-            time_zone_offset_new=0xab,
-            tai_of_zone_change=0x1200000034
+            time_zone_offset_new=0xAB,
+            tai_of_zone_change=0x1200000034,
         ),
-        id="TIME_ZONE_SET"
+        id="TIME_ZONE_SET",
     ),
     pytest.param(
         bytes.fromhex("823dcdab3400000012"),
         TimeOpcode.TIME_ZONE_STATUS,
         dict(
-            time_zone_offset_current=0xcd,
-            time_zone_offset_new=0xab,
-            tai_of_zone_change=0x1200000034
+            time_zone_offset_current=0xCD,
+            time_zone_offset_new=0xAB,
+            tai_of_zone_change=0x1200000034,
         ),
-        id="TIME_ZONE_STATUS"
+        id="TIME_ZONE_STATUS",
     ),
     pytest.param(
         bytes.fromhex("823e"),
         TimeOpcode.TAI_UTC_DELTA_GET,
         dict(),
-        id="TAI_UTC_DELTA_GET"
+        id="TAI_UTC_DELTA_GET",
     ),
     pytest.param(
         bytes.fromhex("823f01005544332211"),
         TimeOpcode.TAI_UTC_DELTA_SET,
         dict(
             tai_utc_delta_new=0b000000000000001,
-            tai_of_delta_change=0x1122334455
+            tai_of_delta_change=0x1122334455,
         ),
-        id="TAI_UTC_DELTA_SET"
+        id="TAI_UTC_DELTA_SET",
     ),
     pytest.param(
         bytes.fromhex("8240014001005544332211"),
@@ -115,15 +120,15 @@ valid = [
         dict(
             tai_utc_delta_current=0b100000000000001,
             tai_utc_delta_new=0b000000000000001,
-            tai_of_delta_change=0x1122334455
+            tai_of_delta_change=0x1122334455,
         ),
-        id="TAI_UTC_DELTA_STATUS"
+        id="TAI_UTC_DELTA_STATUS",
     ),
     pytest.param(
         bytes.fromhex("8238"),
         TimeOpcode.TIME_ROLE_GET,
         dict(),
-        id="TIME_ROLE_GET"
+        id="TIME_ROLE_GET",
     ),
     pytest.param(
         bytes.fromhex("823903"),
@@ -131,7 +136,7 @@ valid = [
         dict(
             time_role=TimeRole.TIME_CLIENT,
         ),
-        id="TIME_ROLE_SET"
+        id="TIME_ROLE_SET",
     ),
     pytest.param(
         bytes.fromhex("823A03"),
@@ -139,9 +144,8 @@ valid = [
         dict(
             time_role=TimeRole.TIME_CLIENT,
         ),
-        id="TIME_ROLE_STATUS"
+        id="TIME_ROLE_STATUS",
     ),
-    # # fmt: on
 ]
 
 

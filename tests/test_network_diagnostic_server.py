@@ -29,14 +29,13 @@ from bluetooth_mesh.messages.silvair.network_diagnostic_server import (
     NetworkDiagnosticSetupServerSubOpcode,
 )
 
-# fmt: off
 valid = [
     pytest.param(
         NetworkDiagnosticSetupServerParams,
         bytes.fromhex("00"),
         NetworkDiagnosticSetupServerSubOpcode.PUBLICATION_GET,
         {},
-        id='PublicationGet'
+        id="PublicationGet",
     ),
     pytest.param(
         NetworkDiagnosticSetupServerParams,
@@ -48,9 +47,9 @@ valid = [
             period=dict(steps=0x02, resolution=0b10),
             ttl=0x03,
             net_key_index=0x0010,
-            features=None
+            features=None,
         ),
-        id='PublicationSet (no features)'
+        id="PublicationSet (no features)",
     ),
     pytest.param(
         NetworkDiagnosticSetupServerParams,
@@ -62,9 +61,9 @@ valid = [
             period=dict(steps=0x02, resolution=0b10),
             ttl=0x03,
             net_key_index=0x0010,
-            features=0x0003
+            features=0x0003,
         ),
-        id="PublicationSet (with features)"
+        id="PublicationSet (with features)",
     ),
     pytest.param(
         NetworkDiagnosticSetupServerParams,
@@ -76,9 +75,9 @@ valid = [
             period=dict(steps=0x02, resolution=0b10),
             ttl=0x03,
             net_key_index=0x0010,
-            features=None
+            features=None,
         ),
-        id="PublicationStatus (no features)"
+        id="PublicationStatus (no features)",
     ),
     pytest.param(
         NetworkDiagnosticSetupServerParams,
@@ -90,16 +89,16 @@ valid = [
             period=dict(steps=0x02, resolution=0b10),
             ttl=0x03,
             net_key_index=0x0010,
-            features=0x0003
+            features=0x0003,
         ),
-        id="PublicationStatus (with features)"
+        id="PublicationStatus (with features)",
     ),
     pytest.param(
         NetworkDiagnosticServerParams,
         bytes.fromhex("00"),
         NetworkDiagnosticServerSubOpcode.SUBSCRIPTION_GET,
         {},
-        id="SubscriptionGet"
+        id="SubscriptionGet",
     ),
     pytest.param(
         NetworkDiagnosticServerParams,
@@ -107,9 +106,9 @@ valid = [
         NetworkDiagnosticServerSubOpcode.SUBSCRIPTION_SET,
         dict(
             destination=0x3412,
-            period=0xAAAA
+            period=0xAAAA,
         ),
-        id="SubscriptionSet"
+        id="SubscriptionSet",
     ),
     pytest.param(
         NetworkDiagnosticServerParams,
@@ -119,9 +118,9 @@ valid = [
             destination=0x3412,
             period=0xAAAA,
             max_record_count=32,
-            record=[dict(source=0x7856, count=0xBBBB, min_hops=0x00, max_hops=0x00)]
+            record=[dict(source=0x7856, count=0xBBBB, min_hops=0x00, max_hops=0x00)],
         ),
-        id="SubscriptionStatus (one record)"
+        id="SubscriptionStatus (one record)",
     ),
     pytest.param(
         NetworkDiagnosticServerParams,
@@ -134,12 +133,11 @@ valid = [
             record=[
                 dict(source=0x7856, count=0xBBBB, min_hops=0x00, max_hops=0x00),
                 dict(source=0x0191, count=0xCCCC, min_hops=0x01, max_hops=0x01),
-            ]
+            ],
         ),
-        id="SubscriptionStatus (multiple records)"
-    )
+        id="SubscriptionStatus (multiple records)",
+    ),
 ]
-# fmt: on
 
 
 @pytest.mark.parametrize("klass,encoded,subopcode,payload", valid)
