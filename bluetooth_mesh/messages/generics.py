@@ -61,14 +61,12 @@ class Delay(Adapter):
         return int(obj * 200)
 
 
-# fmt: off
 TransitionTime = BitStruct(
     "resolution" / BitsInteger(2),
-    "steps" / BitsInteger(6)
+    "steps" / BitsInteger(6),
 )
 
 OptionalSetParameters = Struct(
     "transition_time" / TransitionTimeAdapter(TransitionTime, allow_unknown=False),
-    "delay" / Delay(Int8ul)
+    "delay" / Delay(Int8ul),
 )
-# fmt: on

@@ -121,10 +121,10 @@ class DebugV2DataTypes(IntEnum):
     INVALID = 0xFF
 
 
-# fmt: off
 DebugV2Parameter = SwitchStruct(
     "data_type" / EnumAdapter(Int8ul, DebugV2DataTypes),
-    "parameter" / Switch(
+    "parameter"
+    / Switch(
         this.data_type,
         {
             DebugV2DataTypes.UINT8: Int8ul,
@@ -140,26 +140,25 @@ DebugV2Parameter = SwitchStruct(
             DebugV2DataTypes.ENUM: Int8ul,
             DebugV2DataTypes.STRING: PascalString(Int8ul, "utf-8"),
             DebugV2DataTypes.ARRAY: PrefixedArray(Int8ul, Int8ul),
-            DebugV2DataTypes.INVALID: Struct()
-        }
-    )
+            DebugV2DataTypes.INVALID: Struct(),
+        },
+    ),
 )
 
 DebugV2SubMessage = Struct(
     "subopcode" / EnumAdapter(Int8ul, DebugV2SubOpcode),
     "parameter_type" / Int8ul,
     "page_number" / Int8ul,
-    "payload" / GreedyRange(DebugV2Parameter)
+    "payload" / GreedyRange(DebugV2Parameter),
 )
 
 DebugV2Message = SwitchStruct(
     "opcode" / Opcode(DebugV2Opcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
             DebugV2Opcode.SILVAIR_DEBUG_V2: DebugV2SubMessage,
-        }
-    )
+        },
+    ),
 )
-
-# fmt: on

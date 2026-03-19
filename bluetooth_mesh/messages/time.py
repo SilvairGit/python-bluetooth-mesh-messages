@@ -62,9 +62,6 @@ MESH_UNIX_EPOCH_DIFF = calendar.timegm(
 SECONDS_IN_15_MINUTES = 15 * 60
 
 
-# fmt: off
-
-
 class TimeRole(enum.IntEnum):
     NONE = 0
     TIME_AUTHORITY = 1
@@ -73,11 +70,12 @@ class TimeRole(enum.IntEnum):
 
 
 def TAI_UTC_DeltaPaddedField(tai_utc_delta_name: str):
-    return EmbeddedBitStruct("_",
-                             Padding(1),
-                             tai_utc_delta_name / BitsInteger(15),
-                             reversed=True
-                             )
+    return EmbeddedBitStruct(
+        "_",
+        Padding(1),
+        tai_utc_delta_name / BitsInteger(15),
+        reversed=True,
+    )
 
 
 def mesh_time_zone_offset_to_timedelta(time_zone_offset: int) -> timedelta:
@@ -88,7 +86,7 @@ def timedelta_to_mesh_time_zone_offset(time_zone: timedelta) -> int:
     if time_zone is None:
         return TIME_ZONE_OFFSET_ZERO
 
-    assert (int(time_zone.total_seconds() % SECONDS_IN_15_MINUTES) == 0)
+    assert int(time_zone.total_seconds() % SECONDS_IN_15_MINUTES) == 0
     return int((time_zone.total_seconds() // SECONDS_IN_15_MINUTES) + TIME_ZONE_OFFSET_ZERO)
 
 
@@ -97,7 +95,7 @@ def mesh_tai_utc_delta_to_timedelta(tai_utc_delta: int) -> timedelta:
 
 
 def timedelta_to_mesh_tai_utc_delta(time_zone: timedelta) -> int:
-    assert (time_zone.total_seconds().is_integer())
+    assert time_zone.total_seconds().is_integer()
     return int(time_zone.total_seconds() + TAI_UTC_DELTA_ZERO)
 
 
@@ -108,6 +106,7 @@ def subsecond_to_seconds(subsecond: int) -> float:
 def seconds_to_subsecond(seconds: float) -> int:
     return round((seconds - int(seconds)) * 256)
 
+
 TimeMinimal = Struct(
     "tai_seconds" / BytesInteger(5, swapped=True),
 )
@@ -117,11 +116,12 @@ TimeOptional = Struct(
     StopIf(this.tai_seconds == 0),
     "subsecond" / Int8ul,
     "uncertainty" / Int8ul,
-    *EmbeddedBitStruct("_",
-                       "tai_utc_delta" / BitsInteger(15),
-                       "time_authority" / Flag,
-                       reversed=True
-                       ),
+    *EmbeddedBitStruct(
+        "_",
+        "tai_utc_delta" / BitsInteger(15),
+        "time_authority" / Flag,
+        reversed=True,
+    ),
     "time_zone_offset" / Int8ul,
 )
 
@@ -140,20 +140,21 @@ class TimeZoneOffsetAdapter(Adapter):
         return (obj - 0x40) * 15
 
     def _encode(self, obj, context, path):
-        assert ((obj % 15) == 0)
+        assert (obj % 15) == 0
         return 0x40 + (obj // 15)
 
 
 class TAIUTCDeltaAdapter(Adapter):
     """
-    TAI-UTC Delta is described in seconds encoded in signed integer, mesh format in signed integer with different offset
+    TAI-UTC Delta is described in seconds encoded in signed integer,
+    mesh format in signed integer with different offset
     """
 
     def _decode(self, obj, context, path):
         return obj - 0xFF
 
     def _encode(self, obj, context, path):
-        assert (obj > -255)
+        assert obj > -255
         return obj + 0xFF
 
 
@@ -166,7 +167,7 @@ class UncertaintyAdapter(Adapter):
         return round(obj / 100, 2)
 
     def _encode(self, obj, context, path):
-        assert (obj < 2.6)
+        assert obj < 2.6
         return math.floor(obj * 100)
 
 
@@ -196,18 +197,22 @@ class TimeAdapter(Adapter):
                 date=None,
                 tai_utc_delta=None,
                 time_authority=None,
-                uncertainty=None
+                uncertainty=None,
             )
         time_zone = mesh_time_zone_offset_to_timedelta(obj["time_zone_offset"])
-        full_recv_time = obj["tai_seconds"] + subsecond_to_seconds(obj["subsecond"]) + MESH_UNIX_EPOCH_DIFF + int(
-            time_zone.total_seconds())
+        full_recv_time = (
+            obj["tai_seconds"]
+            + subsecond_to_seconds(obj["subsecond"])
+            + MESH_UNIX_EPOCH_DIFF
+            + int(time_zone.total_seconds())
+        )
         recv_date = datetime.fromtimestamp(full_recv_time, timezone(time_zone))
 
         return Container(
             date=recv_date,
             tai_utc_delta=mesh_tai_utc_delta_to_timedelta(obj["tai_utc_delta"]),
             time_authority=bool(obj["time_authority"]),
-            uncertainty=timedelta(milliseconds=(obj["uncertainty"] * 10))
+            uncertainty=timedelta(milliseconds=obj["uncertainty"] * 10),
         )
 
     def _encode(self, obj, context, path):
@@ -223,7 +228,7 @@ class TimeAdapter(Adapter):
                 minute=passed_time["minute"],
                 second=passed_time["second"],
                 microsecond=passed_time["microsecond"],
-                tzinfo=timezone(time_zone)
+                tzinfo=timezone(time_zone),
             )
 
         if isinstance(obj["uncertainty"], float):
@@ -240,12 +245,12 @@ class TimeAdapter(Adapter):
             uncertainty=int((obj["uncertainty"].total_seconds() * 100)),
             tai_utc_delta=timedelta_to_mesh_tai_utc_delta(obj["tai_utc_delta"]),
             time_authority=bool(obj["time_authority"]),
-            time_zone_offset=timedelta_to_mesh_time_zone_offset(passed_time.utcoffset())
+            time_zone_offset=timedelta_to_mesh_time_zone_offset(passed_time.utcoffset()),
         )
 
 
 TimeRoleMsg = Struct(
-    "time_role" / EnumAdapter(Int8ul, TimeRole)
+    "time_role" / EnumAdapter(Int8ul, TimeRole),
 )
 
 TimeGet = Struct()
@@ -287,8 +292,6 @@ TimeRoleSet = TimeRoleMsg
 TimeRoleStatus = TimeRoleMsg
 
 
-# fmt: off
-
 class TimeOpcode(enum.IntEnum):
     TIME_GET = 0x8237
     TIME_SET = 0x005C
@@ -304,10 +307,10 @@ class TimeOpcode(enum.IntEnum):
     TAI_UTC_DELTA_STATUS = 0x8240
 
 
-# fmt: off
 TimeMessage = SwitchStruct(
     "opcode" / Opcode(TimeOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
             TimeOpcode.TIME_GET: TimeGet,
@@ -321,8 +324,7 @@ TimeMessage = SwitchStruct(
             TimeOpcode.TAI_UTC_DELTA_STATUS: TAIUTCDeltaStatus,
             TimeOpcode.TIME_ROLE_GET: TimeRoleGet,
             TimeOpcode.TIME_ROLE_SET: TimeRoleSet,
-            TimeOpcode.TIME_ROLE_STATUS: TimeRoleStatus
-        }
-    )
+            TimeOpcode.TIME_ROLE_STATUS: TimeRoleStatus,
+        },
+    ),
 )
-# fmt: on

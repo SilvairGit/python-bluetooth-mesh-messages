@@ -124,7 +124,6 @@ class StatusCode(IntEnum):
     STATUS_INVALID_BINDING = 0x11
 
 
-# fmt: off
 # GATEWAY CONFIGURATION MSG
 ConfigurationSetMtu = Struct(
     "mtu_size" / Int16ul,
@@ -197,7 +196,7 @@ ConfigurationStatus = Struct(
 ConnectionState = BitStruct(
     "conn_state" / EnumAdapter(BitsInteger(3), ConnState),
     "link_status" / EnumAdapter(BitsInteger(1), LinkStatus),
-    "last_error" / EnumAdapter(BitsInteger(4), LastError)
+    "last_error" / EnumAdapter(BitsInteger(4), LastError),
 )
 
 # GATEWAY PACKETS MSG
@@ -210,7 +209,8 @@ PacketsStatus = Struct(
 
 GatewayConfigParams = SwitchStruct(
     "subopcode" / EnumAdapter(Int8ul, GatewayConfigServerSubOpcode),
-    "payload" / Switch(
+    "payload"
+    / Switch(
         this.subopcode,
         {
             GatewayConfigServerSubOpcode.GATEWAY_CONFIGURATION_SET: ConfigurationSet,
@@ -225,16 +225,16 @@ GatewayConfigParams = SwitchStruct(
             GatewayConfigServerSubOpcode.GATEWAY_CONFIGURATION_STATUS: ConfigurationStatus,
             GatewayConfigServerSubOpcode.GATEWAY_PACKETS_STATUS: PacketsStatus,
         },
-    )
+    ),
 )
 
 GatewayConfigMessage = SwitchStruct(
     "opcode" / Opcode(GatewayConfigServerOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
-            GatewayConfigServerOpcode.SILVAIR_GATEWAY: GatewayConfigParams
-        }
-    )
+            GatewayConfigServerOpcode.SILVAIR_GATEWAY: GatewayConfigParams,
+        },
+    ),
 )
-# fmt: on

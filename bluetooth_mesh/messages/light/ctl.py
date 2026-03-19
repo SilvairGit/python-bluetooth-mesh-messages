@@ -56,28 +56,27 @@ class LightCTLSetupOpcode(IntEnum):
         return str(self.value)
 
 
-# fmt: off
 LightCTLGet = Struct()
 
 LightCTLDefault = Struct(
     "ctl_lightness" / Int16ul,
     "ctl_temperature" / Int16ul,
-    "ctl_delta_uv" / Int16ul
+    "ctl_delta_uv" / Int16ul,
 )
 
 LightCTLSetMinimal = Struct(
     *LightCTLDefault.subcons,
-    "tid" / Int8ul
+    "tid" / Int8ul,
 )
 
 LightCTLSetOptional = Struct(
     *LightCTLSetMinimal.subcons,
-    *OptionalSetParameters.subcons
+    *OptionalSetParameters.subcons,
 )
 
 LightCTLSet = NamedSelect(
     optional=LightCTLSetOptional,
-    minimal=LightCTLSetMinimal
+    minimal=LightCTLSetMinimal,
 )
 
 LightCTLStatusMinimal = Struct(
@@ -89,12 +88,12 @@ LightCTLStatusOptional = Struct(
     *LightCTLStatusMinimal.subcons,
     "target_ctl_lightness" / Int16ul,
     "target_ctl_temperature" / Int16ul,
-    "remaining_time" / TransitionTimeAdapter(TransitionTime, allow_unknown=True)
+    "remaining_time" / TransitionTimeAdapter(TransitionTime, allow_unknown=True),
 )
 
 LightCTLStatus = NamedSelect(
     optional=LightCTLStatusOptional,
-    minimal=LightCTLStatusMinimal
+    minimal=LightCTLStatusMinimal,
 )
 
 LightCTLTemperatureStatusMinimal = Struct(
@@ -106,28 +105,28 @@ LightCTLTemperatureStatusOptional = Struct(
     *LightCTLTemperatureStatusMinimal.subcons,
     "target_ctl_temperature" / Int16ul,
     "target_ctl_delta_uv" / Int16ul,
-    "remaining_time" / TransitionTimeAdapter(TransitionTime, allow_unknown=True)
+    "remaining_time" / TransitionTimeAdapter(TransitionTime, allow_unknown=True),
 )
 
 LightCTLTemperatureStatus = NamedSelect(
     optional=LightCTLTemperatureStatusOptional,
-    minimal=LightCTLTemperatureStatusMinimal
+    minimal=LightCTLTemperatureStatusMinimal,
 )
 
 LightCTLTemperatureSetMinimal = Struct(
     "ctl_temperature" / Int16ul,
     "ctl_delta_uv" / Int16ul,
-    "tid" / Int8ul
+    "tid" / Int8ul,
 )
 
 LightCTLTemperatureSetOptional = Struct(
     *LightCTLTemperatureSetMinimal.subcons,
-    *OptionalSetParameters.subcons
+    *OptionalSetParameters.subcons,
 )
 
 LightCTLTemperatureSet = NamedSelect(
     optional=LightCTLTemperatureSetOptional,
-    minimal=LightCTLTemperatureSetMinimal
+    minimal=LightCTLTemperatureSetMinimal,
 )
 
 LightCTLRange = Struct(
@@ -137,13 +136,14 @@ LightCTLRange = Struct(
 
 LightCTLRangeStatus = Struct(
     "status" / StatusCodeAdapter,
-    *LightCTLRange.subcons
+    *LightCTLRange.subcons,
 )
 
 
 LightCTLMessage = SwitchStruct(
     "opcode" / Opcode(LightCTLOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
             LightCTLOpcode.LIGHT_CTL_GET: LightCTLGet,
@@ -159,13 +159,14 @@ LightCTLMessage = SwitchStruct(
             LightCTLOpcode.LIGHT_CTL_TEMPERATURE_DEFAULT_GET: LightCTLGet,
             LightCTLOpcode.LIGHT_CTL_TEMPERATURE_DEFAULT_STATUS: LightCTLDefault,
         },
-    )
+    ),
 )
 
 
 LightCTLSetupMessage = SwitchStruct(
     "opcode" / Opcode(LightCTLSetupOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
             LightCTLSetupOpcode.LIGHT_CTL_SETUP_TEMPERATURE_DEFAULT_SET: LightCTLDefault,
@@ -173,6 +174,5 @@ LightCTLSetupMessage = SwitchStruct(
             LightCTLSetupOpcode.LIGHT_CTL_SETUP_TEMPERATURE_RANGE_SET: LightCTLRange,
             LightCTLSetupOpcode.LIGHT_CTL_SETUP_TEMPERATURE_RANGE_SET_UNACKNOWLEDGED: LightCTLRange,
         },
-    )
+    ),
 )
-# fmt: on

@@ -73,7 +73,6 @@ class _LightExtendedControllerProperty(PropertyMixin, Construct):
         return self._build_property(obj, stream, context, path)
 
 
-# fmt: off
 LightExtendedControllerPropertyGet = Struct(
     "property_id" / EnumAdapter(Int16ul, LightExtendedControllerProperty),
 )
@@ -88,7 +87,8 @@ LightExtendedControllerSyncIntegralStatus = Struct(
 
 LightExtendedControllerParams = SwitchStruct(
     "subopcode" / EnumAdapter(Int8ul, LightExtendedControllerSubOpcode),
-    "payload" / Switch(
+    "payload"
+    / Switch(
         this.subopcode,
         {
             LightExtendedControllerSubOpcode.PROPERTY_GET: LightExtendedControllerPropertyGet,
@@ -96,17 +96,17 @@ LightExtendedControllerParams = SwitchStruct(
             LightExtendedControllerSubOpcode.PROPERTY_SET_UNACKNOWLEDGED: LightExtendedControllerPropertySet,
             LightExtendedControllerSubOpcode.PROPERTY_STATUS: LightExtendedControllerPropertyStatus,
             LightExtendedControllerSubOpcode.SYNC_INTEGRAL_STATUS: LightExtendedControllerSyncIntegralStatus,
-        }
-    )
+        },
+    ),
 )
 
 LightExtendedControllerMessage = SwitchStruct(
     "opcode" / Opcode(LightExtendedControllerOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
             LightExtendedControllerOpcode.SILVAIR_LEC: LightExtendedControllerParams,
-        }
-    )
+        },
+    ),
 )
-# fmt: on

@@ -65,16 +65,11 @@ class GenericBatteryFlagsServiceability(IntEnum):
     BATTERY_SERVICEABILITY_UNKNOWN = 0b11
 
 
-# fmt: off
 BatteryFlags = BitStruct(
-    "battery_serviceability_flags" / EnumAdapter(BitsInteger(2),
-                                                 GenericBatteryFlagsServiceability),
-    "battery_charging_flags" / EnumAdapter(BitsInteger(2),
-                                           GenericBatteryFlagsCharging),
-    "battery_indicator_flags" / EnumAdapter(BitsInteger(2),
-                                            GenericBatteryFlagsIndicator),
-    "battery_presence_flags" / EnumAdapter(BitsInteger(2),
-                                           GenericBatteryFlagsPresence),
+    "battery_serviceability_flags" / EnumAdapter(BitsInteger(2), GenericBatteryFlagsServiceability),
+    "battery_charging_flags" / EnumAdapter(BitsInteger(2), GenericBatteryFlagsCharging),
+    "battery_indicator_flags" / EnumAdapter(BitsInteger(2), GenericBatteryFlagsIndicator),
+    "battery_presence_flags" / EnumAdapter(BitsInteger(2), GenericBatteryFlagsPresence),
 )
 
 GenericBatteryGet = Struct()
@@ -83,17 +78,17 @@ GenericBatteryStatus = Struct(
     "battery_level" / DefaultCountValidator(Int8ul),
     "time_to_discharge" / DefaultCountValidator(Int24ul),
     "time_to_charge" / DefaultCountValidator(Int24ul),
-    "flags" / BatteryFlags
+    "flags" / BatteryFlags,
 )
 
 GenericBatteryMessage = SwitchStruct(
     "opcode" / Opcode(GenericBatteryOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
             GenericBatteryOpcode.GENERIC_BATTERY_GET: GenericBatteryGet,
             GenericBatteryOpcode.GENERIC_BATTERY_STATUS: GenericBatteryStatus,
         },
-    )
+    ),
 )
-# fmt: on
