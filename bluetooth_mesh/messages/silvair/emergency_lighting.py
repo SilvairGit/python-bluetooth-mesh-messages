@@ -154,8 +154,8 @@ EmergencyLightingParams = SwitchStruct(
             EmergencyLightingSubOpcode.EL_PROPERTY_STATUS: EmergencyLightingPropertyStatus,
             EmergencyLightingSubOpcode.EL_LAMP_OPERATION_TIME_GET: EmergencyLightingLampOperationTimeGet,
             EmergencyLightingSubOpcode.EL_LAMP_OPERATION_TIME_CLEAR: EmergencyLightingLampOperationTimeClear,
-            EmergencyLightingSubOpcode.EL_LAMP_OPERATION_TIME_CLEAR_UNACKNOWLEDGED: EmergencyLightingLampOperationTimeClear,
-            EmergencyLightingSubOpcode.EL_LAMP_OPERATION_TIME_STATUS: EmergencyLightingLampOperationTimeStatus,
+            EmergencyLightingSubOpcode.EL_LAMP_OPERATION_TIME_CLEAR_UNACKNOWLEDGED: EmergencyLightingLampOperationTimeClear,  # pylint: disable=line-too-long
+            EmergencyLightingSubOpcode.EL_LAMP_OPERATION_TIME_STATUS: EmergencyLightingLampOperationTimeStatus,  # pylint: disable=line-too-long
             EmergencyLightingSubOpcode.EL_REST_ENTER: EmergencyLightingRestEnter,
             EmergencyLightingSubOpcode.EL_REST_ENTER_UNACKNOWLEDGED: EmergencyLightingRestEnter,
             EmergencyLightingSubOpcode.EL_REST_EXIT: EmergencyLightingRestExit,

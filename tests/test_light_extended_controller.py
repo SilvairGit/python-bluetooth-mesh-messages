@@ -19,7 +19,6 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 #
-from datetime import timedelta
 
 import pytest
 
@@ -34,48 +33,48 @@ valid = [
     pytest.param(
         bytes.fromhex("f636010071ff"),
         LightExtendedControllerOpcode.SILVAIR_LEC,
-        dict(
-            subopcode=LightExtendedControllerSubOpcode.PROPERTY_GET,
-            payload=dict(
-                property_id=LightExtendedControllerProperty.AUTO_RESUME_MODE,
-            ),
-        ),
+        {
+            "subopcode": LightExtendedControllerSubOpcode.PROPERTY_GET,
+            "property_get": {
+                "property_id": LightExtendedControllerProperty.AUTO_RESUME_MODE,
+            },
+        },
         id="LIGHT_LEC_PROPERTY_GET[AUTO_RESUME_MODE]",
     ),
     pytest.param(
         bytes.fromhex("f636010171ff01"),
         LightExtendedControllerOpcode.SILVAIR_LEC,
-        dict(
-            subopcode=LightExtendedControllerSubOpcode.PROPERTY_SET,
-            payload=dict(
-                property_id=LightExtendedControllerProperty.AUTO_RESUME_MODE,
-                auto_resume_mode=True,
-            ),
-        ),
+        {
+            "subopcode": LightExtendedControllerSubOpcode.PROPERTY_SET,
+            "property_set": {
+                "property_id": LightExtendedControllerProperty.AUTO_RESUME_MODE,
+                "auto_resume_mode": True,
+            },
+        },
         id="LIGHT_LEC_PROPERTY_SET[AUTO_RESUME_MODE]",
     ),
     pytest.param(
         bytes.fromhex("f636010272ff10A400"),
         LightExtendedControllerOpcode.SILVAIR_LEC,
-        dict(
-            subopcode=LightExtendedControllerSubOpcode.PROPERTY_SET_UNACKNOWLEDGED,
-            payload=dict(
-                property_id=LightExtendedControllerProperty.AUTO_RESUME_TIMER,
-                auto_resume_timer=dict(seconds=42),
-            ),
-        ),
+        {
+            "subopcode": LightExtendedControllerSubOpcode.PROPERTY_SET_UNACKNOWLEDGED,
+            "property_set_unacknowledged": {
+                "property_id": LightExtendedControllerProperty.AUTO_RESUME_TIMER,
+                "auto_resume_timer": {"seconds": 42},
+            },
+        },
         id="LIGHT_LEC_PROPERTY_SET_UNACKNOWLEDGED[AUTO_RESUME_TIMER]",
     ),
     pytest.param(
         bytes.fromhex("f636010372ff90ca04"),
         LightExtendedControllerOpcode.SILVAIR_LEC,
-        dict(
-            subopcode=LightExtendedControllerSubOpcode.PROPERTY_STATUS,
-            payload=dict(
-                property_id=LightExtendedControllerProperty.AUTO_RESUME_TIMER,
-                auto_resume_timer=dict(seconds=314),
-            ),
-        ),
+        {
+            "subopcode": LightExtendedControllerSubOpcode.PROPERTY_STATUS,
+            "property_status": {
+                "property_id": LightExtendedControllerProperty.AUTO_RESUME_TIMER,
+                "auto_resume_timer": {"seconds": 314},
+            },
+        },
         id="LIGHT_LEC_PROPERTY_STATUS[AUTO_RESUME_TIMER]",
     ),
 ]
@@ -88,4 +87,4 @@ def test_parse_valid(encoded, opcode, data):
 
 @pytest.mark.parametrize("encoded,opcode,data", valid)
 def test_build_valid(encoded, opcode, data):
-    assert LightExtendedControllerMessage.build(dict(opcode=opcode, params=data)) == encoded
+    assert LightExtendedControllerMessage.build({"opcode": opcode, "params": data}) == encoded

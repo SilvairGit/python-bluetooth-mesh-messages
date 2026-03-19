@@ -13,187 +13,187 @@ valid = [
     pytest.param(
         b"\x82\x2e",
         GenericPropertyOpcode.GENERIC_USER_PROPERTIES_GET,
-        dict(),
+        {},
         id="GENERIC_USER_PROPERTIES_GET",
     ),
     pytest.param(
         b"\x4b\x8c\x00\x04\x00\x09\x00",
         GenericPropertyOpcode.GENERIC_USER_PROPERTIES_STATUS,
-        dict(
-            property_ids=[
+        {
+            "property_ids": [
                 PropertyID.LIGHT_DISTRIBUTION,
                 PropertyID.AVERAGE_OUTPUT_CURRENT,
                 PropertyID.COLOR_RENDERING_INDEX_RA,
             ]
-        ),
+        },
         id="GENERIC_USER_PROPERTIES_STATUS",
     ),
     pytest.param(
         b"\x82\x2f\x8c\x00",
         GenericPropertyOpcode.GENERIC_USER_PROPERTY_GET,
-        dict(property_id=PropertyID.LIGHT_DISTRIBUTION),
+        {"property_id": PropertyID.LIGHT_DISTRIBUTION},
         id="GENERIC_USER_PROPERTY_GET",
     ),
     pytest.param(
         b"\x4c\x8c\x00\x05",
         GenericPropertyOpcode.GENERIC_USER_PROPERTY_SET,
-        dict(
-            property_id=PropertyID.LIGHT_DISTRIBUTION,
-            light_distribution=dict(light_distribution=LightDistributionField.TYPE_V),
-        ),
+        {
+            "property_id": PropertyID.LIGHT_DISTRIBUTION,
+            "light_distribution": {"light_distribution": LightDistributionField.TYPE_V},
+        },
         id="GENERIC_USER_PROPERTY_SET",
     ),
     pytest.param(
         b"\x4d\x8c\x00\x05",
         GenericPropertyOpcode.GENERIC_USER_PROPERTY_SET_UNACKNOWLEDGED,
-        dict(
-            property_id=PropertyID.LIGHT_DISTRIBUTION,
-            light_distribution=dict(light_distribution=LightDistributionField.TYPE_V),
-        ),
+        {
+            "property_id": PropertyID.LIGHT_DISTRIBUTION,
+            "light_distribution": {"light_distribution": LightDistributionField.TYPE_V},
+        },
         id="GENERIC_USER_PROPERTY_SET_UNACKNOWLEDGED",
     ),
     pytest.param(
         b"\x4e\x8c\x00\x01\x05",
         GenericPropertyOpcode.GENERIC_USER_PROPERTY_STATUS,
-        dict(
-            property_id=PropertyID.LIGHT_DISTRIBUTION,
-            access=UserAccess.READ_ONLY,
-            light_distribution=dict(light_distribution=LightDistributionField.TYPE_V),
-        ),
+        {
+            "property_id": PropertyID.LIGHT_DISTRIBUTION,
+            "access": UserAccess.READ_ONLY,
+            "light_distribution": {"light_distribution": LightDistributionField.TYPE_V},
+        },
         id="GENERIC_USER_PROPERTY_STATUS",
     ),
     pytest.param(
         b"\x82\x2c",
         GenericPropertyOpcode.GENERIC_ADMIN_PROPERTIES_GET,
-        dict(),
+        {},
         id="GENERIC_ADMIN_PROPERTIES_GET",
     ),
     pytest.param(
         b"\x47\x8c\x00\xa4\x00\xb6\x00\xab\x00",
         GenericPropertyOpcode.GENERIC_ADMIN_PROPERTIES_STATUS,
-        dict(
-            property_ids=[
+        {
+            "property_ids": [
                 PropertyID.LIGHT_DISTRIBUTION,
                 PropertyID.NOMINAL_LIGHT_OUTPUT,
                 PropertyID.THERMAL_DERATING,
                 PropertyID.RATED_MEDIAN_USEFUL_LIFE_OF_LUMINAIRE,
             ]
-        ),
+        },
         id="GENERIC_ADMIN_PROPERTIES_STATUS",
     ),
     pytest.param(
         b"\x82\x2d\x8c\x00",
         GenericPropertyOpcode.GENERIC_ADMIN_PROPERTY_GET,
-        dict(property_id=PropertyID.LIGHT_DISTRIBUTION),
+        {"property_id": PropertyID.LIGHT_DISTRIBUTION},
         id="GENERIC_ADMIN_PROPERTY_GET",
     ),
     pytest.param(
         b"\x48\x94\x00\x03\x01\x80",
         GenericPropertyOpcode.GENERIC_ADMIN_PROPERTY_SET,
-        dict(
-            property_id=PropertyID.LIGHT_SOURCE_TEMPERATURE,
-            access=AdminUserAccess.READ_WRITE,
-            light_source_temperature=dict(temperature=-16383.5),  # It supposed to be value not know
-        ),
+        {
+            "property_id": PropertyID.LIGHT_SOURCE_TEMPERATURE,
+            "access": AdminUserAccess.READ_WRITE,
+            "light_source_temperature": {"temperature": -16383.5},  # It supposed to be value not know
+        },
         id="GENERIC_ADMIN_PROPERTY_SET",
     ),
     pytest.param(
         b"\x49\xa4\x00\x01\xff\xff\xff",
         GenericPropertyOpcode.GENERIC_ADMIN_PROPERTY_SET_UNACKNOWLEDGED,
-        dict(
-            property_id=PropertyID.NOMINAL_LIGHT_OUTPUT,
-            access=AdminUserAccess.READ_ONLY,
-            nominal_light_output=dict(light_output=16777215),  # It supposed to be value not know
-        ),
+        {
+            "property_id": PropertyID.NOMINAL_LIGHT_OUTPUT,
+            "access": AdminUserAccess.READ_ONLY,
+            "nominal_light_output": {"light_output": 16777215},  # It supposed to be value not know
+        },
         id="GENERIC_ADMIN_PROPERTY_SET_UNACKNOWLEDGED",
     ),
     pytest.param(
         b"\x4a\xa4\x00\x01\x0a\x00\x00",
         GenericPropertyOpcode.GENERIC_ADMIN_PROPERTY_STATUS,
-        dict(
-            property_id=PropertyID.NOMINAL_LIGHT_OUTPUT,
-            access=UserAccess.READ_ONLY,
-            nominal_light_output=dict(light_output=10),
-        ),
+        {
+            "property_id": PropertyID.NOMINAL_LIGHT_OUTPUT,
+            "access": UserAccess.READ_ONLY,
+            "nominal_light_output": {"light_output": 10},
+        },
         id="GENERIC_ADMIN_PROPERTY_STATUS",
     ),
     pytest.param(
         b"\x82\x2a",
         GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTIES_GET,
-        dict(),
+        {},
         id="GENERIC_MANUFACTURER_PROPERTIES_GET",
     ),
     pytest.param(
         b"\x43\x9d\x00\x8f\x00\xb6\x00\x07\x00",
         GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTIES_STATUS,
-        dict(
-            property_ids=[
+        {
+            "property_ids": [
                 PropertyID.LUMINAIRE_NOMINAL_MAXIMUM_AC_MAINS_VOLTAGE,
                 PropertyID.LIGHT_SOURCE_ON_TIME_RESETTABLE,
                 PropertyID.THERMAL_DERATING,
                 PropertyID.CHROMATICITY_TOLERANCE,
             ]
-        ),
+        },
         id="GENERIC_MANUFACTURER_PROPERTIES_STATUS",
     ),
     pytest.param(
         b"\x82\x2d\xa0\x00",
         GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_GET,
-        dict(property_id=PropertyID.LUMINAIRE_TIME_OF_MANUFACTURE),
+        {"property_id": PropertyID.LUMINAIRE_TIME_OF_MANUFACTURE},
         id="GENERIC_MANUFACTURER_PROPERTY_GET",
     ),
     pytest.param(
         b"\x44\x73\x00\x01",
         GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_SET,
-        dict(property_id=PropertyID.POWER_FACTOR, access=ManufacturerUserAccess.READ_ONLY),
+        {"property_id": PropertyID.POWER_FACTOR, "access": ManufacturerUserAccess.READ_ONLY},
         id="GENERIC_MANUFACTURER_PROPERTY_SET",
     ),
     pytest.param(
         b"\x45\x89\x00\x00",
         GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_SET_UNACKNOWLEDGED,
-        dict(
-            property_id=PropertyID.EXTERNAL_SUPPLY_VOLTAGE_FREQUENCY,
-            access=ManufacturerUserAccess.NOT_USER_PROPERTY,
-        ),
+        {
+            "property_id": PropertyID.EXTERNAL_SUPPLY_VOLTAGE_FREQUENCY,
+            "access": ManufacturerUserAccess.NOT_USER_PROPERTY,
+        },
         id="GENERIC_MANUFACTURER_PROPERTY_SET_UNACKNOWLEDGED",
     ),
     pytest.param(
         b"\x46\x9a\x00\x01abcdefghijklmnoprstuvxyz",
         GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_STATUS,
-        dict(
-            property_id=PropertyID.LUMINAIRE_IDENTIFICATION_NUMBER,
-            access=UserAccess.READ_ONLY,
-            luminaire_identification_number="abcdefghijklmnoprstuvxyz",
-        ),
+        {
+            "property_id": PropertyID.LUMINAIRE_IDENTIFICATION_NUMBER,
+            "access": UserAccess.READ_ONLY,
+            "luminaire_identification_number": "abcdefghijklmnoprstuvxyz",
+        },
         id="GENERIC_MANUFACTURER_PROPERTY_STATUS",
     ),
     pytest.param(
         b"\x46\xb3\x00\x01\x03",
         GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_STATUS,
-        dict(
-            property_id=PropertyID.LIGHT_SOURCE_TYPE,
-            access=UserAccess.READ_ONLY,
-            light_source_type=dict(light_source_type=LightSourceTypeField.LOW_VOLTAGE_HALOGEN),
-        ),
+        {
+            "property_id": PropertyID.LIGHT_SOURCE_TYPE,
+            "access": UserAccess.READ_ONLY,
+            "light_source_type": {"light_source_type": LightSourceTypeField.LOW_VOLTAGE_HALOGEN},
+        },
         id="GENERIC_MANUFACTURER_PROPERTY_STATUS_LIGHT_SOURCE",
     ),
     pytest.param(
         b"\x4f",
         GenericPropertyOpcode.GENERIC_CLIENT_PROPERTIES_GET,
-        dict(),
+        {},
         id="GENERIC_CLIENT_PROPERTIES_GET",
     ),
     pytest.param(
         b"\x50\x9d\x00\x8f\x00\xb6\x00\x07\x00",
         GenericPropertyOpcode.GENERIC_CLIENT_PROPERTIES_STATUS,
-        dict(
-            property_ids=[
+        {
+            "property_ids": [
                 PropertyID.LUMINAIRE_NOMINAL_MAXIMUM_AC_MAINS_VOLTAGE,
                 PropertyID.LIGHT_SOURCE_ON_TIME_RESETTABLE,
                 PropertyID.THERMAL_DERATING,
                 PropertyID.CHROMATICITY_TOLERANCE,
             ]
-        ),
+        },
         id="GENERIC_MANUFACTURER_PROPERTIES_STATUS",
     ),
 ]

@@ -112,7 +112,7 @@ NetworkDiagnosticServerParams = SwitchStruct(
         {
             NetworkDiagnosticServerSubOpcode.SUBSCRIPTION_GET: NetworkDiagnosticServerSubscriptionGet,
             NetworkDiagnosticServerSubOpcode.SUBSCRIPTION_SET: NetworkDiagnosticServerSubscriptionSet,
-            NetworkDiagnosticServerSubOpcode.SUBSCRIPTION_SET_UNACKNOWLEDGED: NetworkDiagnosticServerSubscriptionSet,
+            NetworkDiagnosticServerSubOpcode.SUBSCRIPTION_SET_UNACKNOWLEDGED: NetworkDiagnosticServerSubscriptionSet,  # pylint: disable=line-too-long
             NetworkDiagnosticServerSubOpcode.SUBSCRIPTION_STATUS: NetworkDiagnosticServerSubscriptionStatus,
             NetworkDiagnosticServerSubOpcode.RADIO_STAT_GET: NetworkDiagnosticServerRadioStatGet,
         },
@@ -127,7 +127,7 @@ NetworkDiagnosticSetupServerParams = SwitchStruct(
         {
             NetworkDiagnosticSetupServerSubOpcode.PUBLICATION_GET: NetworkDiagnosticSetupServerPublicationGet,
             NetworkDiagnosticSetupServerSubOpcode.PUBLICATION_SET: NetworkDiagnosticSetupServerPublicationSet,
-            NetworkDiagnosticSetupServerSubOpcode.PUBLICATION_STATUS: NetworkDiagnosticSetupServerPublicationStatus,
+            NetworkDiagnosticSetupServerSubOpcode.PUBLICATION_STATUS: NetworkDiagnosticSetupServerPublicationStatus,  # pylint: disable=line-too-long
         },
     ),
 )

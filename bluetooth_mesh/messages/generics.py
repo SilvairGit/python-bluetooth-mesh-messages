@@ -19,7 +19,6 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 #
-# pylint: disable=W0223
 
 
 from construct import Adapter, BitsInteger, BitStruct, Float32b, Int8ul, Struct
@@ -48,7 +47,7 @@ class TransitionTimeAdapter(Adapter):
 
         assert resolution is not None
 
-        return dict(steps=int(steps), resolution=resolution)
+        return {"steps": int(steps), "resolution": resolution}
 
 
 class Delay(Adapter):

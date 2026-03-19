@@ -216,7 +216,7 @@ GatewayConfigParams = SwitchStruct(
             GatewayConfigServerSubOpcode.GATEWAY_CONFIGURATION_SET: ConfigurationSet,
             GatewayConfigServerSubOpcode.MTU_SIZE_SET: ConfigurationSetMtu,
             GatewayConfigServerSubOpcode.ETHERNET_MAC_ADDRESS_SET: ConfigurationSetMacAddr,
-            GatewayConfigServerSubOpcode.SERVER_ADDRESS_AND_PORT_NUMBER_SET: ConfigurationSetServerAddrAndPortNr,
+            GatewayConfigServerSubOpcode.SERVER_ADDRESS_AND_PORT_NUMBER_SET: ConfigurationSetServerAddrAndPortNr,  # pylint: disable=line-too-long
             GatewayConfigServerSubOpcode.RECONNECT_INTERVAL_SET: ConfigurationSetReconnectInterval,
             GatewayConfigServerSubOpcode.DNS_IP_ADDRESS_SET: ConfigurationSetDnsIpAddr,
             GatewayConfigServerSubOpcode.IP_ADDRESS_SET: ConfigurationSetIpAddr,

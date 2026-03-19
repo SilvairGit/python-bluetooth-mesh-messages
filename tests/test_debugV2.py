@@ -125,12 +125,12 @@ def test_parse_valid(encoded, subopcode, parameter_type, page_number, payload):
 def test_build_valid(encoded, subopcode, parameter_type, page_number, payload):
     assert (
         DebugV2SubMessage.build(
-            dict(
-                subopcode=subopcode,
-                parameter_type=parameter_type,
-                page_number=page_number,
-                payload=payload,
-            )
+            {
+                "subopcode": subopcode,
+                "parameter_type": parameter_type,
+                "page_number": page_number,
+                "payload": payload,
+            }
         )
         == encoded
     )

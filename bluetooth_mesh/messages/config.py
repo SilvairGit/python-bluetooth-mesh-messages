@@ -19,7 +19,6 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 #
-# pylint: disable=W0223
 import enum
 from datetime import timedelta
 
@@ -451,8 +450,6 @@ class AddressType(enum.Enum):
 
 
 def get_address_type(address):
-    # pylint: disable=R0911
-
     if address == 0x0000:
         return AddressType.UNASSIGNED
 
@@ -642,10 +639,13 @@ class RetransmitAdapter(Adapter):
 
     def __init__(self, subcon, interval):
         self.interval = interval
-        super(RetransmitAdapter, self).__init__(subcon)
+        super().__init__(subcon)
 
     def _decode(self, obj, context, path):
-        return dict(count=obj["count"], interval=(obj["interval_steps"] + 1) * self.interval)
+        return {
+            "count": obj["count"],
+            "interval": (obj["interval_steps"] + 1) * self.interval,
+        }
 
     def _encode(self, obj, context, path):
         if obj["count"] > 7:
@@ -656,10 +656,10 @@ class RetransmitAdapter(Adapter):
                     min=self.interval, max=0x20 * self.interval
                 )
             )
-        return dict(
-            count=obj["count"],
-            interval_steps=round((obj["interval"] / self.interval) - 1),
-        )
+        return {
+            "count": obj["count"],
+            "interval_steps": round((obj["interval"] / self.interval) - 1),
+        }
 
 
 NetworkRetransmit = RetransmitAdapter(Retransmit, 10)  # (Network Retransmit Interval Steps + 1) * 10ms
@@ -708,10 +708,10 @@ class KeyIndicesAdapter(Adapter):
         ret = []
         obj.sort()
         while len(obj) > 1:
-            ret += [dict(first=obj.pop(0), second=obj.pop(0))]
+            ret += [{"first": obj.pop(0), "second": obj.pop(0)}]
 
         if obj:
-            ret += [dict(last=obj.pop())]
+            ret += [{"last": obj.pop()}]
 
         return ret
 
@@ -734,7 +734,7 @@ KeyIndices = KeyIndicesAdapter(
         )
     )
 )
-KeyIndices.__construct_doc__ = GreedyRange(BitsInteger(12))
+KeyIndices.__construct_doc__ = GreedyRange(BitsInteger(12))  # pylint: disable=attribute-defined-outside-init
 
 
 class PublishPeriodStepResolution(enum.IntEnum):
@@ -756,6 +756,8 @@ class PublishPeriodStepResolution(enum.IntEnum):
 
         if self == PublishPeriodStepResolution.RESOLUTION_10_MIN:
             return timedelta(minutes=10)
+
+        raise ValueError("Unknown PublishPeriodStepResolution value")
 
 
 PublishPeriodStepResolutionAdapter = EnumAdapter(
@@ -1227,7 +1229,7 @@ ConfigMessage = SwitchStruct(
             ConfigOpcode.CONFIG_MODEL_SUBSCRIPTION_STATUS: ConfigModelSubscriptionStatus,
             ConfigOpcode.CONFIG_MODEL_SUBSCRIPTION_VIRTUAL_ADDRESS_ADD: ConfigModelSubscriptionVAAdd,
             ConfigOpcode.CONFIG_MODEL_SUBSCRIPTION_VIRTUAL_ADDRESS_DELETE: ConfigModelSubscriptionVADelete,
-            ConfigOpcode.CONFIG_MODEL_SUBSCRIPTION_VIRTUAL_ADDRESS_OVERWRITE: ConfigModelSubscriptionVAOverwrite,
+            ConfigOpcode.CONFIG_MODEL_SUBSCRIPTION_VIRTUAL_ADDRESS_OVERWRITE: ConfigModelSubscriptionVAOverwrite,  # pylint: disable=line-too-long
             ConfigOpcode.CONFIG_NETKEY_ADD: ConfigNetKeyAdd,
             ConfigOpcode.CONFIG_NETKEY_DELETE: ConfigNetKeyDelete,
             ConfigOpcode.CONFIG_NETKEY_GET: ConfigNetKeyGet,

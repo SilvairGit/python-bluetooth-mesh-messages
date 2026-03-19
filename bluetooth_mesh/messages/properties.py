@@ -19,7 +19,6 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 #
-# pylint: disable=W0223
 
 # Property IDs available in mesh:
 #   "Mesh Device Properties v2"
@@ -31,7 +30,7 @@
 
 from datetime import date, timedelta
 from enum import IntEnum
-from math import log, pow
+from math import log
 from typing import ClassVar
 
 from construct import (

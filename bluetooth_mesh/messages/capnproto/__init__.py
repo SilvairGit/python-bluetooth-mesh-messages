@@ -11,8 +11,8 @@ def load_definitions():
         tmp_file.seek(0)
         source = tmp_file.read()
 
-        capnp.remove_import_hook()
-        messages = capnp.load(tmp_file.name)
+        capnp.remove_import_hook()  # pylint: disable=no-member
+        messages = capnp.load(tmp_file.name)  # pylint: disable=no-member
 
         return source, messages
 
