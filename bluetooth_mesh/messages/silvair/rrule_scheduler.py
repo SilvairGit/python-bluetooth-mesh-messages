@@ -130,7 +130,6 @@ class Freqs(IntEnum):
     YEARLY = 0x06
 
 
-# fmt: off
 Slots = Struct(
     "slot_id" / Int16ul,
     "element" / Int8ul,
@@ -156,7 +155,8 @@ Day = EnumAdapter(Int8sl, Days)
 
 Rules = Struct(
     "rule_id" / RuleID,
-    "rule" / Switch(
+    "rule"
+    / Switch(
         this.rule_id,
         {
             RuleIDs.FREQ: Freq,
@@ -181,36 +181,36 @@ Rules = Struct(
 
 SchedulerRegisterEntry = Struct(
     "array_of_slots" / PrefixedArray(Int8ul, Slots),
-    "rules" / GreedyRange(Rules)
+    "rules" / GreedyRange(Rules),
 )
 
 RulesListGet = Struct()
 
 RulesListStatus = Struct(
-    "rule_ids" / SetAdapter(GreedyRange(RuleID))
+    "rule_ids" / SetAdapter(GreedyRange(RuleID)),
 )
 
 RegisterMaxSizeGet = Struct()
 
 RegisterMaxSizeStatus = Struct(
-    "register_max_size" / Int32ul
+    "register_max_size" / Int32ul,
 )
 
 SchedulerModeGet = Struct()
 
 SchedulerModeSet = Struct(
-    "scheduler_mode" / EnumAdapter(Int8ul, SchedulerModes)
+    "scheduler_mode" / EnumAdapter(Int8ul, SchedulerModes),
 )
 
 SchedulerModeStatus = SchedulerModeSet
 
 ScheduleRegisterEntryGet = Struct(
-    "entry_id" / Int8ul
+    "entry_id" / Int8ul,
 )
 
 ScheduleRegisterEntrySet = Struct(
     "entry_id" / Int8ul,
-    "scheduler_register_entry" / SchedulerRegisterEntry
+    "scheduler_register_entry" / SchedulerRegisterEntry,
 )
 
 ScheduleRegisterEntryDelete = ScheduleRegisterEntryGet
@@ -229,18 +229,19 @@ ScheduleRegisterEntryStatusOptional = Struct(
 
 ScheduleRegisterEntryStatus = NamedSelect(
     optional=ScheduleRegisterEntryStatusOptional,
-    minimal=ScheduleRegisterEntryStatusMinimal
+    minimal=ScheduleRegisterEntryStatusMinimal,
 )
 
 ScheduleRegisterListGet = Struct()
 
 ScheduleRegisterListStatus = Struct(
-    "entry_ids" / SetAdapter(GreedyRange(Int8ul))
+    "entry_ids" / SetAdapter(GreedyRange(Int8ul)),
 )
 
 RRuleSchedulerSubMessage = Struct(
     "subopcode" / EnumAdapter(Int8ul, RRuleSchedulerSubOpcode),
-    "payload" / Switch(
+    "payload"
+    / Switch(
         this.subopcode,
         {
             RRuleSchedulerSubOpcode.RULES_LIST_GET: RulesListGet,
@@ -263,11 +264,11 @@ RRuleSchedulerSubMessage = Struct(
 
 RRuleSchedulerMessage = SwitchStruct(
     "opcode" / Opcode(RRuleSchedulerOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
             RRuleSchedulerOpcode.SILVAIR_RRULE_SCHEDULER: RRuleSchedulerSubMessage,
         },
     ),
 )
-# fmt: on

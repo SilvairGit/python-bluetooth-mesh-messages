@@ -38,72 +38,72 @@ class GenericLevelOpcode(IntEnum):
     GENERIC_MOVE_SET_UNACKNOWLEDGED = 0x820C
 
 
-# fmt: off
 GenericLevelGet = Struct()
 
 GenericLevelSetMinimal = Struct(
     "level" / Int16sl,
-    "tid" / Int8ul
+    "tid" / Int8ul,
 )
 
 GenericLevelSetOptional = Struct(
     *GenericLevelSetMinimal.subcons,
-    *OptionalSetParameters.subcons
+    *OptionalSetParameters.subcons,
 )
 
 GenericLevelSet = NamedSelect(
     optional=GenericLevelSetOptional,
-    minimal=GenericLevelSetMinimal
+    minimal=GenericLevelSetMinimal,
 )
 
 GenericDeltaSetMinimal = Struct(
     "delta_level" / Int32sl,
-    "tid" / Int8ul
+    "tid" / Int8ul,
 )
 
 GenericDeltaSetOptional = Struct(
     *GenericDeltaSetMinimal.subcons,
-    *OptionalSetParameters.subcons
+    *OptionalSetParameters.subcons,
 )
 
 GenericDeltaSet = NamedSelect(
     optional=GenericDeltaSetOptional,
-    minimal=GenericDeltaSetMinimal
+    minimal=GenericDeltaSetMinimal,
 )
 
 GenericMoveSetMinimal = Struct(
     "delta_level" / Int16sl,
-    "tid" / Int8ul
+    "tid" / Int8ul,
 )
 
 GenericMoveSetOptional = Struct(
     *GenericMoveSetMinimal.subcons,
-    *OptionalSetParameters.subcons
+    *OptionalSetParameters.subcons,
 )
 
 GenericMoveSet = NamedSelect(
     optional=GenericMoveSetOptional,
-    minimal=GenericMoveSetMinimal
+    minimal=GenericMoveSetMinimal,
 )
 
 GenericLevelStatusMinimal = Struct(
-    "present_level" / Int16sl
+    "present_level" / Int16sl,
 )
 
 GenericLevelStatusOptional = Struct(
     *GenericLevelStatusMinimal.subcons,
     "target_level" / Int16sl,
-    "remaining_time" / TransitionTimeAdapter(TransitionTime, allow_unknown=True)
+    "remaining_time" / TransitionTimeAdapter(TransitionTime, allow_unknown=True),
 )
 
 GenericLevelStatus = NamedSelect(
     optional=GenericLevelStatusOptional,
-    minimal=GenericLevelStatusMinimal
+    minimal=GenericLevelStatusMinimal,
 )
 
 GenericLevelMessage = SwitchStruct(
     "opcode" / Opcode(GenericLevelOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
             GenericLevelOpcode.GENERIC_LEVEL_GET: GenericLevelGet,
@@ -115,6 +115,5 @@ GenericLevelMessage = SwitchStruct(
             GenericLevelOpcode.GENERIC_MOVE_SET: GenericMoveSet,
             GenericLevelOpcode.GENERIC_MOVE_SET_UNACKNOWLEDGED: GenericMoveSet,
         },
-    )
+    ),
 )
-# fmt: on

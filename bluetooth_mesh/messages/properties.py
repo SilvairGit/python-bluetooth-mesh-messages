@@ -287,42 +287,39 @@ def FixedString(size):
     )
 
 
-# fmt: off
-
-
 # time
 TimeMiliseconds24 = Struct(
-    "seconds" / DefaultCountValidator(Int24ul, rounding=3, resolution=0.001)
+    "seconds" / DefaultCountValidator(Int24ul, rounding=3, resolution=0.001),
 )
 
 TimeHour24 = Struct(
-    "hours" / DefaultCountValidator(Int24ul)
+    "hours" / DefaultCountValidator(Int24ul),
 )
 
 TimeSecond16 = Struct(
-    "seconds" / DefaultCountValidator(Int16ul)
+    "seconds" / DefaultCountValidator(Int16ul),
 )
 
 TimeSecond32 = Struct(
-    "seconds" / DefaultCountValidator(Int32ul)
+    "seconds" / DefaultCountValidator(Int32ul),
 )
 
 TimeExponential8 = Struct(
-    "seconds" / TimeExponential8Validator(Int8ul)
+    "seconds" / TimeExponential8Validator(Int8ul),
 )
 
 TimeDecihour8 = Struct(
-    "hour" / DefaultCountValidator(Int8ul, rounding=1, resolution=0.1)
+    "hour" / DefaultCountValidator(Int8ul, rounding=1, resolution=0.1),
 )
 
 DateUTC = Struct(
-    "date" / DateAdapter(Int24ul)
+    "date" / DateAdapter(Int24ul),
 )
 
 
 # electric current
 ElectricCurrent = Struct(
-    "current" / DefaultCountValidator(Int16ul, rounding=2, resolution=0.01)
+    "current" / DefaultCountValidator(Int16ul, rounding=2, resolution=0.01),
 )
 
 AverageCurrent = Struct(
@@ -351,51 +348,51 @@ ElectricCurrentStatistics = Struct(
 RelativeValueInACurrentRange = Struct(
     "relative_value" / DefaultCountValidator(Int8ul, rounding=1, resolution=0.5),
     "minimum_current" / DefaultCountValidator(Int16ul, rounding=2, resolution=0.01),
-    "maximum_current" / DefaultCountValidator(Int16ul, rounding=2, resolution=0.01)
+    "maximum_current" / DefaultCountValidator(Int16ul, rounding=2, resolution=0.01),
 )
 
 
 # voltage
 Voltage = Struct(
-    "voltage" / DefaultCountValidator(Int16ul, resolution=1/64),
+    "voltage" / DefaultCountValidator(Int16ul, resolution=1 / 64),
 )
 
 AverageVoltage = Struct(
-    "voltage_value" / DefaultCountValidator(Int16ul, resolution=1/64),
+    "voltage_value" / DefaultCountValidator(Int16ul, resolution=1 / 64),
     "sensing_duration" / TimeExponential8,
 )
 
 VoltageRange = Struct(
-    "minimum_voltage_value" / DefaultCountValidator(Int16ul, resolution=1/64),
-    "typical_voltage_value" / DefaultCountValidator(Int16ul, resolution=1/64),
-    "maximum_voltage_value" / DefaultCountValidator(Int16ul, resolution=1/64),
+    "minimum_voltage_value" / DefaultCountValidator(Int16ul, resolution=1 / 64),
+    "typical_voltage_value" / DefaultCountValidator(Int16ul, resolution=1 / 64),
+    "maximum_voltage_value" / DefaultCountValidator(Int16ul, resolution=1 / 64),
 )
 
 VoltageStatistics = Struct(
-    "average_voltage_value" / DefaultCountValidator(Int16ul, resolution=1/64),
-    "standard_deviation_voltage_value" / DefaultCountValidator(Int16ul, resolution=1/64),
-    "minimum_voltage_value" / DefaultCountValidator(Int16ul, resolution=1/64),
-    "maximum_voltage_value" / DefaultCountValidator(Int16ul, resolution=1/64),
+    "average_voltage_value" / DefaultCountValidator(Int16ul, resolution=1 / 64),
+    "standard_deviation_voltage_value" / DefaultCountValidator(Int16ul, resolution=1 / 64),
+    "minimum_voltage_value" / DefaultCountValidator(Int16ul, resolution=1 / 64),
+    "maximum_voltage_value" / DefaultCountValidator(Int16ul, resolution=1 / 64),
     "sensing_duration" / TimeExponential8,
 )
 
 RelativeValueInAVoltageRange = Struct(
     "relative_value" / DefaultCountValidator(Int8ul, rounding=1, resolution=0.5, unknown_value=False),
-    "minimum_voltage" / DefaultCountValidator(Int16ul, resolution=1/64),
-    "maximum_voltage" / DefaultCountValidator(Int16ul, resolution=1/64),
+    "minimum_voltage" / DefaultCountValidator(Int16ul, resolution=1 / 64),
+    "maximum_voltage" / DefaultCountValidator(Int16ul, resolution=1 / 64),
 )
 
 HighVoltage = Struct(
-    "high_voltage" / DefaultCountValidator(Int24ul, resolution=1/64, unknown_value=False),
+    "high_voltage" / DefaultCountValidator(Int24ul, resolution=1 / 64, unknown_value=False),
 )
 
 VoltageFrequency = Struct(
-    "voltage_frequency" / Int16ul
+    "voltage_frequency" / Int16ul,
 )
 
 # energy
 Energy = Struct(
-    "energy" / DefaultCountValidator(Int24ul)
+    "energy" / DefaultCountValidator(Int24ul),
 )
 
 PreciseEnergy = Struct(
@@ -420,13 +417,13 @@ Energy32 = Struct(
 
 # power
 Power = Struct(
-    "power" / DefaultCountValidator(Int24ul, rounding=1, resolution=0.1, unknown_value=False)
+    "power" / DefaultCountValidator(Int24ul, rounding=1, resolution=0.1, unknown_value=False),
 )
 
 PowerSpecification = Struct(
     "minimum_power_value" / DefaultCountValidator(Int24ul, rounding=1, resolution=0.1),
     "typical_power_value" / DefaultCountValidator(Int24ul, rounding=1, resolution=0.1),
-    "maximum_power_value" / DefaultCountValidator(Int24ul, rounding=1, resolution=0.1)
+    "maximum_power_value" / DefaultCountValidator(Int24ul, rounding=1, resolution=0.1),
 )
 
 ApparentPower = Struct(
@@ -436,11 +433,11 @@ ApparentPower = Struct(
 
 # temperature
 Temperature = Struct(
-    "temperature" / DefaultCountValidator(Int16sl, rounding=2, resolution=0.01)
+    "temperature" / DefaultCountValidator(Int16sl, rounding=2, resolution=0.01),
 )
 
 Temperature8 = Struct(
-    "temperature" / DefaultCountValidator(Int8sl, rounding=1, resolution=0.5)
+    "temperature" / DefaultCountValidator(Int8sl, rounding=1, resolution=0.5),
 )
 
 TemperatureRange = Struct(
@@ -476,18 +473,18 @@ HighTemperature = Struct(
 RelativeValueInATemperatureRange = Struct(
     "relative_value" / DefaultCountValidator(Int8ul, rounding=1, resolution=0.5, unknown_value=False),
     "minimum_temperature" / DefaultCountValidator(Int16sl, rounding=2, resolution=0.01),
-    "maximum_temperature" / DefaultCountValidator(Int16sl, rounding=2, resolution=0.01)
+    "maximum_temperature" / DefaultCountValidator(Int16sl, rounding=2, resolution=0.01),
 )
 
 
 # luminosity
 LuminousFlux = Struct(
-    "luminous_flux" / DefaultCountValidator(Int16ul)
+    "luminous_flux" / DefaultCountValidator(Int16ul),
 )
 
 LuminousFluxRange = Struct(
     "minimum_luminous_flux" / DefaultCountValidator(Int16ul),
-    "maximum_luminous_flux" / DefaultCountValidator(Int16ul)
+    "maximum_luminous_flux" / DefaultCountValidator(Int16ul),
 )
 
 LuminousEnergy = Struct(
@@ -499,11 +496,11 @@ LuminousExposure = Struct(
 )
 
 LuminousIntensity = Struct(
-    "luminous_intensity" / DefaultCountValidator(Int16ul)
+    "luminous_intensity" / DefaultCountValidator(Int16ul),
 )
 
 LuminousEfficacy = Struct(
-    "luminous_efficacy" / DefaultCountValidator(Int16ul, rounding=1, resolution=0.1)
+    "luminous_efficacy" / DefaultCountValidator(Int16ul, rounding=1, resolution=0.1),
 )
 
 Illuminance = Struct(
@@ -513,15 +510,15 @@ Illuminance = Struct(
 RelativeValueInAnIlluminanceRange = Struct(
     "relative_value" / DefaultCountValidator(Int8ul, rounding=1, resolution=0.5, unknown_value=False),
     "minimum_illuminance" / DefaultCountValidator(Int24ul, rounding=2, resolution=0.01, unknown_value=False),
-    "maximum_illuminance" / DefaultCountValidator(Int24ul, rounding=2, resolution=0.01, unknown_value=False)
+    "maximum_illuminance" / DefaultCountValidator(Int24ul, rounding=2, resolution=0.01, unknown_value=False),
 )
 
 PerceivedLightness = Struct(
-    "perceived_lightness" / Int16ul
+    "perceived_lightness" / Int16ul,
 )
 
 LightDistribution = Struct(
-    "light_distribution" / EnumAdapter(Int8ul, LightDistributionField)
+    "light_distribution" / EnumAdapter(Int8ul, LightDistributionField),
 )
 
 LightOutput = Struct(
@@ -529,34 +526,36 @@ LightOutput = Struct(
 )
 
 LightSourceType = Struct(
-    "light_source_type" / EnumAdapter(Int8ul, LightSourceTypeField)
+    "light_source_type" / EnumAdapter(Int8ul, LightSourceTypeField),
 )
 
 # counters
 Percentage8 = Struct(
-    "percentage" / DefaultCountValidator(Int8ul, rounding=1, resolution=0.5)
+    "percentage" / DefaultCountValidator(Int8ul, rounding=1, resolution=0.5),
 )
 
 Count16 = Struct(
-    "count" / DefaultCountValidator(Int16ul)
+    "count" / DefaultCountValidator(Int16ul),
 )
 
 Count24 = Struct(
-    "count" / DefaultCountValidator(Int24ul)
+    "count" / DefaultCountValidator(Int24ul),
 )
 
 Coefficient = Struct(
-    "coefficient" / DefaultCountValidator(Int32ul)
+    "coefficient" / DefaultCountValidator(Int32ul),
 )
 
 
 # chromaticity
 ChromaticityTolerance = Struct(
-    "chromaticity_tolerance" / DefaultCountValidator(Int8sl, rounding=4, resolution=0.0001, unknown_value=False)
+    "chromaticity_tolerance"
+    / DefaultCountValidator(Int8sl, rounding=4, resolution=0.0001, unknown_value=False)
 )
 
 ChromaticDistanceFromPlanckian = Struct(
-    "distance_from_planckian" / DefaultCountValidator(Int16sl, rounding=5, resolution=0.00001, unknown_value=False)
+    "distance_from_planckian"
+    / DefaultCountValidator(Int16sl, rounding=5, resolution=0.00001, unknown_value=False)
 )
 
 CorrelatedColorTemperature = Struct(
@@ -564,22 +563,22 @@ CorrelatedColorTemperature = Struct(
 )
 
 ChromaticityCoordinates = Struct(
-    "chromaticity_x_coordinate" / DefaultCountValidator(Int16ul, resolution=1/0xffff, unknown_value=False),
-    "chromaticity_y_coordinate" / DefaultCountValidator(Int16ul, resolution=1/0xffff, unknown_value=False)
+    "chromaticity_x_coordinate" / DefaultCountValidator(Int16ul, resolution=1 / 0xFFFF, unknown_value=False),
+    "chromaticity_y_coordinate" / DefaultCountValidator(Int16ul, resolution=1 / 0xFFFF, unknown_value=False),
 )
 
 ColorRenderingIndex = Struct(
-    "color_rendering_index" / DefaultCountValidator(Int8sl, unknown_value=False)
+    "color_rendering_index" / DefaultCountValidator(Int8sl, unknown_value=False),
 )
 
 
 # misc
 CosineOfTheAngle = Struct(
-    "cosine_of_the_angle" / Int8sl
+    "cosine_of_the_angle" / Int8sl,
 )
 
 GlobalTradeItemNumber = Struct(
-    "global_trade_item_number" / BytesInteger(6, swapped=True)
+    "global_trade_item_number" / BytesInteger(6, swapped=True),
 )
 
 Appearance = Struct(  # TODO: check if correct
@@ -587,16 +586,16 @@ Appearance = Struct(  # TODO: check if correct
         "_",
         "category" / BitsInteger(10),
         "sub_category" / BitsInteger(6),
-        reversed=True
+        reversed=True,
     )
 )
 
 CountryCode = Struct(
-    "country_code" / DefaultCountValidator(Int16ul)
+    "country_code" / DefaultCountValidator(Int16ul),
 )
 
 Presence = Struct(
-    "presence_detected" / Flag
+    "presence_detected" / Flag,
 )
 
 EventStatistics = Struct(
@@ -769,7 +768,6 @@ PropertyDict = {
     PropertyID.SENSOR_GAIN: Coefficient,
     PropertyID.PRECISE_PRESENT_AMBIENT_TEMPERATURE: Temperature,
 }
-
 
 
 class PropertyMixin:

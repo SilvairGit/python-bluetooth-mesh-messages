@@ -101,12 +101,12 @@ class SensorSetupOpcode(IntEnum):
         return str(self.value)
 
 
-# fmt: off
 SensorPropertyId = FieldAdapter(
     Select(
         EnumAdapter(Int16ul, PropertyID),
-        Int16ul),
-    Int16ul
+        Int16ul,
+    ),
+    Int16ul,
 )
 
 SensorGetMinimal = Struct()
@@ -117,7 +117,7 @@ SensorGetOptional = Struct(
 
 SensorGet = NamedSelect(
     optional=SensorGetOptional,
-    minimal=SensorGetMinimal
+    minimal=SensorGetMinimal,
 )
 
 SensorSettingsGet = Struct(
@@ -136,6 +136,7 @@ SensorSettingPropertyValue = SwitchWithNamedDefault(
     name_for_default=SENSOR_SETTING_RAW_NAME,
 )
 
+
 class SensorSettingRawMixin:
     def _parse_sensor_setting(self, stream, context, path, sensor_setting_property_id, **kwargs):
         try:
@@ -153,11 +154,13 @@ class SensorSettingRawMixin:
             ALIAS = sensor_setting_name
             ORIGINAL = SENSOR_SETTING_RAW_NAME
 
-        return _Container({
-            **kwargs,
-            "sensor_setting_property_id": sensor_setting_property_id,
-            sensor_setting_name: sensor_setting_raw
-        })
+        return _Container(
+            {
+                **kwargs,
+                "sensor_setting_property_id": sensor_setting_property_id,
+                sensor_setting_name: sensor_setting_raw,
+            }
+        )
 
     def _build_sensor_setting(self, obj, stream, context, path, sensor_setting_property_id):
         try:
@@ -208,13 +211,28 @@ class _SensorSettingStatus(SensorSettingRawMixin, Construct):
     )
 
     def _parse(self, stream, context, path):
-        obj = Struct(*SensorSettingGet.subcons, "sensor_setting_access" / Int8ul)._parse(stream, context, path)
+        obj = Struct(
+            *SensorSettingGet.subcons,
+            "sensor_setting_access" / Int8ul,
+        )._parse(
+            stream,
+            context,
+            path,
+        )
 
         sensor_setting_property_id = obj.pop("sensor_setting_property_id")
         return self._parse_sensor_setting(stream, context, path, sensor_setting_property_id, **obj)
 
     def _build(self, obj, stream, context, path):
-        Struct(*SensorSettingGet.subcons, "sensor_setting_access" / Int8ul)._build(obj, stream, context, path)
+        Struct(
+            *SensorSettingGet.subcons,
+            "sensor_setting_access" / Int8ul,
+        )._build(
+            obj,
+            stream,
+            context,
+            path,
+        )
 
         sensor_setting_property_id = obj["sensor_setting_property_id"]
         return self._build_sensor_setting(obj, stream, context, path, sensor_setting_property_id)
@@ -224,7 +242,7 @@ SensorSettingStatus = _SensorSettingStatus()
 
 SensorSettingsStatus = Struct(
     *SensorSettingsGet.subcons,
-    "sensor_setting_property_ids" / GreedyRange(SensorPropertyId)
+    "sensor_setting_property_ids" / GreedyRange(SensorPropertyId),
 )
 
 SensorDescriptorMinimal = Struct(
@@ -236,12 +254,12 @@ SensorDescriptorOptional = Struct(
     *DoubleKeyIndex("sensor_negative_tolerance", "sensor_positive_tolerance"),
     "sensor_sampling_funcion" / Int8ul,
     "sensor_measurement_period" / Int8ul,
-    "sensor_update_interval" / Int8ul
+    "sensor_update_interval" / Int8ul,
 )
 
 SensorDescriptorStatusItem = NamedSelect(
     optional=SensorDescriptorOptional,
-    minimal=SensorDescriptorMinimal
+    minimal=SensorDescriptorMinimal,
 )
 
 SensorDescriptorStatus = GreedyRange(SensorDescriptorStatusItem)
@@ -270,7 +288,14 @@ class _SensorData(SensorSettingRawMixin, Construct):
             sensor_setting_property_id = (setting_property_id[0] >> 5 & 0b111) | setting_property_id[1] << 3
 
         substream = io.BytesIO(stream.read(length))
-        return self._parse_sensor_setting(substream, context, path, sensor_setting_property_id, format=format, length=length)
+        return self._parse_sensor_setting(
+            substream,
+            context,
+            path,
+            sensor_setting_property_id,
+            format=format,
+            length=length,
+        )
 
     def _build(self, obj, stream, context, path):
         sensor_setting_property_id = obj["sensor_setting_property_id"]
@@ -282,7 +307,7 @@ class _SensorData(SensorSettingRawMixin, Construct):
             encoded = bytes([(length - 1) << 1 | 0x01])
             stream_write(stream, encoded, len(encoded), path)
 
-            encoded = sensor_setting_property_id.to_bytes(2, byteorder='little')
+            encoded = sensor_setting_property_id.to_bytes(2, byteorder="little")
             stream_write(stream, encoded, len(encoded), path)
         else:
             encoded = bytes([(length - 1) << 1 | (sensor_setting_property_id & 0b111) << 5])
@@ -292,6 +317,7 @@ class _SensorData(SensorSettingRawMixin, Construct):
             stream_write(stream, encoded, len(encoded), path)
 
         return self._build_sensor_setting(obj, stream, context, path, sensor_setting_property_id)
+
 
 SensorData = _SensorData()
 
@@ -311,7 +337,7 @@ SensorStatus = GreedyRange(SensorData)
 
 FastCadencePeriodDivisorAndTriggerType = EmbeddedBitStruct(
     "status_trigger_type" / BitsInteger(1),
-    "fast_cadence_period_divisor" / BitsInteger(7)
+    "fast_cadence_period_divisor" / BitsInteger(7),
 )
 
 UnitlessTriggerDelta = DefaultCountValidator(Int8ul, rounding=1, resolution=0.1)
@@ -322,13 +348,13 @@ TriggerDelta = Struct(
         {
             0: Struct(
                 "status_trigger_delta_down" / SensorSettingPropertyValue,
-                "status_trigger_delta_up" / SensorSettingPropertyValue
+                "status_trigger_delta_up" / SensorSettingPropertyValue,
             ),
             1: Struct(
                 "status_trigger_delta_down" / UnitlessTriggerDelta,
-                "status_trigger_delta_up" / UnitlessTriggerDelta
-            )
-        }
+                "status_trigger_delta_up" / UnitlessTriggerDelta,
+            ),
+        },
     )
 )
 
@@ -344,7 +370,8 @@ TriggerDelta = Struct(
 
 SensorMessage = SwitchStruct(
     "opcode" / Opcode(SensorOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
             SensorOpcode.SENSOR_DESCRIPTOR_GET: SensorGet,
@@ -355,13 +382,14 @@ SensorMessage = SwitchStruct(
             # SensorOpcode.SENSOR_COLUMN_STATUS: 0x00,
             # SensorOpcode.SENSOR_SERIES_GET: SensorSeriesGet,
             # SensorOpcode.SENSOR_SERIES_STATUS: 0x00,
-        }
-    )
+        },
+    ),
 )
 
 SensorSetupMessage = SwitchStruct(
     "opcode" / Opcode(SensorSetupOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
             SensorSetupOpcode.SENSOR_CADENCE_GET: SensorGetOptional,
@@ -374,7 +402,6 @@ SensorSetupMessage = SwitchStruct(
             SensorSetupOpcode.SENSOR_SETTING_SET: SensorSettingSet,
             SensorSetupOpcode.SENSOR_SETTING_SET_UNACKNOWLEDGED: SensorSettingSet,
             SensorSetupOpcode.SENSOR_SETTING_STATUS: SensorSettingStatus,
-        }
-    )
+        },
+    ),
 )
-# fmt: on

@@ -46,7 +46,6 @@ class SceneStatusCode(IntEnum):
     SCENE_NOT_FOUND = 0x02
 
 
-# fmt: off
 SceneGet = Struct()
 
 SceneRecallMinimal = Struct(
@@ -63,12 +62,12 @@ SceneRecallWithTransition = Struct(
 
 SceneRecall = NamedSelect(
     optional=SceneRecallWithTransition,
-    minimal=SceneRecallMinimal
+    minimal=SceneRecallMinimal,
 )
 
 SceneStatusMinimal = Struct(
     "status_code" / EnumAdapter(Int8ul, SceneStatusCode),
-    "current_scene" / Int16ul
+    "current_scene" / Int16ul,
 )
 
 SceneStatusWithTargetScene = Struct(
@@ -80,7 +79,7 @@ SceneStatusWithTargetScene = Struct(
 
 SceneStatus = NamedSelect(
     optional=SceneStatusWithTargetScene,
-    minimal=SceneStatusMinimal
+    minimal=SceneStatusMinimal,
 )
 
 SceneRegisterGet = Struct()
@@ -88,7 +87,7 @@ SceneRegisterGet = Struct()
 SceneRegisterStatus = Struct(
     "status_code" / EnumAdapter(Int8ul, SceneStatusCode),
     "current_scene" / Int16ul,
-    "scenes" / GreedyRange(Int16ul)
+    "scenes" / GreedyRange(Int16ul),
 )
 
 SceneSetupWithValidation = Struct(
@@ -96,12 +95,13 @@ SceneSetupWithValidation = Struct(
 )
 
 SceneSetup = Struct(
-    "scene_number" / Int16ul
+    "scene_number" / Int16ul,
 )
 
 SceneMessage = SwitchStruct(
     "opcode" / Opcode(SceneOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
             SceneOpcode.SCENE_GET: SceneGet,
@@ -114,8 +114,6 @@ SceneMessage = SwitchStruct(
             SceneOpcode.SCENE_STORE_UNACKNOWLEDGED: SceneSetupWithValidation,
             SceneOpcode.SCENE_DELETE: SceneSetup,
             SceneOpcode.SCENE_DELETE_UNACKNOWLEDGED: SceneSetup,
-
-        }
-    )
+        },
+    ),
 )
-# fmt: on

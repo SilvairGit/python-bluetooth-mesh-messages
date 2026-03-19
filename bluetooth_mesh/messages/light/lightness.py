@@ -58,26 +58,25 @@ class LightLightnessSetupOpcode(IntEnum):
         return str(self.value)
 
 
-# fmt: off
 LightLightnessGet = Struct()
 
 LightLightnessDefault = Struct(
-    "lightness" / Int16ul
+    "lightness" / Int16ul,
 )
 
 LightLightnessStatusMinimal = Struct(
-    "present_lightness" / Int16ul
+    "present_lightness" / Int16ul,
 )
 
 LightLightnessStatusOptional = Struct(
     *LightLightnessStatusMinimal.subcons,
     "target_lightness" / Int16ul,
-    "remaining_time" / TransitionTimeAdapter(TransitionTime, allow_unknown=True)
+    "remaining_time" / TransitionTimeAdapter(TransitionTime, allow_unknown=True),
 )
 
 LightLightnessStatus = NamedSelect(
     optional=LightLightnessStatusOptional,
-    minimal=LightLightnessStatusMinimal
+    minimal=LightLightnessStatusMinimal,
 )
 
 LightLightnessRange = Struct(
@@ -87,57 +86,58 @@ LightLightnessRange = Struct(
 
 LightLightnessRangeStatus = Struct(
     "status" / StatusCodeAdapter,
-    *LightLightnessRange.subcons
+    *LightLightnessRange.subcons,
 )
 
 LightLightnessSetMinimal = Struct(
     "lightness" / Int16ul,
-    "tid" / Int8ul
+    "tid" / Int8ul,
 )
 
 LightLightnessSetOptional = Struct(
     *LightLightnessSetMinimal.subcons,
-    *OptionalSetParameters.subcons
+    *OptionalSetParameters.subcons,
 )
 
 LightLightnessSet = NamedSelect(
     optional=LightLightnessSetOptional,
-    minimal=LightLightnessSetMinimal
+    minimal=LightLightnessSetMinimal,
 )
 
 LightLightnessMessage = SwitchStruct(
     "opcode" / Opcode(LightLightnessOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
-    LightLightnessOpcode.LIGHT_LIGHTNESS_GET: LightLightnessGet,
-    LightLightnessOpcode.LIGHT_LIGHTNESS_SET: LightLightnessSet,
-    LightLightnessOpcode.LIGHT_LIGHTNESS_SET_UNACKNOWLEDGED: LightLightnessSet,
-    LightLightnessOpcode.LIGHT_LIGHTNESS_STATUS: LightLightnessStatus,
-    LightLightnessOpcode.LIGHT_LIGHTNESS_LINEAR_GET: LightLightnessGet,
-    LightLightnessOpcode.LIGHT_LIGHTNESS_LINEAR_SET: LightLightnessSet,
-    LightLightnessOpcode.LIGHT_LIGHTNESS_LINEAR_SET_UNACKNOWLEDGED: LightLightnessSet,
-    LightLightnessOpcode.LIGHT_LIGHTNESS_LINEAR_STATUS: LightLightnessStatus,
-    LightLightnessOpcode.LIGHT_LIGHTNESS_LAST_GET: LightLightnessGet,
-    LightLightnessOpcode.LIGHT_LIGHTNESS_LAST_STATUS: LightLightnessDefault,
-    LightLightnessOpcode.LIGHT_LIGHTNESS_DEFAULT_GET: LightLightnessGet,
-    LightLightnessOpcode.LIGHT_LIGHTNESS_DEFAULT_STATUS: LightLightnessDefault,
-    LightLightnessOpcode.LIGHT_LIGHTNESS_RANGE_GET: LightLightnessGet,
-    LightLightnessOpcode.LIGHT_LIGHTNESS_RANGE_STATUS: LightLightnessRangeStatus,
-        }
-    )
+            LightLightnessOpcode.LIGHT_LIGHTNESS_GET: LightLightnessGet,
+            LightLightnessOpcode.LIGHT_LIGHTNESS_SET: LightLightnessSet,
+            LightLightnessOpcode.LIGHT_LIGHTNESS_SET_UNACKNOWLEDGED: LightLightnessSet,
+            LightLightnessOpcode.LIGHT_LIGHTNESS_STATUS: LightLightnessStatus,
+            LightLightnessOpcode.LIGHT_LIGHTNESS_LINEAR_GET: LightLightnessGet,
+            LightLightnessOpcode.LIGHT_LIGHTNESS_LINEAR_SET: LightLightnessSet,
+            LightLightnessOpcode.LIGHT_LIGHTNESS_LINEAR_SET_UNACKNOWLEDGED: LightLightnessSet,
+            LightLightnessOpcode.LIGHT_LIGHTNESS_LINEAR_STATUS: LightLightnessStatus,
+            LightLightnessOpcode.LIGHT_LIGHTNESS_LAST_GET: LightLightnessGet,
+            LightLightnessOpcode.LIGHT_LIGHTNESS_LAST_STATUS: LightLightnessDefault,
+            LightLightnessOpcode.LIGHT_LIGHTNESS_DEFAULT_GET: LightLightnessGet,
+            LightLightnessOpcode.LIGHT_LIGHTNESS_DEFAULT_STATUS: LightLightnessDefault,
+            LightLightnessOpcode.LIGHT_LIGHTNESS_RANGE_GET: LightLightnessGet,
+            LightLightnessOpcode.LIGHT_LIGHTNESS_RANGE_STATUS: LightLightnessRangeStatus,
+        },
+    ),
 )
 
 LightLightnessSetupMessage = SwitchStruct(
     "opcode" / Opcode(LightLightnessSetupOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
             LightLightnessSetupOpcode.LIGHT_LIGHTNESS_SETUP_DEFAULT_SET: LightLightnessDefault,
             LightLightnessSetupOpcode.LIGHT_LIGHTNESS_SETUP_DEFAULT_SET_UNACKNOWLEDGED: LightLightnessDefault,
             LightLightnessSetupOpcode.LIGHT_LIGHTNESS_SETUP_RANGE_SET: LightLightnessRange,
             LightLightnessSetupOpcode.LIGHT_LIGHTNESS_SETUP_RANGE_SET_UNACKNOWLEDGED: LightLightnessRange,
-        }
-    )
+        },
+    ),
 )
-# fmt: on

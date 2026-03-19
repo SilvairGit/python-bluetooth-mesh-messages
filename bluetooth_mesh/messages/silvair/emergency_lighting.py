@@ -105,7 +105,6 @@ class _EmergencyLightingProperty(PropertyMixin, Construct):
         return self._build_property(obj, stream, context, path)
 
 
-# fmt: off
 EmergencyLightingInhibitEnter = Struct()
 
 EmergencyLightingInhibitExit = Struct()
@@ -139,7 +138,8 @@ EmergencyLightingRestExit = Struct()
 
 EmergencyLightingParams = SwitchStruct(
     "subopcode" / EnumAdapter(Int8ul, EmergencyLightingSubOpcode),
-    "payload" / Switch(
+    "payload"
+    / Switch(
         this.subopcode,
         {
             EmergencyLightingSubOpcode.EL_INHIBIT_ENTER: EmergencyLightingInhibitEnter,
@@ -160,17 +160,17 @@ EmergencyLightingParams = SwitchStruct(
             EmergencyLightingSubOpcode.EL_REST_ENTER_UNACKNOWLEDGED: EmergencyLightingRestEnter,
             EmergencyLightingSubOpcode.EL_REST_EXIT: EmergencyLightingRestExit,
             EmergencyLightingSubOpcode.EL_REST_EXIT_UNACKNOWLEDGED: EmergencyLightingRestExit,
-        }
-    )
+        },
+    ),
 )
 
 EmergencyLightingMessage = SwitchStruct(
     "opcode" / Opcode(EmergencyLightingOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
-            EmergencyLightingOpcode.SILVAIR_EL: EmergencyLightingParams
-        }
-    )
+            EmergencyLightingOpcode.SILVAIR_EL: EmergencyLightingParams,
+        },
+    ),
 )
-# fmt: on

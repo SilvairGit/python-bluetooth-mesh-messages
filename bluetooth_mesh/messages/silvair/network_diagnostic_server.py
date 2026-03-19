@@ -59,14 +59,13 @@ class NetworkDiagnosticSetupServerSubOpcode(IntEnum):
     PUBLICATION_STATUS = 0x02
 
 
-# fmt: off
 NetworkDiagnosticSetupServerPublicationGet = Struct()
 
 RegistryRecord = Struct(
     "source" / UnicastUnassignedAddress,
     "count" / Int16ul,
     "min_hops" / ConfigHeartbeatHops,
-    "max_hops" / ConfigHeartbeatHops
+    "max_hops" / ConfigHeartbeatHops,
 )
 
 NetworkDiagnosticSetupServerPublicationSetMinimal = Struct(
@@ -79,7 +78,7 @@ NetworkDiagnosticSetupServerPublicationSetMinimal = Struct(
 
 NetworkDiagnosticSetupServerPublicationSetOptional = Struct(
     *NetworkDiagnosticSetupServerPublicationSetMinimal.subcons,
-    "features" / ConfigHeartbeatPublicationFeatures
+    "features" / ConfigHeartbeatPublicationFeatures,
 )
 
 NetworkDiagnosticSetupServerPublicationSet = NamedSelect(
@@ -93,61 +92,64 @@ NetworkDiagnosticServerSubscriptionGet = Struct()
 
 NetworkDiagnosticServerSubscriptionSet = Struct(
     "destination" / UnicastUnassignedGroupAddress,
-    "period" / Int16ul
+    "period" / Int16ul,
 )
 
 NetworkDiagnosticServerSubscriptionStatus = Struct(
     "destination" / UnicastUnassignedGroupAddress,
     "period" / Int16ul,
     "max_record_count" / Int8ul,
-    "record" / GreedyRange(RegistryRecord)
+    "record" / GreedyRange(RegistryRecord),
 )
 
 NetworkDiagnosticServerRadioStatGet = Struct()
 
 NetworkDiagnosticServerParams = SwitchStruct(
     "subopcode" / EnumAdapter(Int8ul, NetworkDiagnosticServerSubOpcode),
-    "payload" / Switch(
+    "payload"
+    / Switch(
         this.subopcode,
         {
             NetworkDiagnosticServerSubOpcode.SUBSCRIPTION_GET: NetworkDiagnosticServerSubscriptionGet,
             NetworkDiagnosticServerSubOpcode.SUBSCRIPTION_SET: NetworkDiagnosticServerSubscriptionSet,
             NetworkDiagnosticServerSubOpcode.SUBSCRIPTION_SET_UNACKNOWLEDGED: NetworkDiagnosticServerSubscriptionSet,
             NetworkDiagnosticServerSubOpcode.SUBSCRIPTION_STATUS: NetworkDiagnosticServerSubscriptionStatus,
-            NetworkDiagnosticServerSubOpcode.RADIO_STAT_GET: NetworkDiagnosticServerRadioStatGet
-        }
-    )
+            NetworkDiagnosticServerSubOpcode.RADIO_STAT_GET: NetworkDiagnosticServerRadioStatGet,
+        },
+    ),
 )
 
 NetworkDiagnosticSetupServerParams = SwitchStruct(
     "subopcode" / EnumAdapter(Int8ul, NetworkDiagnosticSetupServerSubOpcode),
-    "payload" / Switch(
+    "payload"
+    / Switch(
         this.subopcode,
         {
             NetworkDiagnosticSetupServerSubOpcode.PUBLICATION_GET: NetworkDiagnosticSetupServerPublicationGet,
             NetworkDiagnosticSetupServerSubOpcode.PUBLICATION_SET: NetworkDiagnosticSetupServerPublicationSet,
-            NetworkDiagnosticSetupServerSubOpcode.PUBLICATION_STATUS: NetworkDiagnosticSetupServerPublicationStatus
-        }
-    )
+            NetworkDiagnosticSetupServerSubOpcode.PUBLICATION_STATUS: NetworkDiagnosticSetupServerPublicationStatus,
+        },
+    ),
 )
 
 NetworkDiagnosticServerMessage = SwitchStruct(
     "opcode" / Opcode(NetworkDiagnosticServerOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
-            NetworkDiagnosticServerOpcode.SILVAIR_NDS: NetworkDiagnosticServerParams
-        }
-    )
+            NetworkDiagnosticServerOpcode.SILVAIR_NDS: NetworkDiagnosticServerParams,
+        },
+    ),
 )
 
 NetworkDiagnosticSetupServerMessage = SwitchStruct(
     "opcode" / Opcode(NetworkDiagnosticSetupServerOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
-            NetworkDiagnosticSetupServerOpcode.SILVAIR_NDS_SETUP: NetworkDiagnosticSetupServerParams
-        }
-    )
+            NetworkDiagnosticSetupServerOpcode.SILVAIR_NDS_SETUP: NetworkDiagnosticSetupServerParams,
+        },
+    ),
 )
-# fmt: on

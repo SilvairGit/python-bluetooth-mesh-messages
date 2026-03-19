@@ -34,12 +34,11 @@ class GenericOnOffOpcode(IntEnum):
     GENERIC_ONOFF_STATUS = 0x8204
 
 
-# fmt: off
 GenericOnOffGet = Struct()
 
 GenericOnOffSetMinimal = Struct(
     "onoff" / Int8ul,
-    "tid" / Int8ul
+    "tid" / Int8ul,
 )
 
 GenericOnOffSetOptional = Struct(
@@ -51,11 +50,11 @@ GenericOnOffSetOptional = Struct(
 
 GenericOnOffSet = NamedSelect(
     optional=GenericOnOffSetOptional,
-    minimal=GenericOnOffSetMinimal
+    minimal=GenericOnOffSetMinimal,
 )
 
 GenericOnOffStatusMinimal = Struct(
-    "present_onoff" / Int8ul
+    "present_onoff" / Int8ul,
 )
 
 GenericOnOffStatusOptional = Struct(
@@ -66,13 +65,14 @@ GenericOnOffStatusOptional = Struct(
 
 GenericOnOffStatus = NamedSelect(
     optional=GenericOnOffStatusOptional,
-    minimal=GenericOnOffStatusMinimal
+    minimal=GenericOnOffStatusMinimal,
 )
 
 
 GenericOnOffMessage = SwitchStruct(
     "opcode" / Opcode(GenericOnOffOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
             GenericOnOffOpcode.GENERIC_ONOFF_GET: GenericOnOffGet,
@@ -82,4 +82,3 @@ GenericOnOffMessage = SwitchStruct(
         },
     ),
 )
-# fmt: off

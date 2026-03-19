@@ -25,7 +25,6 @@ from construct import Default, ExprValidator, GreedyRange, Int8ul, Int16ul, Stru
 
 from bluetooth_mesh.messages.util import EnumSwitch as Switch, Opcode, SwitchStruct
 
-# fmt: off
 FaultTest = Struct(
     "test_id" / Int8ul,
     "company_id" / Int16ul,
@@ -34,19 +33,19 @@ FaultTest = Struct(
 FaultStatus = Struct(
     "test_id" / Int8ul,
     "company_id" / Int16ul,
-    "fault_array" / Default(GreedyRange(Int8ul), [])
+    "fault_array" / Default(GreedyRange(Int8ul), []),
 )
 
 FastPeriodDivisor = Struct(
-    "fast_period_divisor" / ExprValidator(Int8ul, obj_ <= 15)
+    "fast_period_divisor" / ExprValidator(Int8ul, obj_ <= 15),
 )
 
 Attention = Struct(
-    "attention" / Int8ul
+    "attention" / Int8ul,
 )
 
 CompanyId = Struct(
-    "company_id" / Int16ul
+    "company_id" / Int16ul,
 )
 
 HealthCurrentStatus = FaultStatus
@@ -72,7 +71,6 @@ HealthAttentionSet = Attention
 HealthAttentionStatus = Attention
 
 
-# fmt: off
 class HealthOpcode(enum.IntEnum):
     HEALTH_ATTENTION_GET = 0x8004
     HEALTH_ATTENTION_SET = 0x8005
@@ -91,10 +89,10 @@ class HealthOpcode(enum.IntEnum):
     HEALTH_PERIOD_STATUS = 0x8037
 
 
-# fmt: off
 HealthMessage = SwitchStruct(
     "opcode" / Opcode(HealthOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
             HealthOpcode.HEALTH_ATTENTION_GET: HealthAttentionGet,
@@ -112,7 +110,6 @@ HealthMessage = SwitchStruct(
             HealthOpcode.HEALTH_PERIOD_SET: HealthPeriodSet,
             HealthOpcode.HEALTH_PERIOD_SET_UNACKNOWLEDGED: HealthPeriodSet,
             HealthOpcode.HEALTH_PERIOD_STATUS: HealthPeriodStatus,
-        }
-    )
+        },
+    ),
 )
-# fmt: on

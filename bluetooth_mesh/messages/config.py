@@ -423,7 +423,6 @@ FriendAdapter = EnumAdapter(Int8ul, Friend)
 
 TTL = RangeValidator(Int8ul, max_value=0x7F)
 
-# fmt: off
 SIGModelId = Struct(
     "model_id" / Int16ul,
 )
@@ -435,9 +434,8 @@ VendorModelId = Struct(
 
 ModelId = NamedSelect(
     vendor=VendorModelId,
-    sig=SIGModelId
+    sig=SIGModelId,
 )
-# fmt: on
 
 
 class AddressType(enum.Enum):
@@ -486,44 +484,50 @@ def AddressTypeValidator(subcons, *allowed_types):
     return ExprValidator(subcons, lambda obj, ctx: get_address_type(obj) in allowed_types)
 
 
-# fmt: off
 UnassignedAddress = AddressTypeValidator(
     Int16ul,
-    AddressType.UNASSIGNED
+    AddressType.UNASSIGNED,
 )
 
 UnicastAddress = AddressTypeValidator(
     Int16ul,
-    AddressType.UNICAST
+    AddressType.UNICAST,
 )
 
 # TODO Fixed Groups?
 GroupAddress = AddressTypeValidator(
-    Int16ul, AddressType.GROUP
+    Int16ul,
+    AddressType.GROUP,
 )
 
 VirtualLabel = AddressTypeValidator(
     Int16ul,
-    AddressType.VIRTUAL
+    AddressType.VIRTUAL,
 )
 
 NotVirtualLabel = ExprValidator(
     Int16ul,
-    lambda obj, ctx: get_address_type(obj) != AddressType.VIRTUAL
+    lambda obj, ctx: get_address_type(obj) != AddressType.VIRTUAL,
 )
 
 SubscriptionAddress = ExprValidator(
     Int16ul,
-    lambda obj, ctx: get_address_type(obj) not in [AddressType.UNASSIGNED,
-                                                   AddressType.UNICAST,
-                                                   AddressType.ALL_NODES,
-                                                   AddressType.VIRTUAL]
+    lambda obj, ctx: get_address_type(obj)
+    not in [
+        AddressType.UNASSIGNED,
+        AddressType.UNICAST,
+        AddressType.ALL_NODES,
+        AddressType.VIRTUAL,
+    ],
 )
 
 StatusSubscriptionAddress = ExprValidator(
     Int16ul,
-    lambda obj, ctx: get_address_type(obj) not in [AddressType.UNICAST,
-                                                   AddressType.ALL_NODES]
+    lambda obj, ctx: get_address_type(obj)
+    not in [
+        AddressType.UNICAST,
+        AddressType.ALL_NODES,
+    ],
 )
 
 UnicastUnassignedAddress = AddressTypeValidator(
@@ -541,7 +545,7 @@ UnicastUnassignedGroupAddress = AddressTypeValidator(
 
 Int12ul = ExprValidator(
     Int16ul,
-    (obj_ & 0xF000) == 0x00
+    (obj_ & 0xF000) == 0x00,
 )
 
 CompositionDataPage0Element = Struct(
@@ -563,7 +567,7 @@ CompositionDataPage0 = Struct(
 
 ExtendedModelLongFormat = Struct(
     "model_item_index" / Int8ul,
-    "element_offset" / Int8sl
+    "element_offset" / Int8sl,
 )
 
 ExtendedModelShortFormat = BitStruct(
@@ -582,13 +586,18 @@ ModelRelationItem = BitStruct(
     "format" / EnumAdapter(BitsInteger(1), ExtendedModelsItemFormat),
     "corresponding_present" / BitsInteger(1),
     "corresponding_id" / IfThenElseDefault(this.corresponding_present, BitsInteger(8), default=0),
-    "extended_models_items" / Bytewise(EnumSwitchStruct(Switch(
-        this.format,
-        {
-            ExtendedModelsItemFormat.SHORT: ExtendedModelShortFormat[this["extended_items_count"]],
-            ExtendedModelsItemFormat.LONG: ExtendedModelLongFormat[this["extended_items_count"]],
-        }
-    ))),
+    "extended_models_items"
+    / Bytewise(
+        EnumSwitchStruct(
+            Switch(
+                this.format,
+                {
+                    ExtendedModelsItemFormat.SHORT: ExtendedModelShortFormat[this["extended_items_count"]],
+                    ExtendedModelsItemFormat.LONG: ExtendedModelLongFormat[this["extended_items_count"]],
+                },
+            )
+        )
+    ),
 )
 
 CompositionDataPage1Element = Struct(
@@ -599,13 +608,13 @@ CompositionDataPage1Element = Struct(
 )
 
 CompositionDataPage1 = Struct(
-    'element' / GreedyRange(CompositionDataPage1Element)
+    "element" / GreedyRange(CompositionDataPage1Element),
 )
 
 Version = Struct(
-    'version_x' / Int8ul,
-    'version_y' / Int8ul,
-    'version_z' / Int8ul,
+    "version_x" / Int8ul,
+    "version_y" / Int8ul,
+    "version_z" / Int8ul,
 )
 
 MeshProfileEntry = Struct(
@@ -618,7 +627,7 @@ MeshProfileEntry = Struct(
 )
 
 CompositionDataPage2 = Struct(
-    'record_list' / GreedyRange(MeshProfileEntry)
+    "record_list" / GreedyRange(MeshProfileEntry),
 )
 
 Retransmit = BitStruct(
@@ -626,7 +635,6 @@ Retransmit = BitStruct(
     "interval_steps" / BitsInteger(5),
     "count" / BitsInteger(3),
 )
-# fmt: on
 
 
 class RetransmitAdapter(Adapter):
@@ -708,7 +716,6 @@ class KeyIndicesAdapter(Adapter):
         return ret
 
 
-# fmt: off
 KeyIndices = KeyIndicesAdapter(
     GreedyRange(
         Select(
@@ -723,12 +730,11 @@ KeyIndices = KeyIndicesAdapter(
                     Padding(4),
                     "last" / BitsInteger(12),
                 )
-            )
+            ),
         )
     )
 )
 KeyIndices.__construct_doc__ = GreedyRange(BitsInteger(12))
-# fmt: on
 
 
 class PublishPeriodStepResolution(enum.IntEnum):
@@ -752,10 +758,9 @@ class PublishPeriodStepResolution(enum.IntEnum):
             return timedelta(minutes=10)
 
 
-# fmt: off
 PublishPeriodStepResolutionAdapter = EnumAdapter(
     BitsInteger(2),
-    PublishPeriodStepResolution
+    PublishPeriodStepResolution,
 )
 
 PublishPeriod = BitStruct(
@@ -838,7 +843,7 @@ ConfigModelPublicationSet = Struct(
         "rfu" / BitsInteger(3),
         "credential_flag" / PublishFriendshipCredentialsFlagAdapter,
         "app_key_index" / BitsInteger(12),
-        reversed=True
+        reversed=True,
     ),
     "ttl" / TTL,
     "publish_period" / PublishPeriod,
@@ -848,7 +853,7 @@ ConfigModelPublicationSet = Struct(
 
 ConfigModelPublicationStatus = Struct(
     "status" / StatusCodeAdapter,
-    *ConfigModelPublicationSet.subcons
+    *ConfigModelPublicationSet.subcons,
 )
 
 ConfigModelPublicationVASet = Struct(
@@ -859,7 +864,7 @@ ConfigModelPublicationVASet = Struct(
         "rfu" / BitsInteger(3),
         "credential_flag" / PublishFriendshipCredentialsFlagAdapter,
         "app_key_index" / BitsInteger(12),
-        reversed=True
+        reversed=True,
     ),
     "ttl" / TTL,
     "publish_period" / PublishPeriod,
@@ -940,7 +945,7 @@ ConfigNetKeyStatus = Struct(
 ConfigNetKeyGet = Struct()
 
 ConfigNetKeyList = Struct(
-    "net_key_indices" / KeyIndices
+    "net_key_indices" / KeyIndices,
 )
 
 ConfigAppKeyAdd = Struct(
@@ -960,7 +965,7 @@ ConfigAppKeyStatus = Struct(
 )
 
 ConfigAppKeyGet = Struct(
-    *NetKeyIndex
+    *NetKeyIndex,
 )
 
 ConfigAppKeyList = Struct(
@@ -1097,7 +1102,6 @@ ConfigNetworkTransmitSet = NetworkRetransmit
 ConfigNetworkTransmitStatus = ConfigNetworkTransmitSet
 
 
-# fmt: on
 class ConfigOpcode(enum.IntEnum):
     CONFIG_APPKEY_ADD = 0x00
     CONFIG_APPKEY_DELETE = 0x8000
@@ -1172,10 +1176,10 @@ class ConfigOpcode(enum.IntEnum):
     CONFIG_VENDOR_MODEL_SUBSCRIPTION_LIST = 0x802C
 
 
-# fmt: off
 ConfigMessage = SwitchStruct(
     "opcode" / Opcode(ConfigOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
             ConfigOpcode.CONFIG_APPKEY_ADD: ConfigAppKeyAdd,
@@ -1249,7 +1253,6 @@ ConfigMessage = SwitchStruct(
             ConfigOpcode.CONFIG_VENDOR_MODEL_APP_LIST: ConfigVendorModelAppList,
             ConfigOpcode.CONFIG_VENDOR_MODEL_SUBSCRIPTION_GET: ConfigVendorModelSubscriptionGet,
             ConfigOpcode.CONFIG_VENDOR_MODEL_SUBSCRIPTION_LIST: ConfigVendorModelSubscriptionList,
-        }
-    )
+        },
+    ),
 )
-# fmt: on

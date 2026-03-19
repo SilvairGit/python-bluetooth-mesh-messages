@@ -195,7 +195,6 @@ class _EmergencyLightingTestProperty(PropertyMixin, Construct):
         return self._build_property(obj, stream, context, path)
 
 
-# fmt: off
 Timestamp = Struct(
     "tai_seconds" / BytesInteger(5, swapped=True),
     "time_zone_offset" / Int8ul,
@@ -259,7 +258,8 @@ EmergencyLightingTestPropertyStatus = _EmergencyLightingTestProperty()
 
 EmergencyLightingTestParams = SwitchStruct(
     "subopcode" / EnumAdapter(Int8ul, EmergencyLightingTestSubOpcode),
-    "payload" / Switch(
+    "payload"
+    / Switch(
         this.subopcode,
         {
             EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_GET: EmergencyLightingTestFunctionalTestGet,
@@ -274,17 +274,17 @@ EmergencyLightingTestParams = SwitchStruct(
             EmergencyLightingTestSubOpcode.ELT_PROPERTY_SET: EmergencyLightingTestPropertySet,
             EmergencyLightingTestSubOpcode.ELT_PROPERTY_SET_UNACKNOWLEDGED: EmergencyLightingTestPropertySet,
             EmergencyLightingTestSubOpcode.ELT_PROPERTY_STATUS: EmergencyLightingTestPropertyStatus,
-        }
-    )
+        },
+    ),
 )
 
 EmergencyLightingTestMessage = SwitchStruct(
     "opcode" / Opcode(EmergencyLightingTestOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
-            EmergencyLightingTestOpcode.SILVAIR_ELT: EmergencyLightingTestParams
-        }
-    )
+            EmergencyLightingTestOpcode.SILVAIR_ELT: EmergencyLightingTestParams,
+        },
+    ),
 )
-# fmt: on

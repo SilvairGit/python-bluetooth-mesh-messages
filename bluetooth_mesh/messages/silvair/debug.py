@@ -79,21 +79,20 @@ class DebugSubOpcode(IntEnum):
     ARAP_LIST_CONTENT_STATUS = 0x24
 
 
-# fmt: off
 RssiThresholdGet = Struct()
 
 RssiThreshold = Struct(
-    "rssi_threshold" / Int8ul
+    "rssi_threshold" / Int8ul,
 )
 
 RadioTest = Struct(
-    "packet_counter" / Int8ul
+    "packet_counter" / Int8ul,
 )
 
 UptimeGet = Struct()
 
 UptimeStatus = Struct(
-    "uptime" / Int32ul
+    "uptime" / Int32ul,
 )
 
 LastSwFaultGet = Struct()
@@ -102,7 +101,7 @@ LastSwFaultClear = Struct()
 
 LastSwFaultStatus = Struct(
     "time" / Int32ul,
-    "fault" / GreedyString("utf8")
+    "fault" / GreedyString("utf8"),
 )
 
 SystemStatsGet = Struct()
@@ -110,11 +109,11 @@ SystemStatsGet = Struct()
 SystemStat = Struct(
     "name" / PaddedString(8, "utf8"),
     "high_water_mark" / Int32ul,
-    "_rfu" / Padding(2)
+    "_rfu" / Padding(2),
 )
 
 SystemStatsStatus = Struct(
-    "stats" / GreedyRange(SystemStat)
+    "stats" / GreedyRange(SystemStat),
 )
 
 LastMallocFaultGet = Struct()
@@ -132,41 +131,41 @@ LastFdsFaultStatus = LastSwFaultStatus
 BytesBeforeGarbageCollectorGet = Struct()
 
 BytesBeforeGarbageCollectorStatus = Struct(
-    "bytes_left" / Int16ul
+    "bytes_left" / Int16ul,
 )
 
 ProvisionedAppVersionGet = Struct()
 
 ProvisionedAppVersionStatus = Struct(
-    "version" / Int16ul
+    "version" / Int16ul,
 )
 
 FullFirmwareVersionGet = Struct()
 
 FullFirmwareVersionStatus = Struct(
-    "version" / GreedyString("utf8")
+    "version" / GreedyString("utf8"),
 )
 
 IvIndexGet = Struct()
 
 IvIndexStatus = Struct(
-    "ivindex" / Int32ul
+    "ivindex" / Int32ul,
 )
 
 GarbageCollectorCounterGet = Struct()
 
 GarbageCollectorCounterStatus = Struct(
-    "counter" / Int16ul
+    "counter" / Int16ul,
 )
 
 ArapSize16 = Struct(
     "capacity" / Int16ul,
-    "size" / Int16ul
+    "size" / Int16ul,
 )
 
 ArapSize8 = Struct(
     "capacity" / Int8ul,
-    "size" / Int8ul
+    "size" / Int8ul,
 )
 
 ArapListSizeGet = Struct()
@@ -177,7 +176,7 @@ ArapListSizeStatus = NamedSelect(
 )
 
 ArapListContentGet = Struct(
-    "page" / Int8ul
+    "page" / Int8ul,
 )
 
 ArapNode = ByteSwapped(
@@ -191,12 +190,13 @@ ArapNode = ByteSwapped(
 ArapListContentStatus = Struct(
     "current_page" / Int8ul,
     "last_page" / Int8ul,
-    "nodes" / GreedyRange(ArapNode)
+    "nodes" / GreedyRange(ArapNode),
 )
 
 DebugParams = SwitchStruct(
     "subopcode" / EnumAdapter(Int8ul, DebugSubOpcode),
-    "payload" / Switch(
+    "payload"
+    / Switch(
         this.subopcode,
         {
             DebugSubOpcode.RSSI_THRESHOLD_GET: RssiThresholdGet,
@@ -230,17 +230,17 @@ DebugParams = SwitchStruct(
             DebugSubOpcode.ARAP_LIST_SIZE_STATUS: ArapListSizeStatus,
             DebugSubOpcode.ARAP_LIST_CONTENT_GET: ArapListContentGet,
             DebugSubOpcode.ARAP_LIST_CONTENT_STATUS: ArapListContentStatus,
-        }
-    )
+        },
+    ),
 )
 
 DebugMessage = SwitchStruct(
     "opcode" / Opcode(DebugOpcode),
-    "params" / Switch(
+    "params"
+    / Switch(
         this.opcode,
         {
             DebugOpcode.SILVAIR_DEBUG: DebugParams,
-        }
-    )
+        },
+    ),
 )
-# fmt: on
