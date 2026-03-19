@@ -242,7 +242,7 @@ class TimeAdapter(Adapter):
         return Container(
             tai_seconds=int(total_time),
             subsecond=seconds_to_subsecond(total_time),
-            uncertainty=int((obj["uncertainty"].total_seconds() * 100)),
+            uncertainty=int(obj["uncertainty"].total_seconds() * 100),
             tai_utc_delta=timedelta_to_mesh_tai_utc_delta(obj["tai_utc_delta"]),
             time_authority=bool(obj["time_authority"]),
             time_zone_offset=timedelta_to_mesh_time_zone_offset(passed_time.utcoffset()),

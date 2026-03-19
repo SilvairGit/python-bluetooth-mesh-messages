@@ -276,9 +276,9 @@ class _SensorData(SensorSettingRawMixin, Construct):
     def _parse(self, stream, context, path):
         setting_property_id = stream_read(stream, 2, path)
 
-        format = setting_property_id[0] & 0x01
+        setting_format = setting_property_id[0] & 0x01
 
-        if format:
+        if setting_format:
             setting_property_id += stream_read(stream, 1, path)
 
             length = (setting_property_id[0] >> 1) + 1
@@ -293,17 +293,17 @@ class _SensorData(SensorSettingRawMixin, Construct):
             context,
             path,
             sensor_setting_property_id,
-            format=format,
+            format=setting_format,
             length=length,
         )
 
     def _build(self, obj, stream, context, path):
         sensor_setting_property_id = obj["sensor_setting_property_id"]
 
-        format = obj["format"]
+        setting_format = obj["format"]
         length = obj["length"]
 
-        if format:
+        if setting_format:
             encoded = bytes([(length - 1) << 1 | 0x01])
             stream_write(stream, encoded, len(encoded), path)
 
@@ -363,7 +363,9 @@ TriggerDelta = Struct(
 #     "sensor_setting_property_id" / Int16ul,
 #     *FastCadencePeriodDivisorAndTriggerType,
 #     *TriggerDelta.subcons,
-#     "status_min_interval" / ExprAdapter(Int16ul, lambda obj, ctx: pow(2, obj), lambda obj, ctx: log(obj, 2)),
+#     "status_min_interval" / ExprAdapter(
+#       Int16ul, lambda obj, ctx: pow(2, obj), lambda obj, ctx: log(obj, 2)
+#      ),
 #     "fast_cadence_low" / PropertyValue,
 #     "fast_cadence_high" / PropertyValue
 # )

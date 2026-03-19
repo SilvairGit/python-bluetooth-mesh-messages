@@ -22,7 +22,21 @@
 import construct
 import pytest
 
-from bluetooth_mesh.messages.health import *
+from bluetooth_mesh.messages.health import (
+    HealthAttentionGet,
+    HealthAttentionSet,
+    HealthAttentionStatus,
+    HealthCurrentStatus,
+    HealthFaultClear,
+    HealthFaultGet,
+    HealthFaultStatus,
+    HealthFaultTest,
+    HealthMessage,
+    HealthOpcode,
+    HealthPeriodGet,
+    HealthPeriodSet,
+    HealthPeriodStatus,
+)
 
 valid = [
     pytest.param(
@@ -186,7 +200,7 @@ def test_build_health_message(key):
     data = HealthMessage.build(
         {
             "opcode": HealthOpcode.HEALTH_ATTENTION_SET,
-            key: dict(attention=6),
+            key: {"attention": 6},
         }
     )
 
@@ -196,10 +210,10 @@ def test_build_health_message(key):
 def test_parse_health_message():
     msg = HealthMessage.parse(bytes.fromhex("800506"))
 
-    assert msg == dict(
-        opcode=HealthOpcode.HEALTH_ATTENTION_SET,
-        health_attention_set=dict(attention=6),
-    )
+    assert msg == {
+        "opcode": HealthOpcode.HEALTH_ATTENTION_SET,
+        "health_attention_set": {"attention": 6},
+    }
 
 
 def test_parse_health_message_bad_opcode():

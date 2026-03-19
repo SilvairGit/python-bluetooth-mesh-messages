@@ -64,13 +64,13 @@ def convert(
     struct_name=None,
     many=False,
     message_name=None,
-):
+):  # pylint: disable=too-many-branches
     struct_name = struct_name or names[con] or f"{message_name}Params"
 
     if field_name and field_name.startswith("_"):
         return
 
-    elif isinstance(con, Computed):
+    if isinstance(con, Computed):
         return
 
     if isinstance(con, Struct):
@@ -80,8 +80,9 @@ def convert(
             convert(subcon, visitor, message_name=message_name)
 
         visitor.exit()
+        return
 
-    elif isinstance(con, Switch):
+    if isinstance(con, Switch):
         if many:
             visitor.enter_struct(field_name, struct_name, many=many)
             visitor.enter_union(None)
@@ -104,8 +105,9 @@ def convert(
 
         if many:
             visitor.exit()
+        return
 
-    elif isinstance(con, Select):
+    if isinstance(con, Select):
         if many:
             visitor.enter_struct(field_name, struct_name, many=many)
             visitor.enter_union(None)
@@ -123,8 +125,9 @@ def convert(
 
         if many:
             visitor.exit()
+        return
 
-    elif isinstance(con, Renamed):
+    if isinstance(con, Renamed):
         convert(
             con.subcon,
             visitor,
@@ -132,14 +135,17 @@ def convert(
             message_name=message_name,
             many=many,
         )
+        return
 
-    elif isinstance(con, IfThenElse) and con.elsesubcon is Pass:
+    if isinstance(con, IfThenElse) and con.elsesubcon is Pass:
         visitor.field(con.thensubcon, field_name, None)
+        return
 
-    elif isinstance(con, StringEncoded):
+    if isinstance(con, StringEncoded):
         visitor.field(con, field_name, struct_name)
+        return
 
-    elif isinstance(con, (GreedyRange, Array)):
+    if isinstance(con, (GreedyRange, Array)):
         convert(
             con.subcon,
             visitor,
@@ -148,8 +154,9 @@ def convert(
             many=True,
             message_name=message_name,
         )
+        return
 
-    elif isinstance(con, FocusedSeq):
+    if isinstance(con, FocusedSeq):
         subcon = getattr(con, con.parsebuildfrom)
         convert(
             subcon.subcon,
@@ -158,14 +165,15 @@ def convert(
             struct_name=struct_name,
             many=False,
         )
-
-    elif con is Pass:
         return
 
-    elif isinstance(con, StopIf):
+    if con is Pass:
         return
 
-    elif isinstance(con, Construct):
+    if isinstance(con, StopIf):
+        return
+
+    if isinstance(con, Construct):
         subcon = getattr(con, "_subcon", getattr(con, "subcon", None))
         if subcon is None:
             visitor.field(con, field_name, struct_name, many=many)
@@ -179,9 +187,9 @@ def convert(
             message_name=message_name,
             many=many,
         )
+        return
 
-    else:
-        raise TypeError
+    raise TypeError
 
 
 class Visitor:
@@ -208,41 +216,43 @@ class Visitor:
 
     @staticmethod
     def make_type(con):
-        FORMAT_FIELD_TYPES = dict(
-            c="UInt8",
-            b="Int8",
-            B="UInt8",
-            h="Int16",
-            H="UInt16",
-            i="Int32",
-            I="UInt32",
-            l="Int32",
-            L="UInt32",
-            q="Int64",
-            Q="UInt64",
-            f="Float32",
-            d="Float64",
-        )
+        FORMAT_FIELD_TYPES = {
+            "c": "UInt8",
+            "b": "Int8",
+            "B": "UInt8",
+            "h": "Int16",
+            "H": "UInt16",
+            "i": "Int32",
+            "I": "UInt32",
+            "l": "Int32",
+            "L": "UInt32",
+            "q": "Int64",
+            "Q": "UInt64",
+            "f": "Float32",
+            "d": "Float64",
+        }
 
         if isinstance(con, StringEncoded):
             return "Text"
 
-        elif isinstance(con, Bytes) or con is GreedyBytes:
+        if isinstance(con, Bytes) or con is GreedyBytes:
             return "Data"
 
-        elif isinstance(con, FormatField):
+        if isinstance(con, FormatField):
             return FORMAT_FIELD_TYPES[con.fmtstr[1:]]
 
-        elif isinstance(con, BitsInteger):
+        if isinstance(con, BitsInteger):
             width = max(2 ** math.ceil(math.log2(con.length)), 8)
             return f"Int{width}" if con.signed else f"UInt{width}"
 
-        elif isinstance(con, BytesInteger):
+        if isinstance(con, BytesInteger):
             width = max(2 ** math.ceil(math.log2(con.length * 8)), 8)
             return f"Int{width}" if con.signed else f"UInt{width}"
 
-        elif con is Flag:
+        if con is Flag:
             return "Bool"
+
+        return None
 
     def enter_struct(self, field_name="", struct_name="", many=False):
         field_name = self._camelcase(field_name)

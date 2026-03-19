@@ -24,9 +24,11 @@ import json
 import logging
 from tempfile import NamedTemporaryFile
 
+import capnp
 import pytest
 
 from bluetooth_mesh.messages import AccessMessage
+from bluetooth_mesh.messages.capnproto import generate
 from bluetooth_mesh.messages.util import to_camelcase_dict, to_snakecase_dict
 
 valid = [
@@ -383,10 +385,10 @@ valid = [
     ),  # Generic Manufacturer Property Set + Light Source Current + Not a Generic User Property
     bytes.fromhex(
         "45" + "9900" + "01"
-    ),  # Generic Manufacturer Property Set Unacknowledged + Luminaire Color + Generic User Property and can be read
+    ),  # pylint: disable=line-too-long # Generic Manufacturer Property Set Unacknowledged + Luminaire Color + Generic User Property and can be read
     bytes.fromhex(
         "46" + "A000" + "03" + "FEFF00"
-    ),  # Generic Manufacturer Property Status + Luminaire Time Of Manufacture + Read Write + 12-12-12 2012 12:12
+    ),  # pylint: disable=line-too-long # Generic Manufacturer Property Status + Luminaire Time Of Manufacture + Read Write + 12-12-12 2012 12:12
     bytes.fromhex(
         "46" + "8300" + "01" + "FDFFFFFF"
     ),  # Generic Manufacturer Property Status + Apparent Energy + User Access + 4294967.293 kVAh
@@ -479,21 +481,17 @@ valid = [
 ]
 
 
-@pytest.fixture(scope="session")
-def capnproto():
-    import capnp
-
-    from bluetooth_mesh.messages.capnproto import generate
-
+@pytest.fixture(name="capnproto_messages", scope="session")
+def _capnproto_messages():
     with NamedTemporaryFile("w", suffix=".capnp") as f:
         generate(0xD988DA1AAFBE9E47, f)
         f.flush()
-        return capnp.load(f.name)
+        return capnp.load(f.name)  # pylint: disable=no-member
 
 
 @pytest.mark.skipif(not importlib.util.find_spec("capnp"), reason="requires Python3.7")
 @pytest.mark.parametrize("encoded", [pytest.param(i, id=i.hex()) for i in valid])
-def test_parse_capnproto(encoded, capnproto):
+def test_parse_capnproto(encoded, capnproto_messages):
     logging.info("MESH[%i] %s", len(encoded), encoded.hex())
 
     decoded = AccessMessage.parse(encoded)
@@ -502,13 +500,13 @@ def test_parse_capnproto(encoded, capnproto):
     params = to_camelcase_dict(decoded)
     logging.info("CAPNP INPUT[%i] %s", len(json.dumps(params)), json.dumps(params))
 
-    message = capnproto.AccessMessage.new_message(**params)
+    message = capnproto_messages.AccessMessage.new_message(**params)
     logging.info("CAPNP %r", message)
 
     packed = message.to_bytes_packed()
     logging.info("PACKED[%i] %s", len(packed), packed.hex())
 
-    unpacked = capnproto.AccessMessage.from_bytes_packed(packed)
+    unpacked = capnproto_messages.AccessMessage.from_bytes_packed(packed)
     logging.info("UNPACKED %r", unpacked)
 
     params = to_snakecase_dict(unpacked.to_dict())

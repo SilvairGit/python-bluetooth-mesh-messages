@@ -263,9 +263,9 @@ EmergencyLightingTestParams = SwitchStruct(
         this.subopcode,
         {
             EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_GET: EmergencyLightingTestFunctionalTestGet,
-            EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_START: EmergencyLightingTestFunctionalTestStart,
+            EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_START: EmergencyLightingTestFunctionalTestStart,  # pylint: disable=line-too-long
             EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STOP: EmergencyLightingTestFunctionalTestStop,
-            EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STATUS: EmergencyLightingTestFunctionalTestStatus,
+            EmergencyLightingTestSubOpcode.ELT_FUNCTIONAL_TEST_STATUS: EmergencyLightingTestFunctionalTestStatus,  # pylint: disable=line-too-long
             EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_GET: EmergencyLightingTestDurationTestGet,
             EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_START: EmergencyLightingTestDurationTestStart,
             EmergencyLightingTestSubOpcode.ELT_DURATION_TEST_STOP: EmergencyLightingTestDurationTestStop,

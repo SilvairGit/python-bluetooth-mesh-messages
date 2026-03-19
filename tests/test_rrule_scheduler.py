@@ -26,7 +26,7 @@ valid = [
     ),
     pytest.param(
         bytes.fromhex(
-            "080503CDAB0002BBCCCCAB0205ABFF157288CBAB05100002BB" "CCCCAB0005ABFF157288CBAB000001030200020500"
+            "080503CDAB0002BBCCCCAB0205ABFF157288CBAB05100002BBCCCCAB0005ABFF157288CBAB000001030200020500"
         ),
         RRuleSchedulerSubOpcode.SCHEDULE_REGISTER_ENTRY_SET,
         {
@@ -123,26 +123,26 @@ valid = [
                 },
                 {
                     "rule_id": RuleIDs.DTSTART,
-                    "rule": dict(second=56, minute=17, hour=22, day=25, month=11, year=2040),
+                    "rule": {"second": 56, "minute": 17, "hour": 22, "day": 25, "month": 11, "year": 2040},
                 },
                 {
                     "rule_id": RuleIDs.UNTIL,
-                    "rule": dict(second=56, minute=17, hour=22, day=25, month=11, year=2040),
+                    "rule": {"second": 56, "minute": 17, "hour": 22, "day": 25, "month": 11, "year": 2040},
                 },
                 {
                     "rule_id": RuleIDs.EXPLICIT_RDATE,
                     "rule": [
-                        dict(second=56, minute=17, hour=22, day=25, month=11, year=2020),
-                        dict(second=56, minute=17, hour=22, day=25, month=11, year=2030),
-                        dict(second=56, minute=17, hour=22, day=25, month=11, year=2040),
+                        {"second": 56, "minute": 17, "hour": 22, "day": 25, "month": 11, "year": 2020},
+                        {"second": 56, "minute": 17, "hour": 22, "day": 25, "month": 11, "year": 2030},
+                        {"second": 56, "minute": 17, "hour": 22, "day": 25, "month": 11, "year": 2040},
                     ],
                 },
                 {
                     "rule_id": RuleIDs.EXCLUSIONS_RDATE,
                     "rule": [
-                        dict(second=56, minute=17, hour=22, day=25, month=11, year=2020),
-                        dict(second=56, minute=17, hour=22, day=25, month=11, year=2030),
-                        dict(second=56, minute=17, hour=22, day=25, month=11, year=2040),
+                        {"second": 56, "minute": 17, "hour": 22, "day": 25, "month": 11, "year": 2020},
+                        {"second": 56, "minute": 17, "hour": 22, "day": 25, "month": 11, "year": 2030},
+                        {"second": 56, "minute": 17, "hour": 22, "day": 25, "month": 11, "year": 2040},
                     ],
                 },
             ],

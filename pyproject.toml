@@ -78,10 +78,19 @@ disable = [
     "missing-class-docstring",
     "missing-function-docstring",
     "invalid-name",
+    "fixme",
+    "protected-access",
+    "too-few-public-methods",
+    "unused-argument",
+    "too-many-lines",
+    "too-many-return-statements",
+    "duplicate-code",
 ]
 enable = [
     "useless-suppression",
 ]
+max-args = 8
+max-positional-arguments = 9
 
 [tool.pylint.main]
 py-version = "3.14"

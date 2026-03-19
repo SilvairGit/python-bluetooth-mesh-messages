@@ -23,45 +23,52 @@ import sys
 
 import pytest
 
-from bluetooth_mesh.messages.generic.battery import *
+from bluetooth_mesh.messages import GenericBatteryOpcode
+from bluetooth_mesh.messages.generic.battery import (
+    GenericBatteryFlagsCharging,
+    GenericBatteryFlagsIndicator,
+    GenericBatteryFlagsPresence,
+    GenericBatteryFlagsServiceability,
+    GenericBatteryMessage,
+)
 
 valid = [
     pytest.param(
         b"\x82\x23",
         GenericBatteryOpcode.GENERIC_BATTERY_GET,
-        dict(),
+        {},
         id="GENERIC_BATTERY_GET",
     ),
     pytest.param(
         b"\x82\x24\x32\xb4\x00\x00\xfe\xfe\x00\x62",
         GenericBatteryOpcode.GENERIC_BATTERY_STATUS,
-        dict(
-            battery_level=50,
-            time_to_discharge=0xB4,
-            time_to_charge=0xFEFE,
-            flags=dict(
-                battery_presence_flags=GenericBatteryFlagsPresence.BATTERY_PRESENT_NON_REMOVABLE,
-                battery_indicator_flags=GenericBatteryFlagsIndicator.BATTERY_CHARGE_CRITICALLY_LOW,
-                battery_charging_flags=GenericBatteryFlagsCharging.BATTERY_CHARGEABLE_CHARGING,
-                battery_serviceability_flags=GenericBatteryFlagsServiceability.BATTERY_NOT_REQUIRE_SERVICE,
-            ),
-        ),
+        {
+            "battery_level": 50,
+            "time_to_discharge": 0xB4,
+            "time_to_charge": 0xFEFE,
+            "flags": {
+                "battery_presence_flags": GenericBatteryFlagsPresence.BATTERY_PRESENT_NON_REMOVABLE,
+                "battery_indicator_flags": GenericBatteryFlagsIndicator.BATTERY_CHARGE_CRITICALLY_LOW,
+                "battery_charging_flags": GenericBatteryFlagsCharging.BATTERY_CHARGEABLE_CHARGING,
+                "battery_serviceability_flags": GenericBatteryFlagsServiceability.BATTERY_NOT_REQUIRE_SERVICE,
+            },
+        },
         id="GENERIC_BATTERY_STATUS",
     ),
     pytest.param(
         b"\x82\x24\xff\xbb\xaa\x00\xff\xff\xff\xdb",
         GenericBatteryOpcode.GENERIC_BATTERY_STATUS,
-        dict(
-            battery_level=float(sys.float_info.max),
-            time_to_discharge=0xAABB,
-            time_to_charge=float(sys.float_info.max),
-            flags=dict(
-                battery_presence_flags=GenericBatteryFlagsPresence.BATTERY_PRESENCE_UNKNOWN,
-                battery_indicator_flags=GenericBatteryFlagsIndicator.BATTERY_CHARGE_GOOD,
-                battery_charging_flags=GenericBatteryFlagsCharging.BATTERY_CHARGEABLE_NOT_CHARGING,
-                battery_serviceability_flags=GenericBatteryFlagsServiceability.BATTERY_SERVICEABILITY_UNKNOWN,
-            ),
-        ),
+        {
+            "battery_level": float(sys.float_info.max),
+            "time_to_discharge": 0xAABB,
+            "time_to_charge": float(sys.float_info.max),
+            "flags": {
+                "battery_presence_flags": GenericBatteryFlagsPresence.BATTERY_PRESENCE_UNKNOWN,
+                "battery_indicator_flags": GenericBatteryFlagsIndicator.BATTERY_CHARGE_GOOD,
+                "battery_charging_flags": GenericBatteryFlagsCharging.BATTERY_CHARGEABLE_NOT_CHARGING,
+                "battery_serviceability_flags": GenericBatteryFlagsServiceability.BATTERY_SERVICEABILITY_UNKNOWN,  # pylint: disable=line-too-long
+            },
+        },
         id="GENERIC_BATTERY_STATUS",
     ),
 ]
@@ -74,4 +81,4 @@ def test_parse_valid(encoded, opcode, data):
 
 @pytest.mark.parametrize("encoded,opcode,data", valid)
 def test_build_valid(encoded, opcode, data):
-    assert GenericBatteryMessage.build(dict(opcode=opcode, params=data)) == encoded
+    assert GenericBatteryMessage.build({"opcode": opcode, "params": data}) == encoded

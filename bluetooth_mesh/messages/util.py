@@ -19,7 +19,6 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
 #
-# pylint: disable=W0223
 
 import enum
 import math
@@ -70,9 +69,9 @@ def Reversed(subcon):
 
 
 class BitListAdapter(Adapter):
-    def __init__(self, subcon, reversed):
+    def __init__(self, subcon, reverse_bits):
         super().__init__(subcon)
-        self.reversed = reversed
+        self.reversed = reverse_bits
 
     def _decode(self, obj, content, path):
         bits = set()
@@ -94,7 +93,7 @@ class BitListAdapter(Adapter):
         return list(reversed(bits)) if self.reversed else bits
 
 
-def BitList(size, *, reversed=False):
+def BitList(size, *, reversed=False):  # pylint: disable=redefined-builtin
     return BitListAdapter(Bitwise(Bit[size * 8]), reversed)
 
 
@@ -106,29 +105,29 @@ class SetAdapter(Adapter):
         return obj
 
 
-def EnumAdapter(subcon, enum):
+def EnumAdapter(subcon, enum_cls):
     class _Enum(Enum):
-        ENUM = enum
+        ENUM = enum_cls
 
     class _EnumAdapter(Adapter):
-        type = enum
-        _enum = enum
+        type = enum_cls
+        _enum = enum_cls
 
         def _decode(self, obj, context, path):
-            if obj not in enum._value2member_map_:
-                raise ValidationError("object failed validation: '%s' not in %s" % (obj, enum))
-            return enum(obj)
+            if obj not in enum_cls._value2member_map_:
+                raise ValidationError(f"object failed validation: '{obj}' not in {enum_cls}")
+            return enum_cls(obj)
 
         def _encode(self, obj, context, path):
-            if obj == enum:
+            if obj == enum_cls:
                 return obj.value
 
             try:
-                return enum[obj] if isinstance(obj, str) else enum(obj)
+                return enum_cls[obj] if isinstance(obj, str) else enum_cls(obj)
             except ValueError as ex:
-                raise ValidationError("object failed validation: '%s' not in %s" % (obj, enum)) from ex
+                raise ValidationError(f"object failed validation: '{obj}' not in {enum_cls}") from ex
 
-    _EnumAdapter.__construct_doc__ = _Enum(subcon, enum)
+    _EnumAdapter.__construct_doc__ = _Enum(subcon, enum_cls)
 
     return _EnumAdapter(subcon)
 
@@ -147,7 +146,7 @@ def LogAdapter(subcon, *, max_value=None, infinity=False):
                     return float("inf")
 
             if max_value is not None and obj > max_value:
-                raise ValidationError("max value exceeded, expecting at most %d: %s" % (max_value, obj))
+                raise ValidationError(f"max value exceeded, expecting at most {max_value}: {obj}")
 
             return int(math.pow(2, obj - 1))
 
@@ -159,12 +158,12 @@ def LogAdapter(subcon, *, max_value=None, infinity=False):
                 if infinity:
                     return self.MAX_TYPE_VALUE
 
-                raise ValidationError("infinity is not allowed: %s" % obj)
+                raise ValidationError(f"infinity is not allowed: {obj}")
 
             value = math.log(obj, 2) + 1
 
             if max_value is not None and value > max_value:
-                raise ValidationError("max value exceeded, expecting at most %d: %s" % (max_value, obj))
+                raise ValidationError(f"max value exceeded, expecting at most {max_value}: {obj}")
 
             return int(value)
 
@@ -196,7 +195,7 @@ class FieldAdapter(Adapter):
         return obj
 
 
-def EmbeddedBitStruct(name, *fields, reversed=False):
+def EmbeddedBitStruct(name, *fields, reversed=False):  # pylint: disable=redefined-builtin
     """
     Emulates BitStruct embedding:
         - for parsing, adds Computed accessor fields to the parent construct,
@@ -225,31 +224,31 @@ class Opcode(Construct):
     __construct_doc__ = Int32ub
     subcon = Int32ub
 
-    def __init__(self, type=int):
+    def __init__(self, opcode_type=int):
         super().__init__()
-        self.type = type
+        self.type = opcode_type
 
-    def _parse(self, stream, context, path):
+    def _parse(self, stream, context, path):  # pylint: disable=inconsistent-return-statements
         try:
             opcode = stream_read(stream, 1, path)[0]
 
             if opcode == 0x7F:
                 raise ValidationError
 
-            len = opcode >> 7
+            opcode_len = opcode >> 7
 
             # 1 byte opcode
-            if not len:
+            if not opcode_len:
                 return self.type(opcode)
 
-            len = opcode >> 6
+            opcode_len = opcode >> 6
             opcode = opcode << 8 | stream_read(stream, 1, path)[0]
 
             # 2 byte opcode
-            if len == 2:
+            if opcode_len == 2:
                 return self.type(opcode)
 
-            if len == 3:
+            if opcode_len == 3:
                 opcode = opcode << 8 | stream_read(stream, 1, path)[0]
                 return self.type(opcode)
 
@@ -286,19 +285,17 @@ class DefaultCountValidator(Adapter):
     def _decode(self, obj, content, path):
         if self.unknown_value and obj == (256**self.subcon.length) - 1:
             return float(sys.float_info.max)
-        else:
-            return round(obj * self.resolution, self.rounding) if self.rounding else obj * self.resolution
+        return round(obj * self.resolution, self.rounding) if self.rounding else obj * self.resolution
 
     def _encode(self, obj, content, path):
         if self.unknown_value and obj == float(sys.float_info.max):
             return (256**self.subcon.length) - 1
-        else:
-            return round(obj / self.resolution)
+        return round(obj / self.resolution)
 
 
 class MacAddressAdapter(Adapter):
     def _decode(self, obj, context, path):
-        return ":".join(map("{:02x}".format, obj))
+        return ":".join(f"{item:02x}" for item in obj)
 
     def _encode(self, obj, context, path):
         return bytes(int(i, 16) for i in obj.split(":"))
@@ -348,27 +345,18 @@ Container.__eq__ = _container_eq_compat
 
 class EnumSwitch(Switch):
     def _emitparse(self, code):
-        fname = "factory_%s" % code.allocateId()
+        fname = f"factory_{code.allocateId()}"
         code.append(
-            "%s = {%s}"
-            % (
-                fname,
-                ", ".join(
-                    "%r : lambda io,this: %s" % (int(key), sc._compileparse(code))
-                    for key, sc in self.cases.items()
-                ),
+            f"{fname} = {{"
+            + ", ".join(
+                f"{int(key)!r} : lambda io,this: {sc._compileparse(code)}" for key, sc in self.cases.items()
             )
+            + "}"
         )
 
-        defaultfname = "compiled_%s" % code.allocateId()
-        code.append(
-            "%s = lambda io,this: %s"
-            % (
-                defaultfname,
-                self.default._compileparse(code),
-            )
-        )
-        return "%s.get(%s, %s)(io, this)" % (fname, self.keyfunc, defaultfname)
+        defaultfname = f"compiled_{code.allocateId()}"
+        code.append(f"{defaultfname} = lambda io,this: {self.default._compileparse(code)}")
+        return f"{fname}.get({self.keyfunc}, {defaultfname})(io, this)"
 
 
 class EnumSwitchStruct(Adapter):
@@ -520,29 +508,29 @@ def to_case_dict(value, case):
         name = getattr(value, "_name", None)
         return {name: new_dict} if name else new_dict
 
-    elif isinstance(value, (set, list)):
+    if isinstance(value, (set, list)):
         return [to_case_dict(i, case) for i in value]
 
-    elif isinstance(value, enum.Enum):
+    if isinstance(value, enum.Enum):
         return value.value
 
-    elif isinstance(value, bytes):
+    if isinstance(value, bytes):
         return value.hex()
 
     if isinstance(value, datetime):
-        return dict(
-            year=value.year,
-            month=value.month,
-            day=value.day,
-            hour=value.hour,
-            minute=value.minute,
-            second=value.second,
-            microsecond=value.microsecond,
-            timeZoneOffset=(value.utcoffset().total_seconds() / 60),
-        )
+        return {
+            "year": value.year,
+            "month": value.month,
+            "day": value.day,
+            "hour": value.hour,
+            "minute": value.minute,
+            "second": value.second,
+            "microsecond": value.microsecond,
+            "timeZoneOffset": (value.utcoffset().total_seconds() / 60),
+        }
 
     if isinstance(value, date):
-        return dict(year=value.year, month=value.month, day=value.day)
+        return {"year": value.year, "month": value.month, "day": value.day}
 
     if isinstance(value, timedelta):
         return value.total_seconds()

@@ -150,7 +150,7 @@ GenericPropertyMessage = SwitchStruct(
             GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTIES_STATUS: GenericPropertiesStatus,
             GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_GET: GenericPropertyGet,
             GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_SET: GenericManufacturerPropertySet,
-            GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_SET_UNACKNOWLEDGED: GenericManufacturerPropertySet,
+            GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_SET_UNACKNOWLEDGED: GenericManufacturerPropertySet,  # pylint: disable=line-too-long
             GenericPropertyOpcode.GENERIC_MANUFACTURER_PROPERTY_STATUS: GenericPropertyStatus,
             GenericPropertyOpcode.GENERIC_CLIENT_PROPERTIES_GET: GenericPropertiesGet,
             GenericPropertyOpcode.GENERIC_CLIENT_PROPERTIES_STATUS: GenericPropertiesStatus,

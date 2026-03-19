@@ -24,7 +24,75 @@ from copy import deepcopy
 import pytest
 from construct import ValidationError
 
-from bluetooth_mesh.messages.config import *
+from bluetooth_mesh.messages.config import (
+    TTL,
+    CompositionDataPage0,
+    CompositionDataPage0Element,
+    CompositionDataPage1,
+    CompositionDataPage1Element,
+    CompositionDataPage2,
+    ConfigAppKeyAdd,
+    ConfigAppKeyGet,
+    ConfigAppKeyList,
+    ConfigAppKeyStatus,
+    ConfigBeaconGet,
+    ConfigBeaconSet,
+    ConfigBeaconStatus,
+    ConfigCompositionDataGet,
+    ConfigCompositionDataStatus,
+    ConfigDefaultTTLGet,
+    ConfigDefaultTTLSet,
+    ConfigDefaultTTLStatus,
+    ConfigGATTProxyGet,
+    ConfigGATTProxySet,
+    ConfigGATTProxyStatus,
+    ConfigHeartbeatPublicationGet,
+    ConfigHeartbeatPublicationSet,
+    ConfigMessage,
+    ConfigModelPublicationGet,
+    ConfigModelPublicationSet,
+    ConfigModelPublicationStatus,
+    ConfigModelSubscriptionAdd,
+    ConfigModelSubscriptionStatus,
+    ConfigNetKeyAdd,
+    ConfigNetKeyList,
+    ConfigNetworkTransmitSet,
+    ConfigNodeIdentitySet,
+    ConfigNodeIdentityStatus,
+    ConfigOpcode,
+    ConfigRelayGet,
+    ConfigRelaySet,
+    ConfigRelayStatus,
+    ExtendedModelsItemFormat,
+    GATTNamespaceDescriptor,
+    GATTNamespaceDescriptorAdapter,
+    GATTProxy,
+    GATTProxyAdapter,
+    GroupAddress,
+    ModelId,
+    ModelRelationItem,
+    NetAndAppKeyIndex,
+    NetworkRetransmit,
+    NodeIdentity,
+    PublishFriendshipCredentialsFlag,
+    PublishPeriod,
+    PublishPeriodStepResolution,
+    PublishRetransmit,
+    Relay,
+    RelayAdapter,
+    RelayRetransmit,
+    Retransmit,
+    SecureNetworkBeacon,
+    SecureNetworkBeaconAdapter,
+    SIGModelId,
+    SingleKeyIndex,
+    StatusCode,
+    Struct,
+    UnassignedAddress,
+    UnicastAddress,
+    VendorModelId,
+    VirtualLabel,
+)
 
 valid = [
     pytest.param(
@@ -315,7 +383,7 @@ valid = [
     ),
     pytest.param(
         ConfigBeaconGet,
-        bytes(),
+        b"",
         {},
         id="ConfigBeaconGet",
     ),
@@ -823,7 +891,7 @@ valid = [
     ),
     pytest.param(
         ConfigDefaultTTLGet,
-        bytes(),
+        b"",
         {},
         id="ConfigDefaultTTLGet",
     ),
@@ -875,7 +943,7 @@ valid = [
     ),
     pytest.param(
         ConfigGATTProxyGet,
-        bytes(),
+        b"",
         {},
         id="ConfigGATTProxyGet",
     ),
@@ -897,7 +965,7 @@ valid = [
     ),
     pytest.param(
         ConfigRelayGet,
-        bytes(),
+        b"",
         {},
         id="ConfigRelayGet",
     ),
@@ -1186,7 +1254,7 @@ valid = [
     ),
     pytest.param(
         ConfigHeartbeatPublicationGet,
-        bytes(),
+        b"",
         {},
         id="ConfigHeartbeatPublicationGet",
     ),
@@ -1374,11 +1442,11 @@ def test_build_config_message(key):
     data = ConfigMessage.build(
         {
             "opcode": ConfigOpcode.CONFIG_APPKEY_ADD,
-            key: dict(
-                app_key_index=1,
-                net_key_index=1,
-                app_key=app_key,
-            ),
+            key: {
+                "app_key_index": 1,
+                "net_key_index": 1,
+                "app_key": app_key,
+            },
         }
     )
 
@@ -1390,19 +1458,19 @@ def test_parse_config_message():
 
     msg = ConfigMessage.parse(bytes.fromhex("00011000") + key)
 
-    assert msg == dict(
-        opcode=ConfigOpcode.CONFIG_APPKEY_ADD,
-        params=dict(
-            app_key_index=1,
-            net_key_index=1,
-            app_key=key,
-        ),
-        config_appkey_add=dict(
-            app_key_index=1,
-            net_key_index=1,
-            app_key=key,
-        ),
-    )
+    assert msg == {
+        "opcode": ConfigOpcode.CONFIG_APPKEY_ADD,
+        "params": {
+            "app_key_index": 1,
+            "net_key_index": 1,
+            "app_key": key,
+        },
+        "config_appkey_add": {
+            "app_key_index": 1,
+            "net_key_index": 1,
+            "app_key": key,
+        },
+    }
 
 
 invalid_retr = [
