@@ -32,15 +32,35 @@ Supported models include:
 - **Time model**
 - **Health model**
 - **Config model**
-- **Silvair vendor models**: Debug, Emergency Lighting, Gateway Config,
-  Light Extended Controller, Network Diagnostic, RRule Scheduler
+- **Silvair vendor models**: Debug, Debug V2, Emergency Lighting,
+  Emergency Lighting Test, Gateway Config, Light Extended Controller,
+  Network Diagnostic, Network Diagnostic Setup Server, RRule Scheduler
 
 Installation
 ------------
 
+This project requires Python 3.14.
+
 You can install "bluetooth-mesh-messages" via `pip`_ from `PyPI`_::
 
     $ pip install bluetooth-mesh-messages
+
+To install the optional Cap'n Proto support, use::
+
+    $ pip install "bluetooth-mesh-messages[capnp]"
+
+You can also add it to a Poetry-managed project::
+
+    $ poetry add bluetooth-mesh-messages
+
+To include the optional `capnp` extra with Poetry, use::
+
+    $ poetry add bluetooth-mesh-messages --extras capnp
+
+If you want to work on this repository locally, install the project and development
+dependencies with Poetry::
+
+    $ poetry install
 
 Contributing
 ------------
