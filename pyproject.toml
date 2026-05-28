@@ -19,7 +19,7 @@ authors = [
     { name = "Patryk Bieleń", email = "patryk.bielen@silvair.com" }
 ]
 dependencies = [
-    "construct>=2.10.70,<2.11",
+    "construct >= 2.10.70",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",

@@ -464,4 +464,4 @@ capnp = ["pycapnp"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.14,<3.15"
-content-hash = "ed864b9c9142836683a2fd5c5c1de15e47c05c228f7c705c33c489c5d57ac960"
+content-hash = "abd4e06df67def326a3f2aaa05853ebc04c3a8e8a543ad7e7d28310958b390a1"
