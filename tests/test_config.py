@@ -713,8 +713,8 @@ valid = [
                     "extended_models_items": {
                         "long": [
                             {
-                                "model_item_index": 26,
-                                "element_offset": -3,
+                                "element_offset": 26,
+                                "model_item_index": 253,
                             }
                         ]
                     },
@@ -881,8 +881,8 @@ valid = [
             "extended_models_items": {
                 "long": [
                     {
-                        "model_item_index": 10,
-                        "element_offset": 11,
+                        "element_offset": 10,
+                        "model_item_index": 11,
                     }
                 ]
             },
