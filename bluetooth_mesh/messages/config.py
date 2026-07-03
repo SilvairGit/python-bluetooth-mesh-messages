@@ -563,8 +563,8 @@ CompositionDataPage0 = Struct(
 )
 
 ExtendedModelLongFormat = Struct(
+    "element_offset" / Int8sl,
     "model_item_index" / Int8ul,
-    "element_offset" / Int8sl
 )
 
 ExtendedModelShortFormat = BitStruct(
